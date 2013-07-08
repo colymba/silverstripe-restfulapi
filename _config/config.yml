@@ -1,0 +1,7 @@
+---
+Name: mysite
+After: 'framework/*','cms/*'
+---
+Director:
+  rules:
+    'api': 'APIController'
