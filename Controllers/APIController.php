@@ -2,8 +2,36 @@
 
 class APIController extends Controller
 {
+  /**
+   * @var Boolean $useTokenAuthentication If true 'all' requests will be checked for authentication with a token
+   */
+  private static $useTokenAuthentication = true;
+
+  /**
+   * @var Integer $tokenLife Authentication token life in ms
+   */
   private static $tokenLife = 10800000;//3 * 60 * 60 * 1000;
 
+  const AUTH_CODE_LOGGED_IN     = 0;
+  const AUTH_CODE_LOGIN_FAIL    = 1;
+  const AUTH_CODE_TOKEN_INVALID = 2;
+  const AUTH_CODE_TOKEN_EXPIRED = 3;
+
+  /**
+   * @var Array $cors Cross-Origin Resource Sharing (CORS) API settings for cross domain XMLHTTPRequest 
+   */
+  private static $cors = array(
+    'Enabled'       => true,
+    'Allow-Origin'  => array('http://localhost'), // * OR Array list of accepted origins
+    'Allow-Headers' => 'X-Requested-With',
+    'Allow-Methods' => 'POST, GET, PUT, DELETE',
+    'Max-Age'       => 86400 //seconds = 1 day
+  );
+
+  /**
+   * @var Array $embeddedRecords Map of classes to embed for specific record
+   * i.e. 'RequestedClass' => array('ClassToEmbed', 'Another')
+   */
   private static $embeddedRecords = array(
     'Member' => array('Favourites')
   );
@@ -12,21 +40,96 @@ class APIController extends Controller
   private static $sideloadedRecords = array(
   );
 
+  /**
+   * @var Array $allowed_actions URL handler allowed actions
+   */
   private static $allowed_actions = array(
     'index',
     'login',
     'logout'
   );
+
+  /**
+   * @var Array $url_handlers URL handler definition
+   */
   public static $url_handlers = array(
     'login' => 'login',
     'logout' => 'logout',
     '$ClassName/$ID' => 'index'
   );
 
-	public function init()
-	{
-		parent::init();
-	}
+  /**
+   * @var Array $requestData Stores the currently requested data (Model class + ID)
+   */
+  private $requestData = array(
+    'model' => null,
+    'id'    => null
+  );
+
+  /**
+   * Controller inititalisation
+   * Catches CORS preflight request marked with HTTPMethod 'OPTIONS'
+   */
+  public function init()
+  {
+    parent::init();
+
+    //catch preflight request
+    if ( $this->request->httpMethod() === 'OPTIONS' )
+    {
+      print_r($this->request);
+      $this->answer(null, false, true);
+    }
+  }
+
+  /**
+   * Returns the API response to client
+   *
+   * @param JSON|String $json the response body
+   * @param Array|false $error use false if not an error otherwise pass array('code' => statusCode, 'description' => statusDescription)
+   * @param Boolean $corsPreflight set to true if this is a XHR preflight request answer. CORS shoud be enabled.
+   * @return JSON API response
+   */
+  function answer( $json = null, $error = false, $corsPreflight = false )
+  {
+    $answer = new SS_HTTPResponse();
+
+    //set response body
+    if ( $json && !$corsPreflight )
+    {
+      $answer->setBody($json);
+      $answer->addHeader('Content-Type', 'text/json');
+    }
+
+    //Set status code+descript, i.e. 403 Access denied
+    if ( $error !== false && !$corsPreflight )
+    {
+      $answer->setStatusCode($error['code'], $error['description']);
+    }
+
+    //If CORS is enabled sort out headers
+    if ( self::$cors['Enabled'] )
+    {
+      //check if Origin is allowed
+      $allowedOrigin = 'null';
+      $requestOrigin = $this->request->getHeader('Origin');      
+
+      if ( self::$cors['Allow-Origin'] === '*' || in_array($requestOrigin, self::$cors['Allow-Origin']) )
+      {
+        $allowedOrigin = $requestOrigin;
+      }
+      $answer->addHeader('Access-Control-Allow-Origin', $requestOrigin);
+      
+      //allowed headers
+      $answer->addHeader('Access-Control-Allow-Headers', self::$cors['Allow-Headers']);
+      //allowed method
+      $answer->addHeader('Access-Control-Allow-Methods', self::$cors['Allow-Methods']);
+    }
+    
+    //Output + exit
+    $answer->output();
+    exit;
+  }
 
   /**
    * Login a user into the Framework and generates API token
@@ -64,10 +167,12 @@ class APIController extends Controller
     {
       $response['result']  = false;
       $response['message'] = 'Authentication fail.';
+      $response['code']    = self::AUTH_CODE_LOGIN_FAIL;
     }
     else{
       $response['result']       = true;
       $response['message']      = 'Logged in.';
+      $response['code']         = self::AUTH_CODE_LOGGED_IN;
       $response['token']        = $token;
       /*
       $memberData               = $this->parseObject($member);
@@ -78,7 +183,8 @@ class APIController extends Controller
       $response['member']       = $this->parseObject($member);
     }
 
-    return Convert::raw2json($response);
+    //return Convert::raw2json($response);
+    $this->answer( Convert::raw2json($response) );
   }
 
   /**
@@ -135,33 +241,48 @@ class APIController extends Controller
           $response['valid'] = true;
         }
         else{
-          $response['valid'] = false;
-          $response['error'] = 'Token expired.';
+          $response['valid']   = false;
+          $response['message'] = 'Token expired.';
+          $response['code']    = self::AUTH_CODE_TOKEN_EXPIRED;
         }        
       }      
     }
     else{
-      $response['valid'] = false;
-      $response['error'] = 'Token invalid.';
+      $response['valid']   = false;
+      $response['message'] = 'Token invalid.';
+      $response['code']    = self::AUTH_CODE_TOKEN_INVALID;
     }
     return $response;
   }
 
-	/**
+  /**
    * Main API hub swith
    * All requests pass through here and are redirected depending on HTTP verb and params
    *
    * @param SS_HTTPRequest $request HTTP request
+   *
    * @return JSON Returns json object of the models found
    */
   function index(SS_HTTPRequest $request)
-	{
-    $validToken = $this->validateAPIToken($request);
-    if ( !$validToken['valid'] )
+  {
+    //check authentication if enabled
+    if ( self::$useTokenAuthentication )
     {
-      //return $this->httpError(403, $validToken['error']); 
+      $validToken = $this->validateAPIToken($request);
+      if ( !$validToken['valid'] )
+      {
+        $response = new SS_HTTPResponse();
+        $response->setStatusCode(403, $validToken['message']);
+        $response->setBody( Convert::raw2json(array(
+          'message' => $validToken['message'],
+          'code'    => $validToken['code']
+        )));
+        $response->addHeader('Content-Type', 'text/json');
+        return $response;
+      }
     }
 
+    //get requested model(s) details
     $model = $request->param('ClassName');
     $id = $request->param('ID');
     $response = false;
@@ -172,7 +293,12 @@ class APIController extends Controller
       $model = ucfirst( Inflector::singularize($model) );
     }
 
+    //store requested model data
+    $this->requestData['model'] = $model;
+    $this->requestData['id'] = $id;
+
     //map HTTP word to API method
+    //@TODO handle error
     if ( $request->isGET() )
     {
       $response = $this->findModel($model, $id, $request);
@@ -192,16 +318,19 @@ class APIController extends Controller
       $response = $this->deleteModel($model, $id, $request);
     }
 
-    //output JSON response
-    $JSONResponse = new SS_HTTPResponse( $response );
-    $JSONResponse->addHeader('Content-Type', 'text/json');
-    return $JSONResponse;
-	}
+    $this->answer( $response );
+  }
 
-  /*
+  /**
    * Finds 1 or more objects of class $model
+   *
+   * @param String $model the model(s) class to find
+   * @param false|Integer $id The ID of the model to find
+   * @param SS_HTTPRequest the original request
+   *
+   * @return DataObject|DataList the result of the search (note: DataList can be empty)
    */
-  function findModel($model, $id, $request)
+  function findModel($model, $id = false, $request)
   {    
     if ($id)
     {
@@ -229,47 +358,28 @@ class APIController extends Controller
         }
       }
     }
+
     return $return;
   }
 
-  /*
+  /**
    * Create object of class $model
+   * @TODO
    */
   function createModel($model, $request)
   {
 
   }
 
-  /*
-   * update object of class $model
+  /**
+   * Update databse record or $model
+   *
+   * @param String $model the model class to update
+   * @param Integer $id The ID of the model to update
+   * @param SS_HTTPRequest the original request
+   *
+   * @return DataObject The updated model 
    */
-  /*
-  Array
-(
-    [Member] => Array
-        (
-            [ApiToken] => df9a69d4caae85e2a50ac0c35511abcb9f2d411e
-            [ApiTokenExpire] => 1383817406
-            [Favourites] => Array
-                (
-                    [0] => Array
-                        (
-                            [Title] => That's a new one!
-                            [Description] => 
-                            [Date] => Thu, 02 May 2013 00:00:00 GMT
-                            [ID] => 3
-                            [CategoryID] => 2
-                            [PresentationID] => 
-                            [PresenterNotesID] => 
-                            [CoverID] => 
-                        )
-
-                )
-
-        )
-
-)
-*/
   function updateModel($model, $id, $request)
   {
     $model = DataObject::get_by_id($model, $id);
@@ -320,8 +430,9 @@ class APIController extends Controller
     return $model;
   }
 
-  /*
+  /**
    * delete object of class $model
+   * @TODO
    */
   function deleteModel($model, $id, $request)
   {
@@ -332,12 +443,28 @@ class APIController extends Controller
    * DATA PARSING
    */
 
-  /*
+  /**
    * Parse DataList/DataObject to JSON
+   *
+   * @param DataList|DataObject $data The data to parse to JSON for client response
+   *
+   * @return String JSON representation of $data
    */
   function parseJSON($data)
   {
+    //nothing to parse -> return an empty response
+    if ( !$data )
+    {      
+      $className = $this->requestData['model'];
+      $className = strtolower( Inflector::singularize($className) );
 
+      $root = new stdClass();
+      $root->{$className} = new stdClass();
+
+      return Convert::raw2json($root);
+    }
+
+    //multiple results to parse
     if ( $data instanceof DataList )
     {
 
@@ -357,6 +484,7 @@ class APIController extends Controller
       $root->{$className} = $modelsList;
 
     }
+    //one DataObject to parse
     else{
 
       $className = $data->ClassName;
@@ -385,7 +513,7 @@ class APIController extends Controller
     return Convert::raw2json($root);
   }
 
-  /*
+  /**
    * Combine an Object map and its Relations
    * into one root Object ready to be returned as JSON
    */
@@ -447,11 +575,15 @@ class APIController extends Controller
     return $root;
   }
 
-  /*
+  /**
    * Parse DataObject attributes for emberdata
    * converts keys to underscored_names
    * add relations ids list
    * and foreign keys to Int
+   *
+   * @param DataObject $obj The DataObject to parse
+   *
+   * @return Array The parsed DataObject
    */
   function parseObject($obj)
   {
