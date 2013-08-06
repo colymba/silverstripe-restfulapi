@@ -5,7 +5,7 @@ class APIController extends Controller
   /**
    * @var Boolean $useTokenAuthentication If true 'all' requests will be checked for authentication with a token
    */
-  private static $useTokenAuthentication = true;
+  private static $useTokenAuthentication = false;
 
   /**
    * @var Integer $tokenLife Authentication token life in ms
@@ -23,9 +23,9 @@ class APIController extends Controller
   private static $cors = array(
     'Enabled'       => true,
     'Allow-Origin'  => array('http://localhost'), // * OR Array list of accepted origins
-    'Allow-Headers' => 'X-Requested-With',
+    'Allow-Headers' => '*', // * OR or comma separated values 'hearder-1, header-2'
     'Allow-Methods' => 'POST, GET, PUT, DELETE',
-    'Max-Age'       => 86400 //seconds = 1 day
+    'Max-Age'       => 86400 //seconds = 1 day //@NOTE has no effect if Authentification is enabled => custom header = always preflight?
   );
 
   /**
@@ -112,8 +112,7 @@ class APIController extends Controller
     {
       //check if Origin is allowed
       $allowedOrigin = 'null';
-      $requestOrigin = $this->request->getHeader('Origin');      
-
+      $requestOrigin = $this->request->getHeader('Origin');
       if ( self::$cors['Allow-Origin'] === '*' || in_array($requestOrigin, self::$cors['Allow-Origin']) )
       {
         $allowedOrigin = $requestOrigin;
@@ -121,9 +120,22 @@ class APIController extends Controller
       $answer->addHeader('Access-Control-Allow-Origin', $requestOrigin);
       
       //allowed headers
-      $answer->addHeader('Access-Control-Allow-Headers', self::$cors['Allow-Headers']);
+      $allowedHeaders = '';
+      $requestHeaders = $this->request->getHeader('Access-Control-Request-Headers');  
+      if ( self::$cors['Allow-Headers'] === '*' )
+      {
+        $allowedHeaders = $requestHeaders;
+      }
+      else{
+        $allowedHeaders = self::$cors['Allow-Headers'];
+      }
+      $answer->addHeader('Access-Control-Allow-Headers', $allowedHeaders);
+
       //allowed method
       $answer->addHeader('Access-Control-Allow-Methods', self::$cors['Allow-Methods']);
+
+      //max age
+      $answer->addHeader('Access-Control-Max-Age', self::$cors['Max-Age']);
     }
     
     //Output + exit
