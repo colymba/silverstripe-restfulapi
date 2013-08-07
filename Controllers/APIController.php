@@ -46,7 +46,8 @@ class APIController extends Controller
   private static $allowed_actions = array(
     'index',
     'login',
-    'logout'
+    'logout',
+    'lostpassword'
   );
 
   /**
@@ -55,6 +56,7 @@ class APIController extends Controller
   public static $url_handlers = array(
     'login' => 'login',
     'logout' => 'logout',
+    'lostpassword' => 'lostPassword',
     '$ClassName/$ID' => 'index'
   );
 
@@ -95,7 +97,7 @@ class APIController extends Controller
     $answer = new SS_HTTPResponse();
 
     //set response body
-    if ( $json && !$corsPreflight )
+    if ( !$corsPreflight )
     {
       $answer->setBody($json);
       $answer->addHeader('Content-Type', 'text/json');
@@ -113,6 +115,11 @@ class APIController extends Controller
       //check if Origin is allowed
       $allowedOrigin = 'null';
       $requestOrigin = $this->request->getHeader('Origin');
+      if ( !$requestOrigin )
+      {
+        $requestOrigin = parse_url( $this->request->getHeader('Referer') );
+        $requestOrigin = $requestOrigin['scheme'] . '://' . $requestOrigin['host'];
+      }
       if ( self::$cors['Allow-Origin'] === '*' || in_array($requestOrigin, self::$cors['Allow-Origin']) )
       {
         $allowedOrigin = $requestOrigin;
@@ -140,7 +147,7 @@ class APIController extends Controller
     
     //Output + exit
     $answer->output();
-    exit;
+    //exit;
   }
 
   /**
@@ -221,6 +228,36 @@ class APIController extends Controller
       $member->ApiTokenExpire = $expire;
       $member->write();
     }
+  }
+
+  /**
+   * Sends password recovery email
+   *
+   * @param SS_HTTPRequest $request HTTP request containing 'email' vars
+   * @return JSON Returns JSON 'email' = false if email fails (member desn't will not be reported)
+   */
+  function lostPassword(SS_HTTPRequest $request)
+  {
+    $email = Convert::raw2sql( $request->requestVar('email') );
+    $member = DataObject::get_one('Member', "\"Email\" = '{$email}'");
+    $sent = true;
+
+    if($member)
+    {
+      $token = $member->generateAutologinTokenAndStoreHash();
+
+      $e = Member_ForgotPasswordEmail::create();
+      $e->populateTemplate($member);
+      $e->populateTemplate(array(
+        'PasswordResetLink' => Security::getPasswordResetLink($member, $token)
+      ));
+      $e->setTo($member->Email);
+      $sent = $e->send();
+    }
+
+    $this->answer( Convert::raw2json(array(
+      'email' => $sent
+    )));
   }
 
   /**
