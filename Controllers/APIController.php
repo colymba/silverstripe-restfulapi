@@ -22,7 +22,7 @@ class APIController extends Controller
    */
   private static $cors = array(
     'Enabled'       => true,
-    'Allow-Origin'  => '*', // * OR Array list of accepted origins array('http://localhost', 'http://domain.com')
+    'Allow-Origin'  => '*', // * OR Allowed Origin String 'http://localhost' OR Array list of accepted origins array('http://localhost', 'http://domain.com')
     'Allow-Headers' => '*', // * OR or comma separated values 'hearder-1, header-2'
     'Allow-Methods' => 'POST, GET, PUT, DELETE',
     'Max-Age'       => 86400 //seconds = 1 day //@NOTE has no effect if Authentification is enabled => custom header = always preflight?
@@ -79,7 +79,6 @@ class APIController extends Controller
     //catch preflight request
     if ( $this->request->httpMethod() === 'OPTIONS' )
     {
-      print_r($this->request);
       $this->answer(null, false, true);
     }
   }
@@ -99,8 +98,7 @@ class APIController extends Controller
     //set response body
     if ( !$corsPreflight )
     {
-      $answer->setBody($json);
-      $answer->addHeader('Content-Type', 'text/json');
+      $answer->setBody($json);      
     }
 
     //Set status code+descript, i.e. 403 Access denied
@@ -113,17 +111,22 @@ class APIController extends Controller
     if ( self::$cors['Enabled'] )
     {
       //check if Origin is allowed
-      $allowedOrigin = 'null';
+      $allowedOrigin = self::$cors['Allow-Origin'];
       $requestOrigin = $this->request->getHeader('Origin');
-      if ( !$requestOrigin )
+      if ( $requestOrigin )
       {
-        $requestOrigin = parse_url( $this->request->getHeader('Referer') );
-        $requestOrigin = $requestOrigin['scheme'] . '://' . $requestOrigin['host'];
-      }
-      if ( self::$cors['Allow-Origin'] === '*' || in_array($requestOrigin, self::$cors['Allow-Origin']) )
-      {
-        $allowedOrigin = $requestOrigin;
-      }
+        if ( self::$cors['Allow-Origin'] === '*' )
+        {
+          $allowedOrigin = $requestOrigin;
+        }
+        else if ( is_array(self::$cors['Allow-Origin']) )
+        {
+          if ( in_array($requestOrigin, self::$cors['Allow-Origin']) )
+          {
+            $allowedOrigin = $requestOrigin;
+          }
+        }
+      }      
       $answer->addHeader('Access-Control-Allow-Origin', $allowedOrigin);
       
       //allowed headers
@@ -144,10 +147,12 @@ class APIController extends Controller
       //max age
       $answer->addHeader('Access-Control-Max-Age', self::$cors['Max-Age']);
     }
+
+    $answer->addHeader('Content-Type', 'application/json; charset=utf-8');
     
     //Output + exit
     $answer->output();
-    //exit;
+    exit;
   }
 
   /**
@@ -320,14 +325,11 @@ class APIController extends Controller
       $validToken = $this->validateAPIToken($request);
       if ( !$validToken['valid'] )
       {
-        $response = new SS_HTTPResponse();
-        $response->setStatusCode(403, $validToken['message']);
-        $response->setBody( Convert::raw2json(array(
+        $response = Convert::raw2json(array(
           'message' => $validToken['message'],
           'code'    => $validToken['code']
-        )));
-        $response->addHeader('Content-Type', 'text/json');
-        return $response;
+        ));
+        $this->answer( $response, array( 'code' => 403, 'description' => $validToken['message'] ) );
       }
     }
 
