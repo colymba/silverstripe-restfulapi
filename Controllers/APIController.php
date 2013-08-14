@@ -24,7 +24,7 @@ class APIController extends Controller
     'Enabled'       => true,
     'Allow-Origin'  => '*', // * OR Allowed Origin String 'http://localhost' OR Array list of accepted origins array('http://localhost', 'http://domain.com')
     'Allow-Headers' => '*', // * OR or comma separated values 'hearder-1, header-2'
-    'Allow-Methods' => 'POST, GET, PUT, DELETE',
+    'Allow-Methods' => 'OPTIONS, POST, GET, PUT, DELETE',
     'Max-Age'       => 86400 //seconds = 1 day //@NOTE has no effect if Authentification is enabled => custom header = always preflight?
   );
 
