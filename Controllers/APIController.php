@@ -1,16 +1,39 @@
 <?php
-
+/**
+ * SilverStripe 3.1 JSON REST API
+ * Specifically made to use with EmberJS/EmberData DS.RESTAdapter which is based on Rails ActiveModel::Serializers
+ *
+ * Exposes /login and /logout methods to use with API token
+ * Request should be in the format '/Model', '/Model/ID', '/Model?foo=bar&bar=foo'
+ *
+ * Some resources and background on Ember Rest Adapter:
+ * @link http://emberjs.com/guides/models/the-rest-adapter/
+ * @link https://github.com/emberjs/data
+ * @link https://speakerdeck.com/dgeb/optimizing-an-api-for-ember-data
+ * @link https://github.com/rails-api/active_model_serializers
+ * 
+ * @author  Thierry Francois @colymba thierry@colymba.com
+ * @copyright Copyright (c) 2013, Thierry Francois
+ * 
+ * @license http://opensource.org/licenses/BSD-3-Clause BSD Simplified
+ * 
+ * @package ss_json_rest_api
+ */
 class APIController extends Controller
 {
   /**
-   * @var Boolean $useTokenAuthentication If true 'all' requests will be checked for authentication with a token
+   * If true 'all' requests will be checked for authentication with a token
+   * 
+   * @var boolean
    */
   private static $useTokenAuthentication = false;
 
   /**
-   * @var Integer $tokenLife Authentication token life in ms
+   * Authentication token life in ms
+   * 
+   * @var integer
    */
-  private static $tokenLife = 10800000;//3 * 60 * 60 * 1000;
+  private static $tokenLife = 10800000; //3 * 60 * 60 * 1000;
 
   const AUTH_CODE_LOGGED_IN     = 0;
   const AUTH_CODE_LOGIN_FAIL    = 1;
@@ -18,30 +41,73 @@ class APIController extends Controller
   const AUTH_CODE_TOKEN_EXPIRED = 3;
 
   /**
-   * @var Array $cors Cross-Origin Resource Sharing (CORS) API settings for cross domain XMLHTTPRequest 
+   * Cross-Origin Resource Sharing (CORS)
+   * API settings for cross domain XMLHTTPRequest
+   *
+   * Enabled        true|false      enable/disable CORS
+   * Allow-Origin   String|Array    '*' to allow all, 'http://domain.com' to allow single domain, array('http://domain.com', 'http://site.com') to allow multiple domains
+   * Allow-Headers  String          '*' to allow all or comma separated list of headers
+   * Allow-Methods  String          comma separated list of allowed methods
+   * Max-Age        Integer         Preflight/OPTIONS request caching time in seconds (NOTE has no effect if Authentification is enabled => custom header = always preflight)
+   *
+   * @var array 
    */
   private static $cors = array(
     'Enabled'       => true,
-    'Allow-Origin'  => '*', // * OR Allowed Origin String 'http://localhost' OR Array list of accepted origins array('http://localhost', 'http://domain.com')
-    'Allow-Headers' => '*', // * OR or comma separated values 'hearder-1, header-2'
+    'Allow-Origin'  => '*',
+    'Allow-Headers' => '*',
     'Allow-Methods' => 'OPTIONS, POST, GET, PUT, DELETE',
-    'Max-Age'       => 86400 //seconds = 1 day //@NOTE has no effect if Authentification is enabled => custom header = always preflight?
+    'Max-Age'       => 86400
   );
 
   /**
-   * @var Array $embeddedRecords Map of classes to embed for specific record
-   * i.e. 'RequestedClass' => array('ClassToEmbed', 'Another')
+   * Embedded records setting
+   * Specify which relation ($has_one, $has_many, $many_many) model data should be embedded into the response
+   *
+   * Map of classes to embed for specific record
+   * 'RequestedClass' => array('ClassToEmbed', 'Another')
+   *
+   * Non embedded response:
+   * {
+   *   'member': {
+   *     'name': 'John',
+   *     'favourite_ids': [1, 2]
+   *   }
+   * }
+   *
+   * Response with embedded record:
+   * {
+   *   'member': {
+   *     'name': 'John',
+   *     'favourites': [{
+   *         'id': 1,
+   *         'name': 'Mark'
+   *      },{
+   *         'id': 2,
+   *         'name': 'Maggie'
+   *      }]
+   *    }
+   * }
+   * 
+   * @var array
    */
   private static $embeddedRecords = array(
     'Member' => array('Favourites')
   );
 
-  //@TODO
+  /**
+   * Sideloaded records settings
+   * @todo
+   * 
+   * @var array
+   */
   private static $sideloadedRecords = array(
   );
 
   /**
-   * @var Array $allowed_actions URL handler allowed actions
+   * URL handler allowed actions
+   * 
+   * @var array
    */
   private static $allowed_actions = array(
     'index',
@@ -51,7 +117,9 @@ class APIController extends Controller
   );
 
   /**
-   * @var Array $url_handlers URL handler definition
+   * URL handler definition
+   * 
+   * @var array
    */
   public static $url_handlers = array(
     'login' => 'login',
@@ -61,7 +129,9 @@ class APIController extends Controller
   );
 
   /**
-   * @var Array $requestData Stores the currently requested data (Model class + ID)
+   * Stores the currently requested data (Model class + ID)
+   * 
+   * @var array
    */
   private $requestData = array(
     'model' => null,
@@ -85,11 +155,11 @@ class APIController extends Controller
 
   /**
    * Returns the API response to client
-   *
-   * @param JSON|String $json the response body
-   * @param Array|false $error use false if not an error otherwise pass array('code' => statusCode, 'description' => statusDescription)
-   * @param Boolean $corsPreflight set to true if this is a XHR preflight request answer. CORS shoud be enabled.
-   * @return JSON API response
+   * 
+   * @param  string           $json             Response body
+   * @param  boolean|array    $error            Use false if not an error otherwise pass array('code' => statusCode, 'description' => statusDescription)
+   * @param  boolean          $corsPreflight    Set to true if this is a XHR preflight request answer. CORS shoud be enabled.
+   * @return SS_HTTPResponse                    API response to client
    */
   function answer( $json = null, $error = false, $corsPreflight = false )
   {
@@ -157,9 +227,9 @@ class APIController extends Controller
 
   /**
    * Login a user into the Framework and generates API token
-   *
-   * @param SS_HTTPRequest $request HTTP request containing 'email' & 'pwd' vars
-   * @return JSON Returns JSON object of the result (result, message, token, member)
+   * 
+   * @param  SS_HTTPRequest   $request  HTTP request containing 'email' & 'pwd' vars
+   * @return string                     JSON object of the result {result, message, code, token, member}
    */
   function login(SS_HTTPRequest $request)
   {
@@ -213,8 +283,8 @@ class APIController extends Controller
 
   /**
    * Logout a user and update member's API token with an expired one
-   *
-   * @param SS_HTTPRequest $request HTTP request containing 'email' var
+   * 
+   * @param  SS_HTTPRequest   $request    HTTP request containing 'email' var
    */
   function logout(SS_HTTPRequest $request)
   {
@@ -237,9 +307,9 @@ class APIController extends Controller
 
   /**
    * Sends password recovery email
-   *
-   * @param SS_HTTPRequest $request HTTP request containing 'email' vars
-   * @return JSON Returns JSON 'email' = false if email fails (member desn't will not be reported)
+   * 
+   * @param  SS_HTTPRequest   $request    HTTP request containing 'email' vars
+   * @return string                       JSON 'email' = false if email fails (Member doesn't will not be reported)
    */
   function lostPassword(SS_HTTPRequest $request)
   {
@@ -266,14 +336,16 @@ class APIController extends Controller
   }
 
   /**
-   * Validate the API token from an HTTP Request
-   *
-   * @param SS_HTTPRequest $request HTTP request with API token header "X-Silverstripe-Apitoken"
-   * @return array Returns an array with the result and eventual error message
+   * Validate the API token from an HTTP Request header or var
+   * 
+   * @param  SS_HTTPRequest   $request    HTTP request with API token header "X-Silverstripe-Apitoken" or 'token' request var
+   * @return array                        Result and eventual error message (valid, message, code)
    */
   function validateAPIToken(SS_HTTPRequest $request)
   {
     $response = array();
+
+    //get the token
     $token = $request->getHeader("X-Silverstripe-Apitoken");
     if (!$token)
     {
@@ -282,19 +354,23 @@ class APIController extends Controller
 
     if ( $token )
     {
+      //get Member with that token
       $member = Member::get()->filter(array('ApiToken' => $token))->first();
       if ( $member )
       {
+        //check token expiry
         $tokenExpire  = $member->ApiTokenExpire;
         $now          = time();
         $life         = Config::inst()->get( 'APIController', 'tokenLife', Config::INHERITED );
 
         if ( $tokenExpire > ($now - $life) )
         {
+          //all good, log Member in
           $member->logIn();
           $response['valid'] = true;
         }
         else{
+          //too old
           $response['valid']   = false;
           $response['message'] = 'Token expired.';
           $response['code']    = self::AUTH_CODE_TOKEN_EXPIRED;
@@ -302,6 +378,7 @@ class APIController extends Controller
       }      
     }
     else{
+      //no token, bad news
       $response['valid']   = false;
       $response['message'] = 'Token invalid.';
       $response['code']    = self::AUTH_CODE_TOKEN_INVALID;
@@ -312,10 +389,10 @@ class APIController extends Controller
   /**
    * Main API hub swith
    * All requests pass through here and are redirected depending on HTTP verb and params
-   *
-   * @param SS_HTTPRequest $request HTTP request
-   *
-   * @return JSON Returns json object of the models found
+   * 
+   * @param  SS_HTTPRequest   $request    HTTP request
+   * @return string                       json object of the models found
+   * @see    answer()
    */
   function index(SS_HTTPRequest $request)
   {
@@ -374,14 +451,13 @@ class APIController extends Controller
 
   /**
    * Finds 1 or more objects of class $model
-   *
-   * @param String $model the model(s) class to find
-   * @param false|Integer $id The ID of the model to find
-   * @param SS_HTTPRequest the original request
-   *
-   * @return DataObject|DataList the result of the search (note: DataList can be empty)
+   * 
+   * @param  string                 $model    Model(s) class to find
+   * @param  boolean\integr         $id       The ID of the model to find or false
+   * @param  SS_HTTPRequest         $request  The original HTTP request
+   * @return DataObject|DataList              Result of the search (note: DataList can be empty) 
    */
-  function findModel($model, $id = false, $request)
+  function findModel(string $model, $id = false, SS_HTTPRequest $request)
   {    
     if ($id)
     {
@@ -415,9 +491,12 @@ class APIController extends Controller
 
   /**
    * Create object of class $model
-   * @TODO
+   * @todo
+   * @param  string         $model
+   * @param  SS_HTTPRequest $request
+   * @return [type]
    */
-  function createModel($model, $request)
+  function createModel(string $model, SS_HTTPRequest $request)
   {
 
   }
