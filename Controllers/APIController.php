@@ -134,9 +134,18 @@ class APIController extends Controller
    * @var array
    */
   private $requestData = array(
-    'model' => null,
-    'id'    => null
+    'model'  => null,
+    'id'     => null,
+    'params' => null
   );
+
+  /**
+   * Search Filter Modifiers Separator used in the query var
+   * i.e. ?column__EndsWith=suffix
+   * 
+   * @var string
+   */
+  private static $searchFilterModifiersSeparator = '__';
 
   /**
    * Controller inititalisation
@@ -411,9 +420,10 @@ class APIController extends Controller
     }
 
     //get requested model(s) details
-    $model = $request->param('ClassName');
-    $id = $request->param('ID');
-    $response = false;
+    $model       = $request->param('ClassName');
+    $id          = $request->param('ID');
+    $response    = false;
+    $queryParams = $this->parseQueryParams( $request->getVars() );
 
     //convert model name to SS conventions
     if ($model)
@@ -421,15 +431,22 @@ class APIController extends Controller
       $model = ucfirst( Inflector::singularize($model) );
     }
 
-    //store requested model data
+    //store requested model data and query data
     $this->requestData['model'] = $model;
-    $this->requestData['id'] = $id;
+    if ($id)
+    {
+      $this->requestData['id'] = $id;
+    }
+    if ($queryParams)
+    {
+      $this->requestData['params'] = $queryParams;
+    }
 
     //map HTTP word to API method
     //@TODO handle error
     if ( $request->isGET() )
     {
-      $response = $this->findModel($model, $id, $request);
+      $response = $this->findModel($model, $id, $queryParams, $request);
       $response = $this->parseJSON($response);
     }
     elseif ( $request->isPOST() )
@@ -450,38 +467,115 @@ class APIController extends Controller
   }
 
   /**
+   * Parse the query parameters to appropriate Column, Value, Search Filter Modifiers
+   * array(
+   *   array(
+   *     'Column'   => ColumnName,
+   *     'Value'    => ColumnValue,
+   *     'Modifier' => ModifierType
+   *   )
+   * )
+   * 
+   * @param  array  $params raw GET vars array
+   * @return array          formatted query parameters
+   */
+  function parseQueryParams(array $params)
+  {
+    $parsedParams = array();
+
+    foreach ($params as $key__mod => $value)
+    {
+      if ( $key__mod === 'url' ) continue;
+
+      $param = array();  
+
+      $key__mod = explode(
+        self::$searchFilterModifiersSeparator,
+        $key__mod
+      );
+
+      $param['Column'] = $key__mod[0];
+      $param['Value'] = $value;
+      if ( isset($key__mod[1]) ) $param['Modifier'] = $key__mod[1];
+
+      array_push($parsedParams, $param);
+    }
+
+    return $parsedParams;
+  }
+
+  /**
    * Finds 1 or more objects of class $model
    * 
-   * @param  string                 $model    Model(s) class to find
-   * @param  boolean\integr         $id       The ID of the model to find or false
-   * @param  SS_HTTPRequest         $request  The original HTTP request
-   * @return DataObject|DataList              Result of the search (note: DataList can be empty) 
+   * @param  string                 $model          Model(s) class to find
+   * @param  boolean\integr         $id             The ID of the model to find or false
+   * @param  array                  $queryParams    Query parameters and modifiers
+   * @param  SS_HTTPRequest         $request        The original HTTP request
+   * @return DataObject|DataList                    Result of the search (note: DataList can be empty) 
    */
-  function findModel(string $model, $id = false, SS_HTTPRequest $request)
+  function findModel(string $model, $id = false, $queryParams, SS_HTTPRequest $request)
   {    
     if ($id)
     {
       $return = DataObject::get_by_id($model, $id);
     }
     else{
-      //?ids[]=1&ids[]=2
-      $filters = $request->getVars();
-      unset($filters['url']);
+      // ":StartsWith", ":EndsWith", ":PartialMatch", ":GreaterThan", ":LessThan", ":Negation"
+      // sort, rand, limit
 
       $return = DataObject::get($model);
 
-      if ( count($filters) > 0 )
+      if ( count($queryParams) > 0 )
       {
-        foreach ($filters as $filter => $value)
+        foreach ($queryParams as $param)
         {
-          if ( $filter === 'ids' || $filter === 'id' )
+
+          if ( $param['Column'] )
           {
-            $filter = 'ID';
+            $param['Column'] = Inflector::camelize( $param['Column'] );
+
+            // handle sorting by column
+            if ( $param['Modifier'] === 'sort' )
+            {
+              $return = $return->sort(array(
+                $param['Column'] => $param['Value']
+              ));
+            }
+            // normal modifiers / search filters
+            else if ( $param['Modifier'] )
+            {
+              $return = $return->filter(array(
+                $param['Column'].':'.$param['Modifier'] => $value
+              ));
+            }
+            // no modifier / search filter
+            else{
+              $return = $return->filter(array(
+                $param['Column'] => $value
+              ));
+            }
           }
           else{
-            $filter = Inflector::camelize($filter);
+            // random
+            if ( $param['Modifier'] === 'rand' )
+            {
+              $return = $return->sort('RAND()');
+            }
+            // limits
+            else if ( $param['Modifier'] === 'limit' )
+            {
+              // range + offset
+              if ( is_array($param['Value']) )
+              {
+                $return = $return->limit($param['Value'][0], $param['Value'][1]);
+              }
+              // range only
+              else{
+                $return = $return->limit($param['Value']);
+              }
+            }
           }
-          $return = $return->filter(array($filter => $value));
+
         }
       }
     }
