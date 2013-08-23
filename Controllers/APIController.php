@@ -694,7 +694,7 @@ class APIController extends Controller
     {
 
       $className  = $data->dataClass;
-      $className  = strtolower( Inflector::pluralize($className) );
+      $className  = strtolower( Inflector::underscore( Inflector::pluralize($className) ) );
 
       $data       = $data->toArray();
       $modelsList = array();
