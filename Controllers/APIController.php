@@ -681,7 +681,7 @@ class APIController extends Controller
     if ( !$data )
     {      
       $className = $this->requestData['model'];
-      $className = strtolower( Inflector::singularize($className) );
+      $className = strtolower( Inflector::underscore( Inflector::singularize($className) ) );
 
       $root = new stdClass();
       $root->{$className} = new stdClass();
@@ -713,7 +713,7 @@ class APIController extends Controller
     else{
 
       $className = $data->ClassName;
-      $className = strtolower( Inflector::singularize($className) );
+      $className = strtolower( Inflector::underscore( Inflector::singularize($className) ) );
       $obj       = $this->parseObject($data);     
 
       //Side loading
