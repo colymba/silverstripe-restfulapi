@@ -1,5 +1,5 @@
 ---
-Name: mysite
+Name: modelserializer
 After: 'framework/*','cms/*'
 ---
 Director:
