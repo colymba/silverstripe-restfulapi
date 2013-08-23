@@ -428,7 +428,7 @@ class APIController extends Controller
     //convert model name to SS conventions
     if ($model)
     {
-      $model = ucfirst( Inflector::singularize($model) );
+      $model = ucfirst( Inflector::singularize( Inflector::camelize( $model ) ) );
     }
 
     //store requested model data and query data
