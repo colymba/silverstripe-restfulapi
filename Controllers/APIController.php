@@ -812,6 +812,11 @@ class APIController extends Controller
    */
   function parseObject($obj)
   {
+    if( method_exists($obj, 'onBeforeSerializeObject') )
+    {
+      $obj->onBeforeSerializeObject();
+    }
+
     $objMap = $obj->toMap();
     $newObj = array();
 
