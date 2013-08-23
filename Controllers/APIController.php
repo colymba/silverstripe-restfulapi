@@ -494,9 +494,10 @@ class APIController extends Controller
         $key__mod
       );
 
-      $param['Column'] = $key__mod[0];
+      $param['Column'] = ucfirst( $this->ucIDKeys( $key__mod[0] ) );
       $param['Value'] = $value;
       if ( isset($key__mod[1]) ) $param['Modifier'] = $key__mod[1];
+      else $param['Modifier'] = null;
 
       array_push($parsedParams, $param);
     }
@@ -545,13 +546,13 @@ class APIController extends Controller
             else if ( $param['Modifier'] )
             {
               $return = $return->filter(array(
-                $param['Column'].':'.$param['Modifier'] => $value
+                $param['Column'].':'.$param['Modifier'] => $param['Value']
               ));
             }
             // no modifier / search filter
             else{
               $return = $return->filter(array(
-                $param['Column'] => $value
+                $param['Column'] => $param['Value']
               ));
             }
           }
@@ -1060,8 +1061,22 @@ class APIController extends Controller
     return $map;
   }
 
+
+  /**
+   * Changes 'id' suffix to upper case and remove trailing 's', good for (foreign)keys
+   * 
+   * @param  string $column The column name to fix
+   * @return string         Fixed column name
+   */
+  function ucIDKeys( $column )
+  {
+    return preg_replace( '/(.*)ID(s)?$/i', '$1ID', $column);
+  }
+
+
   /**
    * Fixes all ID and foreignKeyIDs to be uppercase
+   * 
    * @param array $map array to convert 
    * @return array converted array
    */
@@ -1069,7 +1084,7 @@ class APIController extends Controller
   {
     foreach ($map as $key => $value)
     {
-      $newKey = preg_replace( '/(.*)ID$/i', '$1ID', $key);
+      $newKey = $this->ucIDKeys( $key );
 
       // Change key if needed
       if ($newKey != $key)
