@@ -561,7 +561,15 @@ class APIController extends Controller
             // random
             if ( $param['Modifier'] === 'rand' )
             {
-              $return = $return->sort('RAND()');
+              // rand + seed
+              if ( $param['Value'] )
+              {
+                $return = $return->sort('RAND('.$param['Value'].')');
+              }
+              // rand only
+              else{
+                $return = $return->sort('RAND()');
+              }
             }
             // limits
             else if ( $param['Modifier'] === 'limit' )
