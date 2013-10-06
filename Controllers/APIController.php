@@ -505,6 +505,12 @@ class APIController extends Controller
     return $parsedParams;
   }
 
+
+  /* **************************************************************************************************
+   * DATA QUERIES
+   */
+  
+
   /**
    * Finds 1 or more objects of class $model
    * 
@@ -663,10 +669,12 @@ class APIController extends Controller
   {
 
   }
+  
 
   /* **************************************************************************************************
    * DATA PARSING
    */
+  
 
   /**
    * Parse DataList/DataObject to JSON
