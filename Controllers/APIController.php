@@ -90,6 +90,7 @@ class APIController extends Controller
    * }
    * 
    * @var array
+   * @todo embeded records are deprecated (for now)
    */
   private static $embeddedRecords = array(
     'Member' => array('Favourites')
@@ -277,12 +278,6 @@ class APIController extends Controller
       $response['message']      = 'Logged in.';
       $response['code']         = self::AUTH_CODE_LOGGED_IN;
       $response['token']        = $token;
-      /*
-      $memberData               = $this->parseObject($member);
-      $memberData['ClassName']  = $memberData['class_name'];
-      unset($memberData['class_name']);
-      $response['member']       = $this->camelizeObjectAttributes($memberData);
-      */
       $response['member']       = $this->parseObject($member);
     }
 
@@ -669,7 +664,7 @@ class APIController extends Controller
   {
 
   }
-  
+
 
   /* **************************************************************************************************
    * DATA PARSING
@@ -677,7 +672,8 @@ class APIController extends Controller
   
 
   /**
-   * Parse DataList/DataObject to JSON
+   * Parse DataList/DataObject into root JSON 
+   * ready to be returned to client
    *
    * @param DataList|DataObject $data The data to parse to JSON for client response
    *
@@ -689,7 +685,9 @@ class APIController extends Controller
     if ( !$data )
     {      
       $className = $this->requestData['model'];
-      $className = strtolower( Inflector::underscore( Inflector::singularize($className) ) );
+      //$className = strtolower( Inflector::underscore( Inflector::singularize($className) ) );
+      $className = lcfirst( Inflector::singularize($className) );
+
 
       $root = new stdClass();
       $root->{$className} = new stdClass();
@@ -702,7 +700,8 @@ class APIController extends Controller
     {
 
       $className  = $data->dataClass;
-      $className  = strtolower( Inflector::underscore( Inflector::pluralize($className) ) );
+      //$className  = strtolower( Inflector::underscore( Inflector::pluralize($className) ) );
+      $className  = lcfirst( Inflector::singularize($className) );
 
       $data       = $data->toArray();
       $modelsList = array();
@@ -721,7 +720,8 @@ class APIController extends Controller
     else{
 
       $className = $data->ClassName;
-      $className = strtolower( Inflector::underscore( Inflector::singularize($className) ) );
+      //$className = strtolower( Inflector::underscore( Inflector::singularize($className) ) );
+      $className = lcfirst( Inflector::singularize($className) );
       $obj       = $this->parseObject($data);     
 
       //Side loading
@@ -809,8 +809,8 @@ class APIController extends Controller
   }
 
   /**
-   * Parse DataObject attributes for emberdata
-   * converts keys to underscored_names
+   * Parse DataObject attributes
+   * converts keys to lowercase-camelized
    * add relations ids list
    * and foreign keys to Int
    *
@@ -839,7 +839,8 @@ class APIController extends Controller
     foreach ($objMap as $key => $value)
     {
       $newKey = str_replace('ID', 'Id', $key);
-      $newKey = Inflector::underscore($newKey);
+      //$newKey = Inflector::underscore($newKey);
+      $newKey = lcfirst($newKey);
 
       //remove foreign keys trailing ID
       $has_one_key = preg_replace ( '/ID$/', '', $key);
@@ -851,6 +852,7 @@ class APIController extends Controller
         $value = intVal( $value );
 
         //if set and embeddable
+        //@todo embeded records are deprecated (for now)
         if ( $this->isRelationEmbeddable($obj, $has_one_key) && $value !== 0 )
         {
           $embeddedObject = $obj->{$has_one_key}();
@@ -859,6 +861,9 @@ class APIController extends Controller
             $value = $this->parseObject($embeddedObject);
           }
         }
+
+        //use non IDed key for has_one
+        $newKey = lcfirst($has_one_key);
 
         //remove undefined has_one relations
         if ( $value === 0 )
@@ -874,24 +879,27 @@ class APIController extends Controller
     }
     
     //has_many + many_many + $belongs_many_many
-    //i.e. "comment_ids": [1, 2, 3] OR "comments": [{obj}, {obj}]
-    $many_relation = array();
-    if ( is_array($has_many) )          $many_relation = array_merge($many_relation, $has_many);
-    if ( is_array($many_many) )         $many_relation = array_merge($many_relation, $many_many);
-    if ( is_array($belongs_many_many) ) $many_relation = array_merge($many_relation, $belongs_many_many);
+    //comments: [1, 2, 3]
+    $many_relations = array();
+    if ( is_array($has_many) )          $many_relations = array_merge($many_relations, $has_many);
+    if ( is_array($many_many) )         $many_relations = array_merge($many_relations, $many_many);
+    if ( is_array($belongs_many_many) ) $many_relations = array_merge($many_relations, $belongs_many_many);
     
-    foreach ($many_relation as $relationName => $relationClassname)
+    foreach ($many_relations as $relationName => $relationClassname)
     {
-      $has_many_objects = $obj->{$relationName}();
+      //get the DataList for this realtion's name
+      $many_objects = $obj->{$relationName}();
+
       //if there actually are objects in the relation
-      if ( $has_many_objects->count() )
+      if ( $many_objects->count() )
       {
         //if embeddable
+        //@todo embeded records are deprecated (for now)
         if ( $this->isRelationEmbeddable($obj, $relationName) )
         {
           $newKey = Inflector::underscore( Inflector::pluralize($relationName) );
           $newObj[$newKey] = array();
-          foreach ($has_many_objects as $embeddedObject) {
+          foreach ($many_objects as $embeddedObject) {
             array_push(
               $newObj[$newKey],
               $this->parseObject($embeddedObject)
@@ -900,9 +908,11 @@ class APIController extends Controller
         }
         else{
           //ID list only
-          $newKey = Inflector::underscore( Inflector::singularize($relationName) );
-          $idList = $has_many_objects->map('ID', 'ID')->keys();
-          $newObj[$newKey.'_ids'] = $idList;
+          //$newKey = Inflector::underscore( Inflector::singularize($relationName) );
+          $newKey = lcfirst($relationName);
+          $idList = $many_objects->map('ID', 'ID')->keys();
+          //$newObj[$newKey.'_ids'] = $idList;
+          $newObj[$newKey] = $idList;
         }
       }
     } 
@@ -912,6 +922,9 @@ class APIController extends Controller
 
   /**
    * Load all of an object's relations
+   * Used for side loaded records
+   *
+   * @todo  should implement and async config check, only sideload is not async   * 
    */
   function loadObjectRelations($obj)
   {    
@@ -1004,6 +1017,7 @@ class APIController extends Controller
    * Checks if an Object's relation record(s) should be embedded or not
    *
    * @see APIController::$embeddedRecords
+   * @todo embeded records are deprecated (for now)
    * @param $obj DataObject Object to check the options againsts
    * @param $relationName String The name of the relation
    * @return boolean whether or not this relation's record(s) should be embedded
@@ -1035,7 +1049,8 @@ class APIController extends Controller
 
     if ( $payload )
     {
-      $payload = $this->underscoredToCamelised( $payload );
+      //$payload = $this->underscoredToCamelised( $payload );
+      $payload = $this->ucfirstCamelcaseKeys( $payload );
       $payload = $this->upperCaseIDs( $payload );
     }
     else{
@@ -1051,7 +1066,7 @@ class APIController extends Controller
    * @param array $map array to convert 
    * @return array converted array
    */
-  function underscoredToCamelised( $map )
+  function ucfirstCamelcaseKeys( $map )
   {
     foreach ($map as $key => $value)
     {
@@ -1074,18 +1089,35 @@ class APIController extends Controller
     return $map;
   }
 
-
   /**
-   * Changes 'id' suffix to upper case and remove trailing 's', good for (foreign)keys
-   * 
-   * @param  string $column The column name to fix
-   * @return string         Fixed column name
+   * Convert an array's keys from underscored
+   * to upper case first and camalized keys
+   * @param array $map array to convert 
+   * @return array converted array
    */
-  function ucIDKeys( $column )
+  /*
+  function underscoredToCamelised( $map )
   {
-    return preg_replace( '/(.*)ID(s)?$/i', '$1ID', $column);
-  }
+    foreach ($map as $key => $value)
+    {
+      $newKey = ucfirst( Inflector::camelize($key) );
 
+      // Change key if needed
+      if ($newKey != $key)
+      {
+        unset($map[$key]);
+        $map[$newKey] = $value;
+      }
+
+      // Handle nested arrays
+      if (is_array($value))
+      {
+        $map[$newKey] = $this->underscoredToCamelised( $map[$newKey] );
+      }
+    }
+
+    return $map;
+  }*/
 
   /**
    * Fixes all ID and foreignKeyIDs to be uppercase
@@ -1115,11 +1147,23 @@ class APIController extends Controller
 
     return $map;
   }
+
+  /**
+   * Changes 'id' suffix to upper case and remove trailing 's', good for (foreign)keys
+   * 
+   * @param  string $column The column name to fix
+   * @return string         Fixed column name
+   */
+  function ucIDKeys( $column )
+  {
+    return preg_replace( '/(.*)ID(s)?$/i', '$1ID', $column);
+  }
   
   /**
    * Changes all object's property to CamelCase
    * @return stdClass converted object
    */
+  /*
   function camelizeObjectAttributes($obj)
   {
     if ( !is_array($obj) )
@@ -1146,5 +1190,6 @@ class APIController extends Controller
 
     return $newObj;
   }
+  */
 
 }
