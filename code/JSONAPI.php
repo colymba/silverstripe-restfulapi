@@ -9,13 +9,13 @@
  * 
  * @package SS_JSONAPI
  */
-class JSONAPI_Controller extends Controller
+class JSONAPI extends RequestHandler
 {
   /**
    * Lets you select if the API requires authentication for access
    * @var boolean
    */
-  public static $requireAuthentication = true;
+  public static $requiresAuthentication = true;
 
   /**
    * Lets you select which class handles authentication
@@ -137,6 +137,26 @@ class JSONAPI_Controller extends Controller
    * @var string
    */
   private static $searchFilterModifiersSeparator = '__';
+
+  /**
+   * Request handler construct
+   * handles modules instanciation etc...
+   */
+  public function __construct()
+  {   
+    //creates authenticator instance if required
+    $requiresAuth = Config::inst()->get( 'JSONAPI', 'authenticatorClass', Config::INHERITED );
+    if ( $requiresAuth )
+    {
+      $authClass = Config::inst()->get( 'JSONAPI', 'authenticatorClass', Config::INHERITED );
+      if ( $authClass && class_exists($authClass) )
+      {
+        self::$authenticator = Injector::inst()->create($authClass);
+      }
+    }
+
+    parent::__construct();
+  }
 
   /**
    * Controller inititalisation
