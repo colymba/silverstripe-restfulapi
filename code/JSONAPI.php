@@ -9,7 +9,7 @@
  * 
  * @package SS_JSONAPI
  */
-class JSONAPI extends RequestHandler
+class JSONAPI extends Controller
 {
   /**
    * Lets you select if the API requires authentication for access
@@ -156,6 +156,35 @@ class JSONAPI extends RequestHandler
     }
 
     parent::__construct();
+  }
+
+  /**
+   * Duplicate and simplification of RequestHandler::handleRequest()
+   * {@link RequestHandler::handleRequest()}
+   * 
+   * Taken from restassured module {@link RESTRouter::handleRequest()}
+   */
+  public function handleRequest(SS_HTTPRequest $request, DataModel $model)
+  {
+    if(!$request) user_error("Controller::handleRequest() not passed a request!", E_USER_ERROR);
+
+    $this->pushCurrent();
+
+    $this->urlParams = $request->allParams();
+    $this->request = $request;
+    $this->response = new SS_HTTPResponse();
+
+    $this->extend('onBeforeInit');
+
+    // Init
+    $this->baseInitCalled = false;
+    $this->init();
+    if(!$this->baseInitCalled) user_error("init() method on class '$this->class' doesn't call Controller::init().  Make sure that you have parent::init() included.", E_USER_WARNING);
+
+    $this->extend('onAfterInit');
+
+    $this->popCurrent();
+    return $this->response;
   }
 
   /**
