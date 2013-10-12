@@ -151,7 +151,7 @@ class JSONAPI extends Controller
       $authClass = Config::inst()->get( 'JSONAPI', 'authenticatorClass', Config::INHERITED );
       if ( $authClass && class_exists($authClass) )
       {
-        self::$authenticator = Injector::inst()->create($authClass);
+        $this->authenticator = Injector::inst()->create($authClass);
       }
     }
 
