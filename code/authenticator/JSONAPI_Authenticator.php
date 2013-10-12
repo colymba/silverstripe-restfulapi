@@ -13,12 +13,6 @@
 interface JSONAPI_Authenticator
 {
 	/**
-	 * Lets you select if the API requires authentication for access
-	 * @var boolean
-	 */
-	public static $requireAuthentication = true;
-
-	/**
    * Login a user into the Framework and generates API token
    * 
    * @param  SS_HTTPRequest   $request  HTTP request containing 'email' & 'pwd' vars
