@@ -158,9 +158,9 @@ class JSONAPI_TokenAuthenticator implements JSONAPI_Authenticator
     else{
       //no token, bad news
       return array(
-        'valid'   => false;
-        'message' => 'Token invalid.';
-        'code'    => self::AUTH_CODE_TOKEN_INVALID;
+        'valid'   => false,
+        'message' => 'Token invalid.',
+        'code'    => self::AUTH_CODE_TOKEN_INVALID
       );
     }
   }
@@ -188,26 +188,26 @@ class JSONAPI_TokenAuthenticator implements JSONAPI_Authenticator
         $member->logIn();
 
         return array(
-          'valid'   => true;
-          'message' => 'Token valid.';
-          'code'    => self::AUTH_CODE_LOGGED_IN;
+          'valid'   => true,
+          'message' => 'Token valid.',
+          'code'    => self::AUTH_CODE_LOGGED_IN
         );
       }
       else{
         //too old
         return array(
-          'valid'   => false;
-          'message' => 'Token expired.';
-          'code'    => self::AUTH_CODE_TOKEN_EXPIRED;
+          'valid'   => false,
+          'message' => 'Token expired.',
+          'code'    => self::AUTH_CODE_TOKEN_EXPIRED
         );
       }        
     }
     else{
       //token not found
       return array(
-        'valid'   => false;
-        'message' => 'Token invalid.'; //not sure it's wise to say it doesn't exist. Let's be shady here
-        'code'    => self::AUTH_CODE_TOKEN_INVALID;
+        'valid'   => false,
+        'message' => 'Token invalid.', //not sure it's wise to say it doesn't exist. Let's be shady here
+        'code'    => self::AUTH_CODE_TOKEN_INVALID
       );
     }    
   }
