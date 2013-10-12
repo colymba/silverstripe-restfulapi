@@ -6,11 +6,8 @@
 	"keywords": ["silverstripe", "api", "RESTful", "json api", "model serializer", "REST server", "RESTful server"],
 	"license": "BSD Simplified",
 	"authors": [{
-			"name": "Thierry Francois",
-			"homepage": "http://colymba.com"
-    },{
-      "name": "GitHub contributors",
-      "homepage": "https://github.com/colymba/silverstripe-model-serializer/contributors"
+		"name": "Thierry Francois",
+		"homepage": "http://colymba.com"
   }],
   "repositories": [{
     "type": "vcs",
