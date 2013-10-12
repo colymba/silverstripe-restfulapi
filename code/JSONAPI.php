@@ -15,7 +15,7 @@ class JSONAPI extends Controller
    * Lets you select if the API requires authentication for access
    * @var boolean
    */
-  public static $requiresAuthentication = true;
+  private static $requiresAuthentication = true;
 
   /**
    * Lets you select which class handles authentication
@@ -275,161 +275,7 @@ class JSONAPI extends Controller
     $answer->output();
     exit;
   }
-
-  /**
-   * Login a user into the Framework and generates API token
-   * 
-   * @param  SS_HTTPRequest   $request  HTTP request containing 'email' & 'pwd' vars
-   * @return string                     JSON object of the result {result, message, code, token, member}
-   */
-  function login(SS_HTTPRequest $request)
-  {
-    $email    = $request->requestVar('email');
-    $pwd      = $request->requestVar('pwd');
-    $member   = false;
-    $response = array();
-
-    if( $email && $pwd )
-    {
-      $member = MemberAuthenticator::authenticate(array(
-        'Email'    => $email,
-        'Password' => $pwd
-      ));
-      if ( $member )
-      {
-        $life   = Config::inst()->get( 'APIController', 'tokenLife', Config::INHERITED );
-        $expire = time() + $life;
-        $token  = sha1( $member->Email . $member->ID . time() );
-
-        $member->ApiToken = $token;
-        $member->ApiTokenExpire = $expire;
-        $member->write();
-        $member->login();
-      }
-    }
-    
-    if ( !$member )
-    {
-      $response['result']  = false;
-      $response['message'] = 'Authentication fail.';
-      $response['code']    = self::AUTH_CODE_LOGIN_FAIL;
-    }
-    else{
-      $response['result']       = true;
-      $response['message']      = 'Logged in.';
-      $response['code']         = self::AUTH_CODE_LOGGED_IN;
-      $response['token']        = $token;
-      $response['member']       = $this->parseObject($member);
-    }
-
-    //return Convert::raw2json($response);
-    $this->answer( Convert::raw2json($response) );
-  }
-
-  /**
-   * Logout a user and update member's API token with an expired one
-   * 
-   * @param  SS_HTTPRequest   $request    HTTP request containing 'email' var
-   */
-  function logout(SS_HTTPRequest $request)
-  {
-    $email = $request->requestVar('email');
-    $member = Member::get()->filter(array('Email' => $email))->first();
-    if ( $member )
-    {
-      //logout
-      $member->logout();
-      //generate expired token
-      $token  = sha1( $member->Email . $member->ID . time() );
-      $life   = Config::inst()->get( 'APIController', 'tokenLife', Config::INHERITED );
-      $expire = time() - ($life * 2);
-      //write
-      $member->ApiToken = $token;
-      $member->ApiTokenExpire = $expire;
-      $member->write();
-    }
-  }
-
-  /**
-   * Sends password recovery email
-   * 
-   * @param  SS_HTTPRequest   $request    HTTP request containing 'email' vars
-   * @return string                       JSON 'email' = false if email fails (Member doesn't will not be reported)
-   */
-  function lostPassword(SS_HTTPRequest $request)
-  {
-    $email = Convert::raw2sql( $request->requestVar('email') );
-    $member = DataObject::get_one('Member', "\"Email\" = '{$email}'");
-    $sent = true;
-
-    if($member)
-    {
-      $token = $member->generateAutologinTokenAndStoreHash();
-
-      $e = Member_ForgotPasswordEmail::create();
-      $e->populateTemplate($member);
-      $e->populateTemplate(array(
-        'PasswordResetLink' => Security::getPasswordResetLink($member, $token)
-      ));
-      $e->setTo($member->Email);
-      $sent = $e->send();
-    }
-
-    $this->answer( Convert::raw2json(array(
-      'email' => $sent
-    )));
-  }
-
-  /**
-   * Validate the API token from an HTTP Request header or var
-   * 
-   * @param  SS_HTTPRequest   $request    HTTP request with API token header "X-Silverstripe-Apitoken" or 'token' request var
-   * @return array                        Result and eventual error message (valid, message, code)
-   */
-  function validateAPIToken(SS_HTTPRequest $request)
-  {
-    $response = array();
-
-    //get the token
-    $token = $request->getHeader("X-Silverstripe-Apitoken");
-    if (!$token)
-    {
-      $token = $request->requestVar('token');
-    }
-
-    if ( $token )
-    {
-      //get Member with that token
-      $member = Member::get()->filter(array('ApiToken' => $token))->first();
-      if ( $member )
-      {
-        //check token expiry
-        $tokenExpire  = $member->ApiTokenExpire;
-        $now          = time();
-        $life         = Config::inst()->get( 'APIController', 'tokenLife', Config::INHERITED );
-
-        if ( $tokenExpire > ($now - $life) )
-        {
-          //all good, log Member in
-          $member->logIn();
-          $response['valid'] = true;
-        }
-        else{
-          //too old
-          $response['valid']   = false;
-          $response['message'] = 'Token expired.';
-          $response['code']    = self::AUTH_CODE_TOKEN_EXPIRED;
-        }        
-      }      
-    }
-    else{
-      //no token, bad news
-      $response['valid']   = false;
-      $response['message'] = 'Token invalid.';
-      $response['code']    = self::AUTH_CODE_TOKEN_INVALID;
-    }
-    return $response;
-  }
+  
 
   /**
    * Main API hub swith
@@ -442,16 +288,17 @@ class JSONAPI extends Controller
   function index(SS_HTTPRequest $request)
   {
     //check authentication if enabled
-    if ( self::$useTokenAuthentication )
+    if ( $this->authenticator )
     {
-      $validToken = $this->validateAPIToken($request);
-      if ( !$validToken['valid'] )
+      $auth = $this->authenticator->authenticate($request);
+
+      if ( !$auth['valid'] )
       {
         $response = Convert::raw2json(array(
-          'message' => $validToken['message'],
-          'code'    => $validToken['code']
+          'message' => $auth['message'],
+          'code'    => $auth['code']
         ));
-        $this->answer( $response, array( 'code' => 403, 'description' => $validToken['message'] ) );
+        $this->answer( $response, array( 'code' => 403, 'description' => $auth['message'] ) );
       }
     }
 
