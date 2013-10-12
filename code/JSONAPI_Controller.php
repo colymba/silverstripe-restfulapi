@@ -1,44 +1,34 @@
 <?php
 /**
- * SilverStripe 3.1 JSON REST API
- * Specifically made to use with EmberJS/EmberData DS.RESTAdapter which is based on Rails ActiveModel::Serializers
- *
- * Exposes /login and /logout methods to use with API token
- * Request should be in the format '/Model', '/Model/ID', '/Model?foo=bar&bar=foo'
- *
- * Some resources and background on Ember Rest Adapter:
- * @link http://emberjs.com/guides/models/the-rest-adapter/
- * @link https://github.com/emberjs/data
- * @link https://speakerdeck.com/dgeb/optimizing-an-api-for-ember-data
- * @link https://github.com/rails-api/active_model_serializers
+ * SilverStripe 3 JSON REST API
  * 
  * @author  Thierry Francois @colymba thierry@colymba.com
  * @copyright Copyright (c) 2013, Thierry Francois
  * 
  * @license http://opensource.org/licenses/BSD-3-Clause BSD Simplified
  * 
- * @package ss_json_rest_api
+ * @package SS_JSONAPI
  */
-class APIController extends Controller
+class JSONAPI_Controller extends Controller
 {
   /**
-   * If true 'all' requests will be checked for authentication with a token
-   * 
+   * Lets you select if the API requires authentication for access
    * @var boolean
    */
-  private static $useTokenAuthentication = false;
+  public static $requireAuthentication = true;
 
   /**
-   * Authentication token life in ms
-   * 
-   * @var integer
+   * Lets you select which class handles authentication
+   * @var string
    */
-  private static $tokenLife = 10800000; //3 * 60 * 60 * 1000;
+  private static $authenticatorClass = 'JSONAPI_TokenAuthenticator';
 
-  const AUTH_CODE_LOGGED_IN     = 0;
-  const AUTH_CODE_LOGIN_FAIL    = 1;
-  const AUTH_CODE_TOKEN_INVALID = 2;
-  const AUTH_CODE_TOKEN_EXPIRED = 3;
+  /**
+   * Current Authenticator instance
+   * @var class
+   */
+  private $authenticator = null;
+
 
   /**
    * Cross-Origin Resource Sharing (CORS)
@@ -155,6 +145,8 @@ class APIController extends Controller
   public function init()
   {
     parent::init();
+
+    //initialize modules (Auth, Query, Serializer...)
 
     //catch preflight request
     if ( $this->request->httpMethod() === 'OPTIONS' )
