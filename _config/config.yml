@@ -1,7 +1,7 @@
 ---
-Name: modelserializer
+Name: jsonApi
 After: 'framework/*','cms/*'
 ---
 Director:
   rules:
-    'api': 'APIController'
+    'api': 'JSONAPI'
