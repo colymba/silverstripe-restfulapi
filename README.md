@@ -1,6 +1,6 @@
-SilverStripe Model Serializer (JSON REST API)
-=============================================
-This module implements a JSON API for read/write access to your SilverStripe Models. Originally made for use with EmberJS/Ember Data DS.RESTAdapter which is based on Rails ActiveModel::Serializers
+# SilverStripe JSON API
+
+This module implements a JSON API for read/write access to your SilverStripe Models. Originally made for use with EmberJS/Ember Data DS.RESTAdapter.
 
 ## Requirements
 * [SilverStripe Framework 3.1](https://github.com/silverstripe/silverstripe-framework)
@@ -11,7 +11,16 @@ This module implements a JSON API for read/write access to your SilverStripe Mod
 * [Ember Data](https://github.com/emberjs/data)
 
 ## Note
-WORK IN PROGRESS
+WORK IN PROGRESS. API in constant change nad not fully implemented.
+
+## Todo
+* implement `createModel()` method
+* check/test `updateModel()` method with latest Ember Data
+* Move serializing method to their own classes (basic, ActiveModel...)
+* API authenticator as its own class?
+* Rename to 'SilverStripe JSON API'
+* Implement API permission set
+* ...
 
 ## License (BSD Simplified)
 
