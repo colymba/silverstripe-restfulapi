@@ -131,8 +131,8 @@ class JSONAPI_DefaultSerializer implements JSONAPI_Serializer
     // iterate $db fields and $has_one realtions
     foreach ($dataObjectMap as $columnName => $value)
     {
+    	$hasOneColumnName = preg_replace( '/ID$/i', '', $columnName );
     	$columnName = $this->serializeColumnName( $columnName );
-    	$hasOneColumnName = preg_replace ( '/ID$/i', '', $columnName );
 
     	// if this column is a has_one relation
     	if ( array_key_exists( $hasOneColumnName, $has_one ) )
@@ -140,21 +140,15 @@ class JSONAPI_DefaultSerializer implements JSONAPI_Serializer
     		// convert value to integer
         $value = intVal( $value );
 
-        // remove ID suffix from realtion name
-        $columnName = $hasOneColumnName;
+        // skip
+        if ( $value === 0 ) continue;
 
-        // remove undefined has_one relations
-        if ( $value === 0 )
-        {
-          $value = null;
-        }
+        // remove ID suffix from realation name
+        $columnName = $this->serializeColumnName( $hasOneColumnName );
     	}
 
     	// save formatted data
-    	if ( $value !== null )
-      {
-        $formattedDataObjectMap[$columnName] = $value;
-      }
+    	$formattedDataObjectMap[$columnName] = $value;
     }
 
     // combine defined '_many' relations into 1 array
