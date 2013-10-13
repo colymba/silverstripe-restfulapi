@@ -68,11 +68,12 @@ class JSONAPI_TokenAuthenticator implements JSONAPI_Authenticator
       $response['message']      = 'Logged in.';
       $response['code']         = self::AUTH_CODE_LOGGED_IN;
       $response['token']        = $token;
-      $response['member']       = $this->parseObject($member);
+      //$response['member']       = $this->parseObject($member);
     }
 
     //return Convert::raw2json($response);
-    $this->answer( Convert::raw2json($response) );
+    //$this->answer( Convert::raw2json($response) );
+    return $response;
   }
 
   /**

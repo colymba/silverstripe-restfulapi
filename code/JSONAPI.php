@@ -15,7 +15,7 @@ class JSONAPI extends Controller
    * Lets you select if the API requires authentication for access
    * @var boolean
    */
-  private static $requiresAuthentication = true;
+  private static $requiresAuthentication = false;
 
   /**
    * Lets you select which class handles authentication
@@ -28,6 +28,31 @@ class JSONAPI extends Controller
    * @var class
    */
   private $authenticator = null;
+
+  /**
+   * Lets you select which class handles model queries
+   * @var string
+   */
+  private static $queryHandlerClass = 'JSONAPI_DefaultQueryHandler';
+
+  /**
+   * Current QueryHandler instance
+   * @var JSONAPI_QueryHandler
+   */
+  private $queryHandler = null;
+
+  /**
+   * Lets you select which class handles model serialization
+   * @var string
+   */
+  private static $serializerClass = 'JSONAPI_DefaultSerializer';
+
+  /**
+   * Current serializer instance
+   * @var JSONAPI_Serializer
+   */
+  private $serializer = null;
+
 
 
   /**
@@ -48,52 +73,7 @@ class JSONAPI extends Controller
     'Allow-Headers' => '*',
     'Allow-Methods' => 'OPTIONS, POST, GET, PUT, DELETE',
     'Max-Age'       => 86400
-  );
-
-  /**
-   * Embedded records setting
-   * Specify which relation ($has_one, $has_many, $many_many) model data should be embedded into the response
-   *
-   * Map of classes to embed for specific record
-   * 'RequestedClass' => array('ClassToEmbed', 'Another')
-   *
-   * Non embedded response:
-   * {
-   *   'member': {
-   *     'name': 'John',
-   *     'favourite_ids': [1, 2]
-   *   }
-   * }
-   *
-   * Response with embedded record:
-   * {
-   *   'member': {
-   *     'name': 'John',
-   *     'favourites': [{
-   *         'id': 1,
-   *         'name': 'Mark'
-   *      },{
-   *         'id': 2,
-   *         'name': 'Maggie'
-   *      }]
-   *    }
-   * }
-   * 
-   * @var array
-   * @todo embeded records are deprecated (for now)
-   */
-  private static $embeddedRecords = array(
-    'Member' => array('Favourites')
-  );
-
-  /**
-   * Sideloaded records settings
-   * @todo
-   * 
-   * @var array
-   */
-  private static $sideloadedRecords = array(
-  );
+  );  
 
   /**
    * URL handler allowed actions
@@ -102,9 +82,7 @@ class JSONAPI extends Controller
    */
   private static $allowed_actions = array(
     'index',
-    'login',
-    'logout',
-    'lostpassword'
+    'auth'
   );
 
   /**
@@ -113,39 +91,28 @@ class JSONAPI extends Controller
    * @var array
    */
   public static $url_handlers = array(
-    'login' => 'login',
-    'logout' => 'logout',
-    'lostpassword' => 'lostPassword',
+    'auth/$Action' => 'auth',
     '$ClassName/$ID' => 'index'
   );
 
-  /**
-   * Stores the currently requested data (Model class + ID)
-   * 
-   * @var array
-   */
-  private $requestData = array(
-    'model'  => null,
-    'id'     => null,
-    'params' => null
-  );
 
   /**
-   * Search Filter Modifiers Separator used in the query var
-   * i.e. ?column__EndsWith=suffix
-   * 
-   * @var string
+   * Returns current serializer instance
+   * @return JSONAPI_Serializer Serializer instance
    */
-  private static $searchFilterModifiersSeparator = '__';
+  public function getserializer()
+  {
+    return $this->serializer;
+  }
+  
 
   /**
-   * Request handler construct
-   * handles modules instanciation etc...
+   * Handles modules instanciation etc...
    */
   public function __construct()
-  {   
+  {  
     //creates authenticator instance if required
-    $requiresAuth = Config::inst()->get( 'JSONAPI', 'authenticatorClass', Config::INHERITED );
+    $requiresAuth = Config::inst()->get( 'JSONAPI', 'requiresAuthentication', Config::INHERITED );
     if ( $requiresAuth )
     {
       $authClass = Config::inst()->get( 'JSONAPI', 'authenticatorClass', Config::INHERITED );
@@ -153,38 +120,36 @@ class JSONAPI extends Controller
       {
         $this->authenticator = Injector::inst()->create($authClass);
       }
+      else{
+        user_error("JSON API Authenticator class '$authClass' doesn't exist."
+        . "No Authenticator defined.", E_USER_WARNING);
+      }
     }
 
+
+    //creates serializer instance    
+    $serializerClass = Config::inst()->get( 'JSONAPI', 'serializerClass', Config::INHERITED );
+    if ( class_exists($serializerClass) )
+    {
+      $this->serializer = Injector::inst()->create($serializerClass, $this);
+    }
+    else{
+      user_error("JSON API Serializer class '$serializerClass' doesn't exist.", E_USER_ERROR);
+    }
+
+
+    //creates query handler instance
+    $queryHandlerClass = Config::inst()->get( 'JSONAPI', 'queryHandlerClass', Config::INHERITED );
+    if ( class_exists($queryHandlerClass) )
+    {
+      $this->queryHandler = Injector::inst()->create($queryHandlerClass, $this);
+    }
+    else{
+      user_error("JSON API Query Handler class '$queryHandlerClass' doesn't exist.", E_USER_ERROR);
+    }
+
+
     parent::__construct();
-  }
-
-  /**
-   * Duplicate and simplification of RequestHandler::handleRequest()
-   * {@link RequestHandler::handleRequest()}
-   * 
-   * Taken from restassured module {@link RESTRouter::handleRequest()}
-   */
-  public function handleRequest(SS_HTTPRequest $request, DataModel $model)
-  {
-    if(!$request) user_error("Controller::handleRequest() not passed a request!", E_USER_ERROR);
-
-    $this->pushCurrent();
-
-    $this->urlParams = $request->allParams();
-    $this->request = $request;
-    $this->response = new SS_HTTPResponse();
-
-    $this->extend('onBeforeInit');
-
-    // Init
-    $this->baseInitCalled = false;
-    $this->init();
-    if(!$this->baseInitCalled) user_error("init() method on class '$this->class' doesn't call Controller::init().  Make sure that you have parent::init() included.", E_USER_WARNING);
-
-    $this->extend('onAfterInit');
-
-    $this->popCurrent();
-    return $this->response;
   }
 
   /**
@@ -193,15 +158,100 @@ class JSONAPI extends Controller
    */
   public function init()
   {
-    parent::init();
-
-    //initialize modules (Auth, Query, Serializer...)
-
     //catch preflight request
     if ( $this->request->httpMethod() === 'OPTIONS' )
     {
       $this->answer(null, false, true);
     }
+
+    parent::init();
+  }
+
+  /**
+   * Handles authentications methods
+   * get response from API Authenticator
+   * then passes it on to $answer()
+   * @param  SS_HTTPRequest $request HTTP request
+   */
+  public function auth(SS_HTTPRequest $request)
+  {
+    $action = $request->param('Action');
+
+    if ( $this->authenticator )
+    {
+      if ( method_exists($this->authenticator, $action) )
+      {
+        $response = $this->authenticator->$action($request);
+        $this->answer($response);
+      }
+      else{
+        $className = get_class($this->authenticator);
+
+        $this->answer(null, array(
+          'code' => 404,
+          'description' => "Action '$action' isn't available on class $className."
+        ));
+      }
+    }
+  }
+  
+
+  /**
+   * Main API hub swith
+   * All requests pass through here and are redirected depending on HTTP verb and params
+   * 
+   * @param  SS_HTTPRequest   $request    HTTP request
+   * @return string                       json object of the models found
+   * @see    answer()
+   */
+  function index(SS_HTTPRequest $request)
+  {
+    print_r('index');
+    //check authentication if enabled
+    if ( $this->authenticator )
+    {
+      $auth = $this->authenticator->authenticate($request);
+
+      if ( !$auth['valid'] )
+      {
+        //Authentication failed return error to client
+        $response = Convert::raw2json(array(
+          'message' => $auth['message'],
+          'code'    => $auth['code']
+        ));
+
+        $this->answer(
+          $response,
+          array(
+            'code' => 403,
+            'description' => $auth['message']
+          )
+        );
+      }
+    }
+
+    $data = $this->queryHandler->handleQuery($request);
+    //$json = $this->serializer->serialize($data);
+
+    print_r($data);
+    print_r($data->toArray());
+    //$this->answer( $json );
+  }
+
+  /**
+   * Returns the API response to client
+   * 
+   * @param  JSON string      $data             JSON to return to client
+   * @param  boolean|array    $error            Use false if not an error otherwise pass array('code' => statusCode, 'description' => statusDescription)
+   * @param  boolean          $corsPreflight    Set to true if this is a XHR preflight request answer. CORS shoud be enabled.
+   * @return SS_HTTPResponse                    API response to client
+   */
+  private function answer($data = '', $error = false, $corsPreflight = false )
+  {
+    $answer = new SS_HTTPResponse();
+
+    $answer->output();
+    exit;
   }
 
   /**
@@ -212,7 +262,7 @@ class JSONAPI extends Controller
    * @param  boolean          $corsPreflight    Set to true if this is a XHR preflight request answer. CORS shoud be enabled.
    * @return SS_HTTPResponse                    API response to client
    */
-  function answer( $json = null, $error = false, $corsPreflight = false )
+  function answer_legacy( $json = null, $error = false, $corsPreflight = false )
   {
     $answer = new SS_HTTPResponse();
 
@@ -275,817 +325,5 @@ class JSONAPI extends Controller
     $answer->output();
     exit;
   }
-  
-
-  /**
-   * Main API hub swith
-   * All requests pass through here and are redirected depending on HTTP verb and params
-   * 
-   * @param  SS_HTTPRequest   $request    HTTP request
-   * @return string                       json object of the models found
-   * @see    answer()
-   */
-  function index(SS_HTTPRequest $request)
-  {
-    //check authentication if enabled
-    if ( $this->authenticator )
-    {
-      $auth = $this->authenticator->authenticate($request);
-
-      if ( !$auth['valid'] )
-      {
-        $response = Convert::raw2json(array(
-          'message' => $auth['message'],
-          'code'    => $auth['code']
-        ));
-        $this->answer( $response, array( 'code' => 403, 'description' => $auth['message'] ) );
-      }
-    }
-
-    //get requested model(s) details
-    $model       = $request->param('ClassName');
-    $id          = $request->param('ID');
-    $response    = false;
-    $queryParams = $this->parseQueryParams( $request->getVars() );
-
-    //convert model name to SS conventions
-    if ($model)
-    {
-      $model = ucfirst( Inflector::singularize( Inflector::camelize( $model ) ) );
-    }
-
-    //store requested model data and query data
-    $this->requestData['model'] = $model;
-    if ($id)
-    {
-      $this->requestData['id'] = $id;
-    }
-    if ($queryParams)
-    {
-      $this->requestData['params'] = $queryParams;
-    }
-
-    //map HTTP word to API method
-    //@TODO handle error
-    if ( $request->isGET() )
-    {
-      $response = $this->findModel($model, $id, $queryParams, $request);
-      $response = $this->parseJSON($response);
-    }
-    elseif ( $request->isPOST() )
-    {
-      $response = $this->createModel($model, $request);
-    }
-    elseif ( $request->isPUT() )
-    {
-      $response = $this->updateModel($model, $id, $request);
-      $response = $this->parseJSON($response);
-    }
-    elseif ( $request->isDELETE() )
-    {
-      $response = $this->deleteModel($model, $id, $request);
-    }
-
-    $this->answer( $response );
-  }
-
-  /**
-   * Parse the query parameters to appropriate Column, Value, Search Filter Modifiers
-   * array(
-   *   array(
-   *     'Column'   => ColumnName,
-   *     'Value'    => ColumnValue,
-   *     'Modifier' => ModifierType
-   *   )
-   * )
-   * 
-   * @param  array  $params raw GET vars array
-   * @return array          formatted query parameters
-   */
-  function parseQueryParams(array $params)
-  {
-    $parsedParams = array();
-
-    foreach ($params as $key__mod => $value)
-    {
-      if ( $key__mod === 'url' ) continue;
-
-      $param = array();  
-
-      $key__mod = explode(
-        self::$searchFilterModifiersSeparator,
-        $key__mod
-      );
-
-      $param['Column'] = ucfirst( $this->ucIDKeys( $key__mod[0] ) );
-      $param['Value'] = $value;
-      if ( isset($key__mod[1]) ) $param['Modifier'] = $key__mod[1];
-      else $param['Modifier'] = null;
-
-      array_push($parsedParams, $param);
-    }
-
-    return $parsedParams;
-  }
-
-
-  /* **************************************************************************************************
-   * DATA QUERIES
-   */
-  
-
-  /**
-   * Finds 1 or more objects of class $model
-   * 
-   * @param  string                 $model          Model(s) class to find
-   * @param  boolean\integr         $id             The ID of the model to find or false
-   * @param  array                  $queryParams    Query parameters and modifiers
-   * @param  SS_HTTPRequest         $request        The original HTTP request
-   * @return DataObject|DataList                    Result of the search (note: DataList can be empty) 
-   */
-  function findModel(string $model, $id = false, $queryParams, SS_HTTPRequest $request)
-  {    
-    if ($id)
-    {
-      $return = DataObject::get_by_id($model, $id);
-    }
-    else{
-      // ":StartsWith", ":EndsWith", ":PartialMatch", ":GreaterThan", ":LessThan", ":Negation"
-      // sort, rand, limit
-
-      $return = DataObject::get($model);
-
-      if ( count($queryParams) > 0 )
-      {
-        foreach ($queryParams as $param)
-        {
-
-          if ( $param['Column'] )
-          {
-            $param['Column'] = Inflector::camelize( $param['Column'] );
-
-            // handle sorting by column
-            if ( $param['Modifier'] === 'sort' )
-            {
-              $return = $return->sort(array(
-                $param['Column'] => $param['Value']
-              ));
-            }
-            // normal modifiers / search filters
-            else if ( $param['Modifier'] )
-            {
-              $return = $return->filter(array(
-                $param['Column'].':'.$param['Modifier'] => $param['Value']
-              ));
-            }
-            // no modifier / search filter
-            else{
-              $return = $return->filter(array(
-                $param['Column'] => $param['Value']
-              ));
-            }
-          }
-          else{
-            // random
-            if ( $param['Modifier'] === 'rand' )
-            {
-              // rand + seed
-              if ( $param['Value'] )
-              {
-                $return = $return->sort('RAND('.$param['Value'].')');
-              }
-              // rand only
-              else{
-                $return = $return->sort('RAND()');
-              }
-            }
-            // limits
-            else if ( $param['Modifier'] === 'limit' )
-            {
-              // range + offset
-              if ( is_array($param['Value']) )
-              {
-                $return = $return->limit($param['Value'][0], $param['Value'][1]);
-              }
-              // range only
-              else{
-                $return = $return->limit($param['Value']);
-              }
-            }
-          }
-
-        }
-      }
-    }
-
-    return $return;
-  }
-
-  /**
-   * Create object of class $model
-   * @todo
-   * @param  string         $model
-   * @param  SS_HTTPRequest $request
-   * @return [type]
-   */
-  function createModel(string $model, SS_HTTPRequest $request)
-  {
-
-  }
-
-  /**
-   * Update databse record or $model
-   *
-   * @param String $model the model class to update
-   * @param Integer $id The ID of the model to update
-   * @param SS_HTTPRequest the original request
-   *
-   * @return DataObject The updated model 
-   */
-  function updateModel($model, $id, $request)
-  {
-    $model = DataObject::get_by_id($model, $id);
-    $payload = $this->decodePayload( $request->getBody() );
-
-    if ( $model && $payload )
-    {
-      $has_one            = Config::inst()->get( $model->ClassName, 'has_one', Config::INHERITED );
-      $has_many           = Config::inst()->get( $model->ClassName, 'has_many', Config::INHERITED );
-      $many_many          = Config::inst()->get( $model->ClassName, 'many_many', Config::INHERITED );
-      $belongs_many_many  = Config::inst()->get( $model->ClassName, 'belongs_many_many', Config::INHERITED );
-
-      $modelData          = array_shift( $payload );
-      $hasChanges         = false;
-      $hasRelationChanges = false;
-
-      foreach ($modelData as $attribute => $value)
-      {
-        if ( !is_array($value) )
-        {
-          if ( $model->{$attribute} != $value )
-          {
-            $model->{$attribute} = $value;
-            $hasChanges          = true;
-          }
-        }
-        else{
-          //has_many, many_many or $belong_many_many
-          if ( array_key_exists($attribute, $has_many) || array_key_exists($attribute, $many_many) || array_key_exists($attribute, $belongs_many_many) )
-          {
-            $hasRelationChanges = true;
-            $ssList = $model->{$attribute}();            
-            $ssList->removeAll(); //reset list
-            foreach ($value as $associatedModel)
-            {
-              $ssList->add( $associatedModel['ID'] );              
-            }
-          }
-        }
-      }
-
-      if ( $hasChanges || $hasRelationChanges )
-      {
-        $model->write(false, false, false, $hasRelationChanges);
-      }
-    }
-
-    return $model;
-  }
-
-  /**
-   * delete object of class $model
-   * @TODO
-   */
-  function deleteModel($model, $id, $request)
-  {
-
-  }
-
-
-  /* **************************************************************************************************
-   * DATA PARSING
-   */
-  
-
-  /**
-   * Parse DataList/DataObject into root JSON 
-   * ready to be returned to client
-   *
-   * @param DataList|DataObject $data The data to parse to JSON for client response
-   *
-   * @return String JSON representation of $data
-   */
-  function parseJSON($data)
-  {
-    //nothing to parse -> return an empty response
-    if ( !$data )
-    {      
-      $className = $this->requestData['model'];
-      //$className = strtolower( Inflector::underscore( Inflector::singularize($className) ) );
-      $className = lcfirst( Inflector::singularize($className) );
-
-
-      $root = new stdClass();
-      $root->{$className} = new stdClass();
-
-      return Convert::raw2json($root);
-    }
-
-    //multiple results to parse
-    if ( $data instanceof DataList )
-    {
-
-      $className  = $data->dataClass;
-      //$className  = strtolower( Inflector::underscore( Inflector::pluralize($className) ) );
-      $className  = lcfirst( Inflector::singularize($className) );
-
-      $data       = $data->toArray();
-      $modelsList = array();
-
-      foreach ($data as $obj)
-      {
-        $newObj = $this->parseObject($obj);
-        array_push($modelsList, $newObj);
-      }
-
-      $root = new stdClass();
-      $root->{$className} = $modelsList;
-
-    }
-    //one DataObject to parse
-    else{
-
-      $className = $data->ClassName;
-      //$className = strtolower( Inflector::underscore( Inflector::singularize($className) ) );
-      $className = lcfirst( Inflector::singularize($className) );
-      $obj       = $this->parseObject($data);     
-
-      //Side loading
-      //@TODO
-      /*
-      $sideloadingOptions = $this::$sideloadedRecords;
-      if ( array_key_exists( ucfirst(Inflector::camelize($className)), $sideloadingOptions) )
-      {
-        $relations = $this->loadObjectRelations( $data );
-        $root      = $this->addRelationsToJSONRoot($obj, $relations);
-      }
-      else{
-        $root = new stdClass();
-        $root->{$className} = $obj;
-      }
-      */
-
-      $root = new stdClass();
-      $root->{$className} = $obj;
-
-    }
-    return Convert::raw2json($root);
-  }
-
-  /**
-   * Combine an Object map and its Relations
-   * into one root Object ready to be returned as JSON
-   */
-  function addRelationsToJSONRoot($obj, $relations)
-  {
-    $root = new stdClass();
-    $className = strtolower( Inflector::singularize($obj['class_name']) );
-    $root->{$className} = $obj;
-
-    if ($relations)
-    {
-      
-      if ( isset($relations['has_one']) )
-      {
-        //print_r($relations['has_one']);
-        foreach ($relations['has_one'] as $relation => $object)
-        {
-          $class = strtolower( Inflector::singularize($relation) );
-          $root->{$class} = $object;
-        }
-      }
-
-      if ( isset($relations['has_many']) )
-      {
-        foreach ($relations['has_many'] as $relation => $objectList)
-        {
-          //print_r($objectList);
-          /*
-          $id_list_key = strtolower( $relation ) . '_ids';
-          $idList = array();
-          foreach ($objectList as $objInfo)
-          {
-            array_push($idList, $objInfo['id']);
-          }*/
-          //print_r($idList);
-          //$root->{$className}[$id_list_key] = $idList;
-          $root->{strtolower( Inflector::pluralize($relation) )} = $objectList;
-        }
-      }
-
-      if ( isset($relations['many_many']) )
-      {
-        foreach ($relations['many_many'] as $relation => $objectList)
-        {
-          $root->{strtolower( Inflector::pluralize($relation) )} = $objectList;
-        }
-      }
-
-      if ( isset($relations['belongs_many_many']) )
-      {
-        foreach ($relations['belongs_many_many'] as $relation => $objectList)
-        {
-          $root->{strtolower( Inflector::pluralize($relation) )} = $objectList;
-        }
-      }
-      
-    }
-    //print_r($root);
-    return $root;
-  }
-
-  /**
-   * Parse DataObject attributes
-   * converts keys to lowercase-camelized
-   * add relations ids list
-   * and foreign keys to Int
-   *
-   * @param DataObject $obj The DataObject to parse
-   *
-   * @return Array The parsed DataObject
-   */
-  function parseObject($obj)
-  {
-    if( method_exists($obj, 'onBeforeSerializeObject') )
-    {
-      $obj->onBeforeSerializeObject();
-    }
-
-    $objMap = $obj->toMap();
-    $newObj = array();
-
-    $has_one           = Config::inst()->get( $objMap['ClassName'], 'has_one', Config::INHERITED );
-    $has_many          = Config::inst()->get( $objMap['ClassName'], 'has_many', Config::INHERITED );
-    $many_many         = Config::inst()->get( $objMap['ClassName'], 'many_many', Config::INHERITED );
-    $belongs_many_many = Config::inst()->get( $objMap['ClassName'], 'belongs_many_many', Config::INHERITED );
-    
-    $embeddedOptions = $this::$embeddedRecords;
-
-    //attributes / has_ones
-    foreach ($objMap as $key => $value)
-    {
-      $newKey = str_replace('ID', 'Id', $key);
-      //$newKey = Inflector::underscore($newKey);
-      $newKey = lcfirst($newKey);
-
-      //remove foreign keys trailing ID
-      $has_one_key = preg_replace ( '/ID$/', '', $key);
-
-      //foreign keys to int OR embedding  
-      if ( array_key_exists( $has_one_key, $has_one ) )
-      {
-        //convert to integer
-        $value = intVal( $value );
-
-        //if set and embeddable
-        //@todo embeded records are deprecated (for now)
-        if ( $this->isRelationEmbeddable($obj, $has_one_key) && $value !== 0 )
-        {
-          $embeddedObject = $obj->{$has_one_key}();
-          if ( $embeddableObject )
-          {
-            $value = $this->parseObject($embeddedObject);
-          }
-        }
-
-        //use non IDed key for has_one
-        $newKey = lcfirst($has_one_key);
-
-        //remove undefined has_one relations
-        if ( $value === 0 )
-        {
-          $value = null;
-        }
-      }
-
-      if ( $value !== null )
-      {
-        $newObj[$newKey] = $value;
-      }
-    }
-    
-    //has_many + many_many + $belongs_many_many
-    //comments: [1, 2, 3]
-    $many_relations = array();
-    if ( is_array($has_many) )          $many_relations = array_merge($many_relations, $has_many);
-    if ( is_array($many_many) )         $many_relations = array_merge($many_relations, $many_many);
-    if ( is_array($belongs_many_many) ) $many_relations = array_merge($many_relations, $belongs_many_many);
-    
-    foreach ($many_relations as $relationName => $relationClassname)
-    {
-      //get the DataList for this realtion's name
-      $many_objects = $obj->{$relationName}();
-
-      //if there actually are objects in the relation
-      if ( $many_objects->count() )
-      {
-        //if embeddable
-        //@todo embeded records are deprecated (for now)
-        if ( $this->isRelationEmbeddable($obj, $relationName) )
-        {
-          $newKey = Inflector::underscore( Inflector::pluralize($relationName) );
-          $newObj[$newKey] = array();
-          foreach ($many_objects as $embeddedObject) {
-            array_push(
-              $newObj[$newKey],
-              $this->parseObject($embeddedObject)
-            );
-          }
-        }
-        else{
-          //ID list only
-          //$newKey = Inflector::underscore( Inflector::singularize($relationName) );
-          $newKey = lcfirst($relationName);
-          $idList = $many_objects->map('ID', 'ID')->keys();
-          //$newObj[$newKey.'_ids'] = $idList;
-          $newObj[$newKey] = $idList;
-        }
-      }
-    } 
-
-    return $newObj;
-  }
-
-  /**
-   * Load all of an object's relations
-   * Used for side loaded records
-   *
-   * @todo  should implement and async config check, only sideload is not async   * 
-   */
-  function loadObjectRelations($obj)
-  {    
-    $embeddableRelations = $this::$embeddedRecords[$obj->ClassName];
-    $relations           = array();
-
-    $has_one           = Config::inst()->get( $obj->ClassName, 'has_one', Config::INHERITED );
-    $has_many          = Config::inst()->get( $obj->ClassName, 'has_many', Config::INHERITED );
-    $many_many         = Config::inst()->get( $obj->ClassName, 'many_many', Config::INHERITED );
-    $belongs_many_many = Config::inst()->get( $obj->ClassName, 'belongs_many_many', Config::INHERITED );
-
-    //has_one
-    foreach ($has_one as $name => $class)
-    {
-      if ( in_array($name, $embeddableRelations) )
-      {
-        $relationObj        = $obj->{$name}();
-        $parsedRelationObj  = $this->parseObject($relationObj);
-        $relations['has_one'][ Inflector::singularize($relationObj->ClassName) ] = $parsedRelationObj;
-      }
-    }
-
-    //has_many
-    foreach ($has_many as $relationName => $relationClass)
-    {
-      if ( in_array($relationName, $embeddableRelations) )
-      {
-
-        $has_many_objects = $obj->{$relationName}();
-        $className        = Inflector::singularize( $has_many_objects->dataClass );
-        $relations['has_many'][$className]  = array();
-
-        foreach ($has_many_objects as $relationObject)
-        {
-          $parsedObject = $this->parseObject($relationObject);
-          array_push($relations['has_many'][$className], $parsedObject);
-        }
-
-      }      
-    }
-
-    //many_many
-    foreach ($many_many as $relationName => $relationClass)
-    {
-      if ( in_array($relationName, $embeddableRelations) )
-      {
-
-        $has_many_objects = $obj->{$relationName}();
-        $className        = Inflector::singularize( $has_many_objects->dataClass );
-        //$relationKey      = strtolower($relationName);
-
-        $relations['many_many'][$className]  = array();
-        //$relations['many_many'][$relationKey]  = array();
-
-        foreach ($has_many_objects as $relationObject)
-        {
-          $parsedObject = $this->parseObject($relationObject);
-          array_push($relations['many_many'][$className], $parsedObject);
-          //array_push($relations['many_many'][$relationKey], $parsedObject);
-        }
-
-      }      
-    }
-
-    //belongs_many_many
-    foreach ($belongs_many_many as $relationName => $relationClass)
-    {
-      if ( in_array($relationName, $embeddableRelations) )
-      {
-
-        $has_many_objects = $obj->{$relationName}();
-        $className        = Inflector::singularize( $has_many_objects->dataClass );
-
-        $relations['belongs_many_many'][$className]  = array();
-
-        foreach ($has_many_objects as $relationObject)
-        {
-          $parsedObject = $this->parseObject($relationObject);
-          array_push($relations['belongs_many_many'][$className], $parsedObject);
-        }
-
-      }      
-    }
-
-    return $relations;
-  }
-
-
-  /**
-   * Checks if an Object's relation record(s) should be embedded or not
-   *
-   * @see APIController::$embeddedRecords
-   * @todo embeded records are deprecated (for now)
-   * @param $obj DataObject Object to check the options againsts
-   * @param $relationName String The name of the relation
-   * @return boolean whether or not this relation's record(s) should be embedded
-   */
-  function isRelationEmbeddable($obj, $relationName)
-  {
-    $embedOptions = $this::$embeddedRecords;
-
-    //if the Class has embedding options
-    if ( array_key_exists( $obj->className, $embedOptions) )
-    {
-      //if the relation is embeddable
-      if ( in_array($relationName, $embedOptions[$obj->className]) )
-      {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  /**
-   * Decode the Payload sent through a PUT request
-   * into an associative array with all attributes case converted
-   */
-  function decodePayload( $payloadBody )
-  {
-    $payload = json_decode( $payloadBody, true );
-
-    if ( $payload )
-    {
-      //$payload = $this->underscoredToCamelised( $payload );
-      $payload = $this->ucfirstCamelcaseKeys( $payload );
-      $payload = $this->upperCaseIDs( $payload );
-    }
-    else{
-      return false;
-    }
-
-    return $payload;
-  }
-
-  /**
-   * Convert an array's keys from underscored
-   * to upper case first and camalized keys
-   * @param array $map array to convert 
-   * @return array converted array
-   */
-  function ucfirstCamelcaseKeys( $map )
-  {
-    foreach ($map as $key => $value)
-    {
-      $newKey = ucfirst( Inflector::camelize($key) );
-
-      // Change key if needed
-      if ($newKey != $key)
-      {
-        unset($map[$key]);
-        $map[$newKey] = $value;
-      }
-
-      // Handle nested arrays
-      if (is_array($value))
-      {
-        $map[$newKey] = $this->underscoredToCamelised( $map[$newKey] );
-      }
-    }
-
-    return $map;
-  }
-
-  /**
-   * Convert an array's keys from underscored
-   * to upper case first and camalized keys
-   * @param array $map array to convert 
-   * @return array converted array
-   */
-  /*
-  function underscoredToCamelised( $map )
-  {
-    foreach ($map as $key => $value)
-    {
-      $newKey = ucfirst( Inflector::camelize($key) );
-
-      // Change key if needed
-      if ($newKey != $key)
-      {
-        unset($map[$key]);
-        $map[$newKey] = $value;
-      }
-
-      // Handle nested arrays
-      if (is_array($value))
-      {
-        $map[$newKey] = $this->underscoredToCamelised( $map[$newKey] );
-      }
-    }
-
-    return $map;
-  }*/
-
-  /**
-   * Fixes all ID and foreignKeyIDs to be uppercase
-   * 
-   * @param array $map array to convert 
-   * @return array converted array
-   */
-  function upperCaseIDs( $map )
-  {
-    foreach ($map as $key => $value)
-    {
-      $newKey = $this->ucIDKeys( $key );
-
-      // Change key if needed
-      if ($newKey != $key)
-      {
-        unset($map[$key]);
-        $map[$newKey] = $value;
-      }
-
-      // Handle nested arrays
-      if (is_array($value))
-      {
-        $map[$newKey] = $this->upperCaseIDs( $map[$newKey] );
-      }
-    }
-
-    return $map;
-  }
-
-  /**
-   * Changes 'id' suffix to upper case and remove trailing 's', good for (foreign)keys
-   * 
-   * @param  string $column The column name to fix
-   * @return string         Fixed column name
-   */
-  function ucIDKeys( $column )
-  {
-    return preg_replace( '/(.*)ID(s)?$/i', '$1ID', $column);
-  }
-  
-  /**
-   * Changes all object's property to CamelCase
-   * @return stdClass converted object
-   */
-  /*
-  function camelizeObjectAttributes($obj)
-  {
-    if ( !is_array($obj) )
-    {
-      $obj = $obj->toMap();
-    }    
-    $newObj = new stdClass();
-    $has_one = Config::inst()->get( $obj['ClassName'], 'has_one', Config::INHERITED );  
-
-    foreach ($obj as $key => $value)
-    {
-      $newKey = str_replace('ID', 'Id', $key);
-      $newKey = lcfirst( Inflector::camelize($newKey) );
-
-      //foreign keys to int
-      $has_one_key = preg_replace( '/ID$/', '', $key);
-      if ( array_key_exists( $has_one_key, $has_one ) )
-      {
-        $value = intVal( $value );
-      }
-
-      $newObj->{$newKey} = $value;
-    }
-
-    return $newObj;
-  }
-  */
 
 }
