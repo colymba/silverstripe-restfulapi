@@ -17,11 +17,13 @@ class JSONAPI extends Controller
    */
   private static $requiresAuthentication = false;
 
+
   /**
    * Lets you select which class handles authentication
    * @var string
    */
   private static $authenticatorClass = 'JSONAPI_TokenAuthenticator';
+
 
   /**
    * Current Authenticator instance
@@ -29,11 +31,13 @@ class JSONAPI extends Controller
    */
   private $authenticator = null;
 
+
   /**
    * Lets you select which class handles model queries
    * @var string
    */
   private static $queryHandlerClass = 'JSONAPI_DefaultQueryHandler';
+
 
   /**
    * Current QueryHandler instance
@@ -41,18 +45,19 @@ class JSONAPI extends Controller
    */
   private $queryHandler = null;
 
+
   /**
    * Lets you select which class handles model serialization
    * @var string
    */
   private static $serializerClass = 'JSONAPI_DefaultSerializer';
 
+
   /**
    * Current serializer instance
    * @var JSONAPI_Serializer
    */
   private $serializer = null;
-
 
 
   /**
@@ -75,6 +80,7 @@ class JSONAPI extends Controller
     'Max-Age'       => 86400
   );  
 
+
   /**
    * URL handler allowed actions
    * 
@@ -85,6 +91,7 @@ class JSONAPI extends Controller
     'auth'
   );
 
+
   /**
    * URL handler definition
    * 
@@ -94,6 +101,16 @@ class JSONAPI extends Controller
     'auth/$Action' => 'auth',
     '$ClassName/$ID' => 'index'
   );
+
+
+  /**
+   * Returns current query handler instance
+   * @return JSONAPI_QueryHandler QueryHandler instance
+   */
+  public function getqueryHandler()
+  {
+    return $this->queryHandler;
+  }
 
 
   /**
@@ -206,7 +223,6 @@ class JSONAPI extends Controller
    */
   function index(SS_HTTPRequest $request)
   {
-    print_r('index');
     //check authentication if enabled
     if ( $this->authenticator )
     {
@@ -230,29 +246,13 @@ class JSONAPI extends Controller
       }
     }
 
-    $data = $this->queryHandler->handleQuery($request);
-    //$json = $this->serializer->serialize($data);
+    $data = $this->queryHandler->handleQuery( $request );
 
-    print_r($data);
-    print_r($data->toArray());
-    //$this->answer( $json );
+    $json = $this->serializer->serialize( $data );
+
+    $this->answer( $json );
   }
 
-  /**
-   * Returns the API response to client
-   * 
-   * @param  JSON string      $data             JSON to return to client
-   * @param  boolean|array    $error            Use false if not an error otherwise pass array('code' => statusCode, 'description' => statusDescription)
-   * @param  boolean          $corsPreflight    Set to true if this is a XHR preflight request answer. CORS shoud be enabled.
-   * @return SS_HTTPResponse                    API response to client
-   */
-  private function answer($data = '', $error = false, $corsPreflight = false )
-  {
-    $answer = new SS_HTTPResponse();
-
-    $answer->output();
-    exit;
-  }
 
   /**
    * Returns the API response to client
@@ -262,7 +262,7 @@ class JSONAPI extends Controller
    * @param  boolean          $corsPreflight    Set to true if this is a XHR preflight request answer. CORS shoud be enabled.
    * @return SS_HTTPResponse                    API response to client
    */
-  function answer_legacy( $json = null, $error = false, $corsPreflight = false )
+  function answer( $json = null, $error = false, $corsPreflight = false )
   {
     $answer = new SS_HTTPResponse();
 

@@ -14,14 +14,14 @@
 class JSONAPI_DefaultQueryHandler implements JSONAPI_QueryHandler
 {
 	/**
-	 * Store current JSONAPI instance
+	 * Stores current JSONAPI instance
 	 * @var JSONAPI
 	 */
 	private $api = null;
 
 
 	/**
-	 * Store current JSONAPI Serializer instance
+	 * Stores current JSONAPI Serializer instance
 	 * @var JSONAPI
 	 */
 	private $serializer = null;
@@ -85,7 +85,7 @@ class JSONAPI_DefaultQueryHandler implements JSONAPI_QueryHandler
    * 
    * @var array
    */
-  private $requestData = array(
+  public $requestedData = array(
     'model'  => null,
     'id'     => null,
     'params' => null
@@ -99,6 +99,16 @@ class JSONAPI_DefaultQueryHandler implements JSONAPI_QueryHandler
 	public function getapi()
 	{
 		return $this->api;
+	}
+
+
+	/**
+	 * Return current JSONAPI Serializer instance
+	 * @return JSONAPI_Serializer Serializer instance
+	 */
+	public function getserializer()
+	{
+		return $this->serializer;
 	}
 
 
@@ -122,41 +132,38 @@ class JSONAPI_DefaultQueryHandler implements JSONAPI_QueryHandler
   /**
    * All requests pass through here and are redirected depending on HTTP verb and params
    * 
-   * @param  SS_HTTPRequest   $request    HTTP request
-   * @return array                        DataObjec/DataList array map
+   * @param  SS_HTTPRequest                 $request    HTTP request
+   * @return DataObjec|DataList|stdClass                DataObject/DataList result or stdClass on error
    */
   public function handleQuery(SS_HTTPRequest $request)
   {
-  	print_r('handleQuery');
-    //get requested model(s) details
+  	//get requested model(s) details
     $model       = $request->param('ClassName');
     $id          = $request->param('ID');
     $response    = false;
     $queryParams = $this->parseQueryParameters( $request->getVars() );
 
     //convert model name to SS conventions
-    //@todo use Serializer (serializer->deserializeClassName())
     if ($model)
     {
-      $model = ucfirst( Inflector::singularize( Inflector::camelize( $model ) ) );
+      $model = $this->serializer->unformatName( $model );
     }
 
     //store requested model data and query data
-    $this->requestData['model'] = $model;
+    $this->requestedData['model'] = $model;
     if ($id)
     {
-      $this->requestData['id'] = $id;
+      $this->requestedData['id'] = $id;
     }
     if ($queryParams)
     {
-      $this->requestData['params'] = $queryParams;
+      $this->requestedData['params'] = $queryParams;
     }
 
     //map HTTP word to module method
     if ( $request->isGET() )
     {
       $result = $this->findModel($model, $id, $queryParams, $request);
-      //$result = $this->parseJSON($result);
     }
     elseif ( $request->isPOST() )
     {
@@ -165,17 +172,15 @@ class JSONAPI_DefaultQueryHandler implements JSONAPI_QueryHandler
     elseif ( $request->isPUT() )
     {
       $result = $this->updateModel($model, $id, $request);
-      //$result = $this->parseJSON($result);
     }
     elseif ( $request->isDELETE() )
     {
       $result = $this->deleteModel($model, $id, $request);
     }
     else{
-    	$result = array();
+    	$result = new stdClass();
     }
-
-    //$this->answer( $result );
+    
     return $result;
   }
 
@@ -200,7 +205,9 @@ class JSONAPI_DefaultQueryHandler implements JSONAPI_QueryHandler
 
     foreach ($params as $key__mod => $value)
     {
-      if ( strtoupper($key__mod) === 'URL' ) continue;
+      //if ( strtoupper($key__mod) === 'URL' ) continue;
+      // skip ul, flush, flushtoken
+      if ( in_array(strtoupper($key__mod), array('URL', 'FLUSH', 'FLUSHTOKEN')) ) continue;
 
       $param = array();
 
@@ -209,8 +216,7 @@ class JSONAPI_DefaultQueryHandler implements JSONAPI_QueryHandler
         $key__mod
       );
 
-      //@todo use Serializer for 'Column' (serializer->deserializeColumnName())
-      $param['Column'] = ucfirst( $this->serializer->ucIDKeys( $key__mod[0] ) );
+      $param['Column'] = $this->serializer->unformatName( $key__mod[0] );
 
       $param['Value'] = $value;
 
@@ -242,7 +248,7 @@ class JSONAPI_DefaultQueryHandler implements JSONAPI_QueryHandler
   {    
     if ($id)
     {
-      $return = DataObject::get_by_id($model, $id);
+    	$return = DataObject::get_by_id($model, $id);
     }
     else{
       // ":StartsWith", ":EndsWith", ":PartialMatch", ":GreaterThan", ":LessThan", ":Negation"
@@ -257,7 +263,8 @@ class JSONAPI_DefaultQueryHandler implements JSONAPI_QueryHandler
 
           if ( $param['Column'] )
           {
-            $param['Column'] = Inflector::camelize( $param['Column'] );
+          	//@delete ?
+            //$param['Column'] = Inflector::camelize( $param['Column'] );
 
             // handle sorting by column
             if ( $param['Modifier'] === 'sort' )

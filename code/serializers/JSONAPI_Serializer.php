@@ -12,5 +12,63 @@
  */
 interface JSONAPI_Serializer
 {
-	
+	/**
+	 * Return current JSONAPI instance
+	 * @return JSONAPI JSONAPI instance
+	 */
+	public function getapi();
+
+
+	/**
+	 * Return current JSONAPI Query Handler instance
+	 * @return JSONAPI_QueryHandler QueryHandler instance
+	 */
+	public function getserializer();
+
+
+	/**
+	 * Create instance and saves current api reference
+	 * @param JSONAPI $api current JSONAPI instance
+	 */
+	public function __construct(JSONAPI $api);
+
+
+	/**
+	 * Convert raw data (DataObject, DataList or Array) to JSON
+	 * ready to be consumed by the client API
+	 * 
+	 * @param  DataObject|DataList|Array  $data  data to serialize
+	 * @return string                            JSON representation of data
+	 */
+	public function serialize($data);
+
+
+	/**
+	 * Format a SilverStripe ClassName of DBField
+	 * to be used by the client API
+	 * 
+	 * @param  string $name ClassName of DBField name
+	 * @return string       Formatted name
+	 */
+	public function formatName(string $name);
+
+
+	/**
+	 * Convert client JSON data to an array of data
+	 * ready to be consumed by SilverStripe
+	 * 
+	 * @param  string  $data   JSON to be converted to data ready to be consumed by SilverStripe
+	 * @return array           Formatted array representation of the JSON data
+	 */
+	public function deserialize(string $json);
+
+
+	/**
+	 * Format a ClassName of DBField name sent by client API
+	 * to be used by SilverStripe
+	 * 
+	 * @param  string $name ClassName of DBField name
+	 * @return string       Formatted name
+	 */
+	public function unformatName(string $name);
 }

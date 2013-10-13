@@ -13,16 +13,25 @@
 interface JSONAPI_QueryHandler
 {
 	/**
+	 * Return current JSONAPI instance
+	 * @return JSONAPI JSONAPI instance
+	 */
+	public function getapi();
+
+
+	/**
+	 * Return current JSONAPI Serializer instance
+	 * @return JSONAPI_Serializer Serializer instance
+	 */
+	public function getserializer();
+
+
+	/**
 	 * Create instance and saves current api reference
 	 * @param JSONAPI $api current JSONAPI instance
 	 */
 	public function __construct(JSONAPI $api);
 
-	/**
-	 * Return current JSONAPI instance
-	 * @return JSONAPI JSONAPI instance
-	 */
-	public function getapi();
 
 	/**
    * All requests pass through here and are redirected depending on HTTP verb and params
