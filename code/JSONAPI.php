@@ -271,13 +271,13 @@ class JSONAPI extends Controller
     //set response body
     if ( !$corsPreflight )
     {
-      $answer->setBody($json);      
-    }
+      $answer->setBody($json); 
 
-    //Set status code+descript, i.e. 403 Access denied
-    if ( $error !== false && !$corsPreflight )
-    {
-      $answer->setStatusCode($error['code'], $error['description']);
+      //Set status code+descript, i.e. 403 Access denied
+      if ( $error !== false )
+      {
+        $answer->setStatusCode($error['code'], $error['description']);
+      }     
     }
 
     //set CORS if needed
