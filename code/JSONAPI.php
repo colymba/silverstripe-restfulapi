@@ -125,6 +125,7 @@ class JSONAPI extends Controller
 
   /**
    * Handles modules instanciation etc...
+   * @todo Check if module implement the right interface
    */
   public function __construct()
   {  
@@ -216,7 +217,8 @@ class JSONAPI extends Controller
   /**
    * Main API hub swith
    * All requests pass through here and are redirected depending on HTTP verb and params
-   * 
+   *
+   * @todo move authentication check to another methode
    * @param  SS_HTTPRequest   $request    HTTP request
    * @return string                       json object of the models found
    * @see    answer()
@@ -278,52 +280,71 @@ class JSONAPI extends Controller
       $answer->setStatusCode($error['code'], $error['description']);
     }
 
-    //If CORS is enabled sort out headers
-    if ( self::$cors['Enabled'] )
-    {
-      //check if Origin is allowed
-      $allowedOrigin = self::$cors['Allow-Origin'];
-      $requestOrigin = $this->request->getHeader('Origin');
-      if ( $requestOrigin )
-      {
-        if ( self::$cors['Allow-Origin'] === '*' )
-        {
-          $allowedOrigin = $requestOrigin;
-        }
-        else if ( is_array(self::$cors['Allow-Origin']) )
-        {
-          if ( in_array($requestOrigin, self::$cors['Allow-Origin']) )
-          {
-            $allowedOrigin = $requestOrigin;
-          }
-        }
-      }      
-      $answer->addHeader('Access-Control-Allow-Origin', $allowedOrigin);
-      
-      //allowed headers
-      $allowedHeaders = '';
-      $requestHeaders = $this->request->getHeader('Access-Control-Request-Headers');  
-      if ( self::$cors['Allow-Headers'] === '*' )
-      {
-        $allowedHeaders = $requestHeaders;
-      }
-      else{
-        $allowedHeaders = self::$cors['Allow-Headers'];
-      }
-      $answer->addHeader('Access-Control-Allow-Headers', $allowedHeaders);
-
-      //allowed method
-      $answer->addHeader('Access-Control-Allow-Methods', self::$cors['Allow-Methods']);
-
-      //max age
-      $answer->addHeader('Access-Control-Max-Age', self::$cors['Max-Age']);
-    }
+    //set CORS if needed
+    $answer = $this->setAnswerCORS( $answer );
 
     $answer->addHeader('Content-Type', 'application/json; charset=utf-8');
     
     //Output + exit
     $answer->output();
     exit;
+  }
+
+
+  /**
+   * Apply the proper CORS response heardes
+   * to an SS_HTTPResponse
+   * 
+   * @param SS_HTTPResponse $answer The updated response if CORS are neabled
+   */
+  private function setAnswerCORS(SS_HTTPResponse $answer)
+  {
+    $cors = Config::inst()->get( 'JSONAPI', 'cors', Config::INHERITED );
+
+    // skip if CORS is not enabled
+    if ( !$cors['Enabled'] )
+    {
+      return $answer;
+    }
+
+    //check if Origin is allowed
+    $allowedOrigin = $cors['Allow-Origin'];
+    $requestOrigin = $this->request->getHeader('Origin');
+    if ( $requestOrigin )
+    {
+      if ( $cors['Allow-Origin'] === '*' )
+      {
+        $allowedOrigin = $requestOrigin;
+      }
+      else if ( is_array($cors['Allow-Origin']) )
+      {
+        if ( in_array($requestOrigin, $cors['Allow-Origin']) )
+        {
+          $allowedOrigin = $requestOrigin;
+        }
+      }
+    }      
+    $answer->addHeader('Access-Control-Allow-Origin', $allowedOrigin);
+    
+    //allowed headers
+    $allowedHeaders = '';
+    $requestHeaders = $this->request->getHeader('Access-Control-Request-Headers');  
+    if ( $cors['Allow-Headers'] === '*' )
+    {
+      $allowedHeaders = $requestHeaders;
+    }
+    else{
+      $allowedHeaders = $cors['Allow-Headers'];
+    }
+    $answer->addHeader('Access-Control-Allow-Headers', $allowedHeaders);
+
+    //allowed method
+    $answer->addHeader('Access-Control-Allow-Methods', $cors['Allow-Methods']);
+
+    //max age
+    $answer->addHeader('Access-Control-Max-Age', $cors['Max-Age']);
+
+    return $answer;
   }
 
 }

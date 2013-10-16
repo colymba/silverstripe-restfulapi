@@ -13,6 +13,7 @@
  */
 class JSONAPI_DefaultSerializer implements JSONAPI_Serializer
 {
+	
 	/**
 	 * Stores current JSONAPI instance
 	 * @var JSONAPI
