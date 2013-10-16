@@ -12,6 +12,7 @@
  */
 interface JSONAPI_Authenticator
 {
+  
 	/**
    * Login a user into the Framework and generates API token
    * 

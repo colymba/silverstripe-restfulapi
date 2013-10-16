@@ -2,8 +2,10 @@
 
 This module implements a JSON API for read/write access to your SilverStripe Models. Originally made for use with EmberJS/Ember Data DS.RESTAdapter.
 
+API URL structure: `http://domain.com/api/Model/ID?param=val`
+
 ## Requirements
-* [SilverStripe Framework 3.1](https://github.com/silverstripe/silverstripe-framework)
+* [SilverStripe Framework 3.1+](https://github.com/silverstripe/silverstripe-framework)
 
 ## Links
 * [JSON API](http://jsonapi.org)
@@ -15,12 +17,11 @@ WORK IN PROGRESS. API in constant change nad not fully implemented.
 
 ## Todo
 * implement `createModel()` method
+* implement `deleteModel()` method
 * check/test `updateModel()` method with latest Ember Data
-* Move serializing method to their own classes (basic, ActiveModel...)
-* API authenticator as its own class?
-* Rename to 'SilverStripe JSON API'
-* Implement API permission set
-* ...
+* Implement API's PermissionProvider
+* Default YAML config
+* Rename module to 'RESTAPI'? this can be used for other thing than JSON via custom Serilaizer...
 
 ## License (BSD Simplified)
 

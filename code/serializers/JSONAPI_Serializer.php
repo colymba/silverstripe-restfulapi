@@ -12,8 +12,10 @@
  */
 interface JSONAPI_Serializer
 {
+
 	/**
 	 * Return current JSONAPI instance
+	 * 
 	 * @return JSONAPI JSONAPI instance
 	 */
 	public function getapi();
@@ -21,6 +23,7 @@ interface JSONAPI_Serializer
 
 	/**
 	 * Return current JSONAPI Query Handler instance
+	 * 
 	 * @return JSONAPI_QueryHandler QueryHandler instance
 	 */
 	public function getserializer();
@@ -28,6 +31,7 @@ interface JSONAPI_Serializer
 
 	/**
 	 * Create instance and saves current api reference
+	 * 
 	 * @param JSONAPI $api current JSONAPI instance
 	 */
 	public function __construct(JSONAPI $api);

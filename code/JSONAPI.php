@@ -1,6 +1,9 @@
 <?php
 /**
  * SilverStripe 3 JSON REST API
+ * Module implementing a framework REST API
+ * with flexible configuration of Model querying and response serialization
+ * through independent components
  * 
  * @author  Thierry Francois @colymba thierry@colymba.com
  * @copyright Copyright (c) 2013, Thierry Francois
@@ -11,8 +14,10 @@
  */
 class JSONAPI extends Controller
 {
+
   /**
    * Lets you select if the API requires authentication for access
+   * 
    * @var boolean
    */
   private static $requiresAuthentication = false;
@@ -20,6 +25,7 @@ class JSONAPI extends Controller
 
   /**
    * Lets you select which class handles authentication
+   * 
    * @var string
    */
   private static $authenticatorClass = 'JSONAPI_TokenAuthenticator';
@@ -27,6 +33,7 @@ class JSONAPI extends Controller
 
   /**
    * Current Authenticator instance
+   * 
    * @var class
    */
   private $authenticator = null;
@@ -34,6 +41,7 @@ class JSONAPI extends Controller
 
   /**
    * Lets you select which class handles model queries
+   * 
    * @var string
    */
   private static $queryHandlerClass = 'JSONAPI_DefaultQueryHandler';
@@ -41,6 +49,7 @@ class JSONAPI extends Controller
 
   /**
    * Current QueryHandler instance
+   * 
    * @var JSONAPI_QueryHandler
    */
   private $queryHandler = null;
@@ -48,6 +57,7 @@ class JSONAPI extends Controller
 
   /**
    * Lets you select which class handles model serialization
+   * 
    * @var string
    */
   private static $serializerClass = 'JSONAPI_DefaultSerializer';
@@ -55,6 +65,7 @@ class JSONAPI extends Controller
 
   /**
    * Current serializer instance
+   * 
    * @var JSONAPI_Serializer
    */
   private $serializer = null;
@@ -105,6 +116,7 @@ class JSONAPI extends Controller
 
   /**
    * Returns current query handler instance
+   * 
    * @return JSONAPI_QueryHandler QueryHandler instance
    */
   public function getqueryHandler()
@@ -115,6 +127,7 @@ class JSONAPI extends Controller
 
   /**
    * Returns current serializer instance
+   * 
    * @return JSONAPI_Serializer Serializer instance
    */
   public function getserializer()
@@ -125,6 +138,7 @@ class JSONAPI extends Controller
 
   /**
    * Handles modules instanciation etc...
+   * 
    * @todo Check if module implement the right interface
    */
   public function __construct()
@@ -189,6 +203,7 @@ class JSONAPI extends Controller
    * Handles authentications methods
    * get response from API Authenticator
    * then passes it on to $answer()
+   * 
    * @param  SS_HTTPRequest $request HTTP request
    */
   public function auth(SS_HTTPRequest $request)
@@ -219,9 +234,9 @@ class JSONAPI extends Controller
    * All requests pass through here and are redirected depending on HTTP verb and params
    *
    * @todo move authentication check to another methode
+   * 
    * @param  SS_HTTPRequest   $request    HTTP request
    * @return string                       json object of the models found
-   * @see    answer()
    */
   function index(SS_HTTPRequest $request)
   {
@@ -258,6 +273,8 @@ class JSONAPI extends Controller
 
   /**
    * Returns the API response to client
+   *
+   * @todo  get 'Content-Type' header from Serializer object
    * 
    * @param  string           $json             Response body
    * @param  boolean|array    $error            Use false if not an error otherwise pass array('code' => statusCode, 'description' => statusDescription)

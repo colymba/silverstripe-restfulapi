@@ -13,6 +13,7 @@
  */
 class JSONAPI_TokenAuthenticator implements JSONAPI_Authenticator
 {
+
 	/**
    * Authentication token life in ms
    * 
@@ -20,10 +21,12 @@ class JSONAPI_TokenAuthenticator implements JSONAPI_Authenticator
    */
   private static $tokenLife = 10800000; //3 * 60 * 60 * 1000;
 
+
   const AUTH_CODE_LOGGED_IN     = 0;
   const AUTH_CODE_LOGIN_FAIL    = 1;
   const AUTH_CODE_TOKEN_INVALID = 2;
   const AUTH_CODE_TOKEN_EXPIRED = 3;
+
 
   /**
    * Login a user into the Framework and generates API token
@@ -76,6 +79,7 @@ class JSONAPI_TokenAuthenticator implements JSONAPI_Authenticator
     return $response;
   }
 
+
   /**
    * Logout a user and update member's API token with an expired one
    * 
@@ -99,6 +103,7 @@ class JSONAPI_TokenAuthenticator implements JSONAPI_Authenticator
       $member->write();
     }
   }
+
 
   /**
    * Sends password recovery email
@@ -129,6 +134,7 @@ class JSONAPI_TokenAuthenticator implements JSONAPI_Authenticator
       'email' => $sent
     )));
   }
+
 
   /**
    * Checks if a request to the API is authenticated
@@ -165,6 +171,7 @@ class JSONAPI_TokenAuthenticator implements JSONAPI_Authenticator
       );
     }
   }
+  
 
   /**
    * Validate the API token

@@ -16,6 +16,7 @@ class JSONAPI_DefaultSerializer implements JSONAPI_Serializer
 	
 	/**
 	 * Stores current JSONAPI instance
+	 * 
 	 * @var JSONAPI
 	 */
 	private $api = null;
@@ -23,6 +24,7 @@ class JSONAPI_DefaultSerializer implements JSONAPI_Serializer
 
 	/**
 	 * Stores current JSONAPI Query Handler
+	 * 
 	 * @var JSONAPI_QueryHandler
 	 */
 	private $queryHandler = null;
@@ -30,6 +32,7 @@ class JSONAPI_DefaultSerializer implements JSONAPI_Serializer
 
   /**
 	 * Return current JSONAPI instance
+	 * 
 	 * @return JSONAPI JSONAPI instance
 	 */
 	public function getapi()
@@ -40,6 +43,7 @@ class JSONAPI_DefaultSerializer implements JSONAPI_Serializer
 
 	/**
 	 * Return current JSONAPI Query Handler instance
+	 * 
 	 * @return JSONAPI_QueryHandler QueryHandler instance
 	 */
 	public function getserializer()
@@ -50,6 +54,7 @@ class JSONAPI_DefaultSerializer implements JSONAPI_Serializer
 
 	/**
 	 * Create instance and saves current api reference
+	 * 
 	 * @param JSONAPI $api current JSONAPI instance
 	 */
 	public function __construct(JSONAPI $api)
@@ -318,6 +323,7 @@ class JSONAPI_DefaultSerializer implements JSONAPI_Serializer
   /**
    * Convert an array's keys from underscored
    * to upper case first and camalized keys
+   * 
    * @param array $map array to convert 
    * @return array converted array
    */

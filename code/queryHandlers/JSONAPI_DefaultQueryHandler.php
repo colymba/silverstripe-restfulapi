@@ -13,8 +13,10 @@
  */
 class JSONAPI_DefaultQueryHandler implements JSONAPI_QueryHandler
 {
+
 	/**
 	 * Stores current JSONAPI instance
+   * 
 	 * @var JSONAPI
 	 */
 	private $api = null;
@@ -22,6 +24,7 @@ class JSONAPI_DefaultQueryHandler implements JSONAPI_QueryHandler
 
 	/**
 	 * Stores current JSONAPI Serializer instance
+   * 
 	 * @var JSONAPI
 	 */
 	private $serializer = null;
@@ -64,6 +67,7 @@ class JSONAPI_DefaultQueryHandler implements JSONAPI_QueryHandler
 
   /**
    * Sideloaded records settings
+   * 
    * @todo not implemented
    * 
    * @var array
@@ -94,6 +98,7 @@ class JSONAPI_DefaultQueryHandler implements JSONAPI_QueryHandler
 
   /**
 	 * Return current JSONAPI instance
+   * 
 	 * @return JSONAPI JSONAPI instance
 	 */
 	public function getapi()
@@ -104,6 +109,7 @@ class JSONAPI_DefaultQueryHandler implements JSONAPI_QueryHandler
 
 	/**
 	 * Return current JSONAPI Serializer instance
+   * 
 	 * @return JSONAPI_Serializer Serializer instance
 	 */
 	public function getserializer()
@@ -114,6 +120,7 @@ class JSONAPI_DefaultQueryHandler implements JSONAPI_QueryHandler
 
 	/**
 	 * Create instance and saves current api reference
+   * 
 	 * @param JSONAPI $api current JSONAPI instance
 	 */
 	public function __construct(JSONAPI $api)
@@ -326,6 +333,7 @@ class JSONAPI_DefaultQueryHandler implements JSONAPI_QueryHandler
 
   /**
    * Create object of class $model
+   * 
    * @todo not implemented
    * @param  string         $model
    * @param  SS_HTTPRequest $request
@@ -402,6 +410,7 @@ class JSONAPI_DefaultQueryHandler implements JSONAPI_QueryHandler
 
   /**
    * Delete object of Class $model and ID $id
+   * 
    * @todo not implemented
    * @param  string         $model   Model class
    * @param  Integer 				$id      Model ID
