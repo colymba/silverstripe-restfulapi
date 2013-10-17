@@ -340,7 +340,7 @@ class JSONAPI extends Controller
           $allowedOrigin = $requestOrigin;
         }
       }
-    }      
+    }
     $answer->addHeader('Access-Control-Allow-Origin', $allowedOrigin);
     
     //allowed headers

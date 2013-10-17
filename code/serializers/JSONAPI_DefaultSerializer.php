@@ -279,7 +279,7 @@ class JSONAPI_DefaultSerializer implements JSONAPI_Serializer
 	 */
 	public function deserialize(string $json)
 	{
-		$data = json_decode( $payloadBody, true );
+		$data = json_decode( $json, true );
 
     if ( $data )
     {
@@ -364,7 +364,7 @@ class JSONAPI_DefaultSerializer implements JSONAPI_Serializer
       // Handle nested arrays
       if (is_array($value))
       {
-        $map[$newKey] = $this->underscoredToCamelised( $map[$newKey] );
+        $map[$newKey] = $this->ucfirstCamelcaseKeys( $map[$newKey] );
       }
     }
 

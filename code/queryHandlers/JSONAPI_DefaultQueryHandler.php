@@ -356,14 +356,12 @@ class JSONAPI_DefaultQueryHandler implements JSONAPI_QueryHandler
    * @param Integer $id The ID of the model to update
    * @param SS_HTTPRequest the original request
    *
-   * @todo embeded records are deprecated so relations updating probably doesn't work anymore
-   *
    * @return DataObject The updated model 
    */
   function updateModel($model, $id, $request)
   {
     $model = DataObject::get_by_id($model, $id);
-    $payload = $this->decodePayload( $request->getBody() );
+    $payload = $this->serializer->deserialize( $request->getBody() );
 
     if ( $model && $payload )
     {
@@ -380,7 +378,13 @@ class JSONAPI_DefaultQueryHandler implements JSONAPI_QueryHandler
       {
         if ( !is_array($value) )
         {
-          if ( $model->{$attribute} != $value )
+          if ( method_exists($model, $attribute) )
+          {
+            $relation         = $attribute . 'ID';
+            $model->$relation = $value;
+            $hasChanges       = true;
+          }
+          else if ( $model->{$attribute} != $value )
           {
             $model->{$attribute} = $value;
             $hasChanges          = true;
@@ -388,15 +392,14 @@ class JSONAPI_DefaultQueryHandler implements JSONAPI_QueryHandler
         }
         else{
           //has_many, many_many or $belong_many_many
-          //@todo check/test
           if ( array_key_exists($attribute, $has_many) || array_key_exists($attribute, $many_many) || array_key_exists($attribute, $belongs_many_many) )
           {
             $hasRelationChanges = true;
             $ssList = $model->{$attribute}();            
             $ssList->removeAll(); //reset list
-            foreach ($value as $associatedModel)
+            foreach ($value as $id)
             {
-              $ssList->add( $associatedModel['ID'] );              
+              $ssList->add( $id );              
             }
           }
         }
