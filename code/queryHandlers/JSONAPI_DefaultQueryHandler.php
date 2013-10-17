@@ -143,7 +143,7 @@ class JSONAPI_DefaultQueryHandler implements JSONAPI_QueryHandler
    * @return DataObjec|DataList|stdClass                DataObject/DataList result or stdClass on error
    */
   public function handleQuery(SS_HTTPRequest $request)
-  {
+  { 
   	//get requested model(s) details
     $model       = $request->param('ClassName');
     $id          = $request->param('ID');
@@ -154,6 +154,10 @@ class JSONAPI_DefaultQueryHandler implements JSONAPI_QueryHandler
     if ($model)
     {
       $model = $this->serializer->unformatName( $model );
+    }
+    else{
+      //if model missing, stop + return blank object
+      return new stdClass();
     }
 
     //store requested model data and query data
