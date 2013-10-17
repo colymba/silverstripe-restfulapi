@@ -338,14 +338,16 @@ class JSONAPI_DefaultQueryHandler implements JSONAPI_QueryHandler
   /**
    * Create object of class $model
    * 
-   * @todo not implemented
    * @param  string         $model
    * @param  SS_HTTPRequest $request
    * @return DataObject
    */
   function createModel(string $model, SS_HTTPRequest $request)
   {
+    $newModel = Injector::inst()->create($model);
+    $newModel->write();
 
+    return $this->updateModel($model, $newModel->ID, $request);
   }
 
 
@@ -378,7 +380,7 @@ class JSONAPI_DefaultQueryHandler implements JSONAPI_QueryHandler
       {
         if ( !is_array($value) )
         {
-          if ( method_exists($model, $attribute) )
+          if ( array_key_exists($attribute, $has_one) )
           {
             $relation         = $attribute . 'ID';
             $model->$relation = $value;
