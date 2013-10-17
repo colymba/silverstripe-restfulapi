@@ -30,6 +30,15 @@ interface JSONAPI_Serializer
 
 
 	/**
+	 * Return Content-type header definition
+	 * to be used in the API response
+	 * 
+	 * @return string Content-type
+	 */
+	public function getcontentType();
+
+
+	/**
 	 * Create instance and saves current api reference
 	 * 
 	 * @param JSONAPI $api current JSONAPI instance

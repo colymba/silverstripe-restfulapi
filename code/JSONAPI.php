@@ -300,7 +300,7 @@ class JSONAPI extends Controller
     //set CORS if needed
     $answer = $this->setAnswerCORS( $answer );
 
-    $answer->addHeader('Content-Type', 'application/json; charset=utf-8');
+    $answer->addHeader('Content-Type', $this->serializer->getcontentType() );
     
     //Output + exit
     $answer->output();

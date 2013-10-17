@@ -13,6 +13,15 @@
  */
 class JSONAPI_DefaultSerializer implements JSONAPI_Serializer
 {
+
+	/**
+	 * Content-type header definition for this Serializer
+	 * Used by JSONAPI in the response
+	 * 
+	 * @var string
+	 */
+	private $contentType = 'application/json; charset=utf-8';
+
 	
 	/**
 	 * Stores current JSONAPI instance
@@ -49,6 +58,18 @@ class JSONAPI_DefaultSerializer implements JSONAPI_Serializer
 	public function getserializer()
 	{
 		return $this->queryHandler;
+	}
+
+
+	/**
+	 * Return Content-type header definition
+	 * to be used in the API response
+	 * 
+	 * @return string Content-type
+	 */
+	public function getcontentType()
+	{
+		return $this->contentType;
 	}
 
 
