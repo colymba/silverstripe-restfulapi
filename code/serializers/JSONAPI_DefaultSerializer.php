@@ -80,6 +80,7 @@ class JSONAPI_DefaultSerializer implements JSONAPI_Serializer
 	public function serialize($data)
 	{
 		$json = '';
+		$formattedData = false;
 
 		if ( $data instanceof DataObject )
 		{
@@ -90,13 +91,12 @@ class JSONAPI_DefaultSerializer implements JSONAPI_Serializer
 		{
 			$className = $this->formatName( $data->dataClass );
 			$formattedData = $this->formatDataList( $data );
-		}/*
+		}
 		else{
 			//no usable $data -> return empty json
 			$root = new stdClass();
-			$root->{$this->queryHandler->requestedData['model']} = new stdClass();
       $json = Convert::raw2json($root);
-		}*/
+		}
 
 		if ( $formattedData )
 		{
