@@ -157,7 +157,7 @@ class JSONAPI_DefaultQueryHandler implements JSONAPI_QueryHandler
     }
     else{
       //if model missing, stop + return blank object
-      return new stdClass();
+      return false;
     }
 
     //store requested model data and query data
@@ -189,7 +189,7 @@ class JSONAPI_DefaultQueryHandler implements JSONAPI_QueryHandler
       $result = $this->deleteModel($model, $id, $request);
     }
     else{
-    	$result = new stdClass();
+    	$result = false;
     }
     
     return $result;
