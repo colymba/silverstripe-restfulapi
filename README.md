@@ -16,9 +16,7 @@ API URL structure: `http://domain.com/api/Model/ID?param=val`
 WORK IN PROGRESS. API in constant change nad not fully implemented.
 
 ## Todo
-* implement `createModel()` method
 * implement `deleteModel()` method
-* check/test `updateModel()` method with latest Ember Data
 * Implement API's PermissionProvider
 * Default YAML config
 * Rename module to 'RESTAPI'? this can be used for other thing than JSON via custom Serilaizer...
