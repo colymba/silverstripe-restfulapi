@@ -111,6 +111,7 @@ class JSONAPI_DefaultSerializer implements JSONAPI_Serializer
 		else if ( $data instanceof DataList )
 		{
 			$className = $this->formatName( $data->dataClass );
+			$className = Inflector::pluralize( $className );
 			$formattedData = $this->formatDataList( $data );
 		}
 		else if ( is_array($data) )
