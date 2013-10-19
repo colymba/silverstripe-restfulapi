@@ -423,11 +423,11 @@ class JSONAPI_DefaultQueryHandler implements JSONAPI_QueryHandler
    * @param  string          $model     Model class
    * @param  integer 				 $id        Model ID
    * @param  SS_HTTPRequest  $request   Model ID
-   * @return Boolean                    true if successful or false if failed              
+   * @return boolean|array              true if successful or array with error detail              
    */
   function deleteModel(string $model, integer $id, SS_HTTPRequest $request)
   {
-    $deleted = false;
+    $deleted = true;
 
     if ( $id )
     {
@@ -436,8 +436,13 @@ class JSONAPI_DefaultQueryHandler implements JSONAPI_QueryHandler
       if ( $object )
       {
         $object->delete();
-        $deleted = true;
       }
+      else{
+        $deleted = array('error' => 'Record not found');
+      }
+    }
+    else{
+      $deleted = array('error' => 'ID missing');
     }
     
     return $deleted;
