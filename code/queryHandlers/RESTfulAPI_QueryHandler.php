@@ -1,30 +1,30 @@
 <?php
 /**
- * JSON API Query handlers definition
+ * RESTfulAPI Query handlers definition
  * 
  * @author  Thierry Francois @colymba thierry@colymba.com
  * @copyright Copyright (c) 2013, Thierry Francois
  * 
  * @license http://opensource.org/licenses/BSD-3-Clause BSD Simplified
  * 
- * @package SS_JSONAPI
+ * @package RESTfulAPI
  * @subpackage QueryHandler
  */
-interface JSONAPI_QueryHandler
+interface RESTfulAPI_QueryHandler
 {
 
 	/**
-	 * Return current JSONAPI instance
+	 * Return current RESTfulAPI instance
 	 * 
-	 * @return JSONAPI JSONAPI instance
+	 * @return RESTfulAPI RESTfulAPI instance
 	 */
 	public function getapi();
 
 
 	/**
-	 * Return current JSONAPI Serializer instance
+	 * Return current RESTfulAPI Serializer instance
 	 * 
-	 * @return JSONAPI_Serializer Serializer instance
+	 * @return RESTfulAPI_Serializer Serializer instance
 	 */
 	public function getserializer();
 
@@ -32,9 +32,9 @@ interface JSONAPI_QueryHandler
 	/**
 	 * Create instance and saves current api reference
 	 * 
-	 * @param JSONAPI $api current JSONAPI instance
+	 * @param RESTfulAPI $api current RESTfulAPI instance
 	 */
-	public function __construct(JSONAPI $api);
+	public function __construct(RESTfulAPI $api);
 
 
 	/**

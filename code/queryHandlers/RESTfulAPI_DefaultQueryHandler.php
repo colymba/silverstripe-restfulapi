@@ -1,6 +1,6 @@
 <?php
 /**
- * Default API Query handler
+ * Default RESTfulAPI Query handler
  * handles models request etc...
  * 
  * @author  Thierry Francois @colymba thierry@colymba.com
@@ -8,24 +8,24 @@
  * 
  * @license http://opensource.org/licenses/BSD-3-Clause BSD Simplified
  * 
- * @package SS_JSONAPI
+ * @package RESTfulAPI
  * @subpackage QueryHandler
  */
-class JSONAPI_DefaultQueryHandler implements JSONAPI_QueryHandler
+class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
 {
 
 	/**
-	 * Stores current JSONAPI instance
+	 * Stores current RESTfulAPI instance
    * 
-	 * @var JSONAPI
+	 * @var RESTfulAPI
 	 */
 	private $api = null;
 
 
 	/**
-	 * Stores current JSONAPI Serializer instance
+	 * Stores current RESTfulAPI Serializer instance
    * 
-	 * @var JSONAPI
+	 * @var RESTfulAPI
 	 */
 	private $serializer = null;
 
@@ -97,9 +97,9 @@ class JSONAPI_DefaultQueryHandler implements JSONAPI_QueryHandler
 
 
   /**
-	 * Return current JSONAPI instance
+	 * Return current RESTfulAPI instance
    * 
-	 * @return JSONAPI JSONAPI instance
+	 * @return RESTfulAPI RESTfulAPI instance
 	 */
 	public function getapi()
 	{
@@ -108,9 +108,9 @@ class JSONAPI_DefaultQueryHandler implements JSONAPI_QueryHandler
 
 
 	/**
-	 * Return current JSONAPI Serializer instance
+	 * Return current RESTfulAPI Serializer instance
    * 
-	 * @return JSONAPI_Serializer Serializer instance
+	 * @return RESTfulAPI_Serializer Serializer instance
 	 */
 	public function getserializer()
 	{
@@ -121,17 +121,17 @@ class JSONAPI_DefaultQueryHandler implements JSONAPI_QueryHandler
 	/**
 	 * Create instance and saves current api reference
    * 
-	 * @param JSONAPI $api current JSONAPI instance
+	 * @param RESTfulAPI $api current RESTfulAPI instance
 	 */
-	public function __construct(JSONAPI $api)
+	public function __construct(RESTfulAPI $api)
 	{
-		if ( $api instanceof JSONAPI )
+		if ( $api instanceof RESTfulAPI )
 		{
 			$this->api = $api;
 			$this->serializer = $api->getserializer();
 		}
 		else{
-			user_error("JSONAPI_DefaultQueryHandler __constuct requires a JSONAPI instance as argument.", E_USER_ERROR);
+			user_error("RESTfulAPI_DefaultQueryHandler __constuct requires a RESTfulAPI instance as argument.", E_USER_ERROR);
 		}		
 	}
 
@@ -212,7 +212,7 @@ class JSONAPI_DefaultQueryHandler implements JSONAPI_QueryHandler
   function parseQueryParameters(array $params)
   {
     $parsedParams = array();
-    $searchFilterModifiersSeparator = Config::inst()->get( 'JSONAPI_DefaultQueryHandler', 'searchFilterModifiersSeparator', Config::INHERITED );
+    $searchFilterModifiersSeparator = Config::inst()->get( 'RESTfulAPI_DefaultQueryHandler', 'searchFilterModifiersSeparator', Config::INHERITED );
 
     foreach ($params as $key__mod => $value)
     {

@@ -1,18 +1,19 @@
 <?php
 /**
- * SilverStripe 3 JSON REST API
- * Module implementing a framework REST API
- * with flexible configuration of Model querying and response serialization
- * through independent components
+ * SilverStripe 3 RESTful API
+ * 
+ * This module implements a RESTful API
+ * with flexible configuration for model querying and response serialization
+ * through independent components.
  * 
  * @author  Thierry Francois @colymba thierry@colymba.com
  * @copyright Copyright (c) 2013, Thierry Francois
  * 
  * @license http://opensource.org/licenses/BSD-3-Clause BSD Simplified
  * 
- * @package SS_JSONAPI
+ * @package RESTfulAPI
  */
-class JSONAPI extends Controller
+class RESTfulAPI extends Controller
 {
 
   /**
@@ -28,7 +29,7 @@ class JSONAPI extends Controller
    * 
    * @var string
    */
-  private static $authenticatorClass = 'JSONAPI_TokenAuthenticator';
+  private static $authenticatorClass = 'RESTfulAPI_TokenAuthenticator';
 
 
   /**
@@ -44,13 +45,13 @@ class JSONAPI extends Controller
    * 
    * @var string
    */
-  private static $queryHandlerClass = 'JSONAPI_DefaultQueryHandler';
+  private static $queryHandlerClass = 'RESTfulAPI_DefaultQueryHandler';
 
 
   /**
    * Current QueryHandler instance
    * 
-   * @var JSONAPI_QueryHandler
+   * @var RESTfulAPI_QueryHandler
    */
   private $queryHandler = null;
 
@@ -60,13 +61,13 @@ class JSONAPI extends Controller
    * 
    * @var string
    */
-  private static $serializerClass = 'JSONAPI_DefaultSerializer';
+  private static $serializerClass = 'RESTfulAPI_DefaultSerializer';
 
 
   /**
    * Current serializer instance
    * 
-   * @var JSONAPI_Serializer
+   * @var RESTfulAPI_Serializer
    */
   private $serializer = null;
 
@@ -117,7 +118,7 @@ class JSONAPI extends Controller
   /**
    * Returns current query handler instance
    * 
-   * @return JSONAPI_QueryHandler QueryHandler instance
+   * @return RESTfulAPI_QueryHandler QueryHandler instance
    */
   public function getqueryHandler()
   {
@@ -128,7 +129,7 @@ class JSONAPI extends Controller
   /**
    * Returns current serializer instance
    * 
-   * @return JSONAPI_Serializer Serializer instance
+   * @return RESTfulAPI_Serializer Serializer instance
    */
   public function getserializer()
   {
@@ -144,10 +145,10 @@ class JSONAPI extends Controller
   public function __construct()
   {  
     //creates authenticator instance if required
-    $requiresAuth = Config::inst()->get( 'JSONAPI', 'requiresAuthentication', Config::INHERITED );
+    $requiresAuth = Config::inst()->get( 'RESTfulAPI', 'requiresAuthentication', Config::INHERITED );
     if ( $requiresAuth )
     {
-      $authClass = Config::inst()->get( 'JSONAPI', 'authenticatorClass', Config::INHERITED );
+      $authClass = Config::inst()->get( 'RESTfulAPI', 'authenticatorClass', Config::INHERITED );
       if ( $authClass && class_exists($authClass) )
       {
         $this->authenticator = Injector::inst()->create($authClass);
@@ -160,7 +161,7 @@ class JSONAPI extends Controller
 
 
     //creates serializer instance    
-    $serializerClass = Config::inst()->get( 'JSONAPI', 'serializerClass', Config::INHERITED );
+    $serializerClass = Config::inst()->get( 'RESTfulAPI', 'serializerClass', Config::INHERITED );
     if ( class_exists($serializerClass) )
     {
       $this->serializer = Injector::inst()->create($serializerClass, $this);
@@ -171,7 +172,7 @@ class JSONAPI extends Controller
 
 
     //creates query handler instance
-    $queryHandlerClass = Config::inst()->get( 'JSONAPI', 'queryHandlerClass', Config::INHERITED );
+    $queryHandlerClass = Config::inst()->get( 'RESTfulAPI', 'queryHandlerClass', Config::INHERITED );
     if ( class_exists($queryHandlerClass) )
     {
       $this->queryHandler = Injector::inst()->create($queryHandlerClass, $this);
@@ -316,7 +317,7 @@ class JSONAPI extends Controller
    */
   private function setAnswerCORS(SS_HTTPResponse $answer)
   {
-    $cors = Config::inst()->get( 'JSONAPI', 'cors', Config::INHERITED );
+    $cors = Config::inst()->get( 'RESTfulAPI', 'cors', Config::INHERITED );
 
     // skip if CORS is not enabled
     if ( !$cors['Enabled'] )

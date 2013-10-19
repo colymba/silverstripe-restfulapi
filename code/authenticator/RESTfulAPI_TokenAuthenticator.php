@@ -1,6 +1,6 @@
 <?php
 /**
- * API authenticator
+ * RESTfulAPI Token authenticator
  * handles login, logout and request authentication via token
  * 
  * @author  Thierry Francois @colymba thierry@colymba.com
@@ -8,10 +8,10 @@
  * 
  * @license http://opensource.org/licenses/BSD-3-Clause BSD Simplified
  * 
- * @package SS_JSONAPI
+ * @package RESTfulAPI
  * @subpackage Authentication
  */
-class JSONAPI_TokenAuthenticator implements JSONAPI_Authenticator
+class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
 {
 
 	/**
@@ -188,7 +188,7 @@ class JSONAPI_TokenAuthenticator implements JSONAPI_Authenticator
       //check token expiry
       $tokenExpire  = $member->ApiTokenExpire;
       $now          = time();
-      $life         = Config::inst()->get( 'JSONAPI_TokenAuthenticator', 'tokenLife', Config::INHERITED );
+      $life         = Config::inst()->get( 'RESTfulAPI_TokenAuthenticator', 'tokenLife', Config::INHERITED );
 
       if ( $tokenExpire > ($now - $life) )
       {

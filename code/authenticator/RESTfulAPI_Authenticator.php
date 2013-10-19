@@ -1,16 +1,16 @@
 <?php
 /**
- * Basic required structure for any API Authenticator
+ * Basic required structure for any RESTfulAPI Authenticator
  * 
  * @author  Thierry Francois @colymba thierry@colymba.com
  * @copyright Copyright (c) 2013, Thierry Francois
  * 
  * @license http://opensource.org/licenses/BSD-3-Clause BSD Simplified
  * 
- * @package SS_JSONAPI
+ * @package RESTfulAPI
  * @subpackage Authentication
  */
-interface JSONAPI_Authenticator
+interface RESTfulAPI_Authenticator
 {
   
 	/**

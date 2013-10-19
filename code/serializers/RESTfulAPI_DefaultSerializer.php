@@ -1,6 +1,6 @@
 <?php
 /**
- * Default API Model Serializer
+ * Default RESTfulAPI Model Serializer
  * handles DataObject, DataList etc.. JSON serialization and de-serialization
  * 
  * @author  Thierry Francois @colymba thierry@colymba.com
@@ -8,15 +8,15 @@
  * 
  * @license http://opensource.org/licenses/BSD-3-Clause BSD Simplified
  * 
- * @package SS_JSONAPI
+ * @package RESTfulAPI
  * @subpackage Serializer
  */
-class JSONAPI_DefaultSerializer implements JSONAPI_Serializer
+class RESTfulAPI_DefaultSerializer implements RESTfulAPI_Serializer
 {
 
 	/**
 	 * Content-type header definition for this Serializer
-	 * Used by JSONAPI in the response
+	 * Used by RESTfulAPI in the response
 	 * 
 	 * @var string
 	 */
@@ -24,25 +24,25 @@ class JSONAPI_DefaultSerializer implements JSONAPI_Serializer
 
 	
 	/**
-	 * Stores current JSONAPI instance
+	 * Stores current RESTfulAPI instance
 	 * 
-	 * @var JSONAPI
+	 * @var RESTfulAPI
 	 */
 	private $api = null;
 	
 
 	/**
-	 * Stores current JSONAPI Query Handler
+	 * Stores current RESTfulAPI Query Handler
 	 * 
-	 * @var JSONAPI_QueryHandler
+	 * @var RESTfulAPI_QueryHandler
 	 */
 	private $queryHandler = null;
 
 
   /**
-	 * Return current JSONAPI instance
+	 * Return current RESTfulAPI instance
 	 * 
-	 * @return JSONAPI JSONAPI instance
+	 * @return RESTfulAPI RESTfulAPI instance
 	 */
 	public function getapi()
 	{
@@ -51,9 +51,9 @@ class JSONAPI_DefaultSerializer implements JSONAPI_Serializer
 
 
 	/**
-	 * Return current JSONAPI Query Handler instance
+	 * Return current RESTfulAPI Query Handler instance
 	 * 
-	 * @return JSONAPI_QueryHandler QueryHandler instance
+	 * @return RESTfulAPI_QueryHandler QueryHandler instance
 	 */
 	public function getserializer()
 	{
@@ -76,17 +76,17 @@ class JSONAPI_DefaultSerializer implements JSONAPI_Serializer
 	/**
 	 * Create instance and saves current api reference
 	 * 
-	 * @param JSONAPI $api current JSONAPI instance
+	 * @param RESTfulAPI $api current RESTfulAPI instance
 	 */
-	public function __construct(JSONAPI $api)
+	public function __construct(RESTfulAPI $api)
 	{
-		if ( $api instanceof JSONAPI )
+		if ( $api instanceof RESTfulAPI )
 		{
 			$this->api = $api;
 			$this->queryHandler = $api->getqueryHandler();
 		}
 		else{
-			user_error("JSONAPI_DefaultSerializer __constuct requires a JSONAPI instance as argument.", E_USER_ERROR);
+			user_error("RESTfulAPI_DefaultSerializer __constuct requires a RESTfulAPI instance as argument.", E_USER_ERROR);
 		}		
 	}
 

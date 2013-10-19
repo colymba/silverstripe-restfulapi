@@ -1,7 +1,7 @@
 ---
-Name: jsonApi
+Name: restfulapi
 After: 'framework/*','cms/*'
 ---
 Director:
   rules:
-    'api': 'JSONAPI'
+    'api': 'RESTfulAPI'

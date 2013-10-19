@@ -1,25 +1,38 @@
-# SilverStripe JSON API
+# SilverStripe RESTful API
 
-This module implements a JSON API for read/write access to your SilverStripe Models. Originally made for use with EmberJS/Ember Data DS.RESTAdapter.
+This module implements a RESTful API for read/write access to your SilverStripe Models. Comes bundled with a default Query Handler and JSON Serializer, but can be extended to return XML or other content type via custom Serializers.
 
-API URL structure: `http://domain.com/api/Model/ID?param=val`
+## API URL structure
+
+| Action                | Verb      | URL                                     |
+| :-------------------- | :-------- | :-------------------------------------- |
+| Find 1 record         | `GET`     | `api/Models/ID`                         |
+| Find multiple records | `GET`     | `api/Models?param=val&anotherParam=val` |
+| Update a record       | `PUT`     | `api/Models/ID`                         |
+| Create a record       | `POST`    | `api/Models`                            |
+| Delete a record       | `DELETE`  | `api/Models/ID`                         |
+| -                     | -         | -                                       |
+| Login & get token     | `*`       | `api/auth/login?email=***&pwd=***`      |
+| Logout                | `*`       | `api/auth/logout`                       |
+| Password reset email  | `*`       | `api/auth/lostPassword?email=***`       |
+
+`Models` being the pluralized calss name of the model you are querying.
 
 ## Requirements
 * [SilverStripe Framework 3.1+](https://github.com/silverstripe/silverstripe-framework)
+
+## Note
+Originally made for use with EmberJS/Ember Data DS.RESTAdapter. This RESTful API with the default JSON Serializer should work out of the box with the latest version of Ember Data.
 
 ## Links
 * [JSON API](http://jsonapi.org)
 * [Ember JS](https://github.com/emberjs/ember.js)
 * [Ember Data](https://github.com/emberjs/data)
 
-## Note
-WORK IN PROGRESS. API in constant change nad not fully implemented.
-
 ## Todo
-* implement `deleteModel()` method
+* Authentication, Serializer & QueryHandler help
 * Implement API's PermissionProvider
 * Default YAML config
-* Rename module to 'RESTAPI'? this can be used for other thing than JSON via custom Serilaizer...
 
 ## License (BSD Simplified)
 

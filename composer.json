@@ -1,9 +1,9 @@
 {
-	"name": "colymba/silverstripe-model-serializer",
+	"name": "colymba/silverstripe-restfulapi",
 	"type": "silverstripe-module",
-	"description": "SilverStripe 3 Model Serializer providing a JSON REST API for your application.",
+	"description": "SilverStripe 3 RESTful API with a default JSON serializer.",
 	"homepage": "https://github.com/colymba/silverstripe-model-serializer",
-	"keywords": ["silverstripe", "api", "RESTful", "json api", "model serializer", "REST server", "RESTful server"],
+	"keywords": ["silverstripe", "api", "REST", "REST API", "RESTful", "json api", "model serializer", "REST server", "RESTful server"],
 	"license": "BSD Simplified",
 	"authors": [{
 		"name": "Thierry Francois",
@@ -11,7 +11,7 @@
   }],
   "repositories": [{
     "type": "vcs",
-    "url": "git@github.com:colymba/silverstripe-model-serializer.git"
+    "url": "git@github.com:colymba/silverstripe-restfulapi.git"
   }],
 	"require": {
     "silverstripe/framework": "~3.1"
