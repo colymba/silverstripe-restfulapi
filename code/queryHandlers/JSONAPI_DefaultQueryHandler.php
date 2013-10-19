@@ -265,7 +265,7 @@ class JSONAPI_DefaultQueryHandler implements JSONAPI_QueryHandler
       // ":StartsWith", ":EndsWith", ":PartialMatch", ":GreaterThan", ":LessThan", ":Negation"
       // sort, rand, limit
 
-      $return = DataObject::get($model);
+      $return = DataList::create($model);
 
       if ( count($queryParams) > 0 )
       {
