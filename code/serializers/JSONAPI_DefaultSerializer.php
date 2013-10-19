@@ -113,10 +113,13 @@ class JSONAPI_DefaultSerializer implements JSONAPI_Serializer
 			$className = $this->formatName( $data->dataClass );
 			$formattedData = $this->formatDataList( $data );
 		}
+		else if ( is_array($data) )
+		{
+			$json = Convert::raw2json($data);
+		}
 		else{
-			//no usable $data -> return empty json
-			$root = new stdClass();
-      $json = Convert::raw2json($root);
+			//no usable $data -> empty response
+      $json = '';
 		}
 
 		if ( $formattedData )
