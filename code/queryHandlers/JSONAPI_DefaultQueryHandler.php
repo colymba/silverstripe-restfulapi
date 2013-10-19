@@ -420,13 +420,26 @@ class JSONAPI_DefaultQueryHandler implements JSONAPI_QueryHandler
   /**
    * Delete object of Class $model and ID $id
    * 
-   * @todo not implemented
-   * @param  string         $model   Model class
-   * @param  Integer 				$id      Model ID
-   * @return Boolean                 true if successful or false if failed              
+   * @param  string          $model     Model class
+   * @param  integer 				 $id        Model ID
+   * @param  SS_HTTPRequest  $request   Model ID
+   * @return Boolean                    true if successful or false if failed              
    */
-  function deleteModel($model, $id)
+  function deleteModel(string $model, integer $id, SS_HTTPRequest $request)
   {
+    $deleted = false;
 
+    if ( $id )
+    {
+      $object = DataObject::get_by_id($model, $id);
+
+      if ( $object )
+      {
+        $object->delete();
+        $deleted = true;
+      }
+    }
+    
+    return $deleted;
   }
 }
