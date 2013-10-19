@@ -235,7 +235,7 @@ class JSONAPI_DefaultSerializer implements JSONAPI_Serializer
 
 
 	/**
-	 * Format a SilverStripe ClassName of DBField
+	 * Format a SilverStripe ClassName or Field name
 	 * to be used by the client API
 	 * 
 	 * @param  string $name ClassName of DBField name
@@ -255,6 +255,14 @@ class JSONAPI_DefaultSerializer implements JSONAPI_Serializer
 		return $name;
 	}
 
+
+	/**
+	 * Format a DB Column name or Field name
+	 * to be used by the client API
+	 * 
+	 * @param  string $name Field name
+	 * @return string       Formatted name
+	 */
 	private function serializeColumnName(string $name)
 	{
 		$name = str_replace('ID', 'Id', $name);
@@ -277,8 +285,8 @@ class JSONAPI_DefaultSerializer implements JSONAPI_Serializer
 	 * Convert client JSON data to an array of data
 	 * ready to be consumed by SilverStripe
 	 * 
-	 * @param  string  $data   JSON to be converted to data ready to be consumed by SilverStripe
-	 * @return array           Formatted array representation of the JSON data
+	 * @param  string        $data   JSON to be converted to data ready to be consumed by SilverStripe
+	 * @return array|false           Formatted array representation of the JSON data or false if failed
 	 */
 	public function deserialize(string $json)
 	{
@@ -286,8 +294,15 @@ class JSONAPI_DefaultSerializer implements JSONAPI_Serializer
 
     if ( $data )
     {
-      $data = $this->ucfirstCamelcaseKeys( $data );
-      $data = $this->upperCaseIDs( $data );
+      foreach ($data as $column => $value)
+      {
+      	$newColumn = $this->deserializeColumnName( $column );
+      	if ( $newColumn !== $column )
+      	{
+      		unset($data[$column]);
+        	$data[$newColumn] = $value;
+      	}
+      }
     }
     else{
       return false;
@@ -298,16 +313,15 @@ class JSONAPI_DefaultSerializer implements JSONAPI_Serializer
 
 
 	/**
-	 * Format a ClassName of DBField name sent by client API
+	 * Format a ClassName or Field name sent by client API
 	 * to be used by SilverStripe
 	 * 
-	 * @param  string $name ClassName of DBField name
+	 * @param  string $name ClassName of Field name
 	 * @return string       Formatted name
 	 */
 	public function unformatName(string $name)
 	{
-		$class = Inflector::camelize( $name );
-		$class = Inflector::singularize( $class );
+		$class = Inflector::singularize( $name );
 		$class = ucfirst( $class );
 
 		if ( ClassInfo::exists($class) )
@@ -315,9 +329,23 @@ class JSONAPI_DefaultSerializer implements JSONAPI_Serializer
 			return $class;
 		}
 		else{
-			$name = $this->ucIDKeys( $name );
-			$name = ucfirst( $name );
+			$name = $this->serializeColumnName( $name );
 		}
+
+		return $name;
+	}
+
+
+	/**
+	 * Format a DB Column name or Field name
+	 * sent from client API to be used by SilverStripe
+	 * 
+	 * @param  string $name Field name
+	 * @return string       Formatted name
+	 */
+	private function deserializeColumnName(string $name)
+	{
+		$name = ucfirst($name);
 
 		return $name;
 	}
@@ -326,7 +354,7 @@ class JSONAPI_DefaultSerializer implements JSONAPI_Serializer
 
 
 	/* ************************************************************************************
-	 * UTILITIES **************************************************************************
+	 * UTILITIES LEGACY *******************************************************************
 	 * ************************************************************************************/
 
 
