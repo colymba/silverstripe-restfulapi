@@ -330,7 +330,7 @@ class JSONAPI_DefaultSerializer implements JSONAPI_Serializer
 			return $class;
 		}
 		else{
-			$name = $this->serializeColumnName( $name );
+			$name = $this->deserializeColumnName( $name );
 		}
 
 		return $name;
@@ -346,6 +346,7 @@ class JSONAPI_DefaultSerializer implements JSONAPI_Serializer
 	 */
 	private function deserializeColumnName(string $name)
 	{
+		$name = preg_replace( '/(.*)ID(s)?$/i', '$1ID', $name);
 		$name = ucfirst($name);
 
 		return $name;
