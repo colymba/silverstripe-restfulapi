@@ -1,6 +1,6 @@
 # SilverStripe RESTful API
 
-This module implements a RESTful API for read/write access to your SilverStripe Models. Comes bundled with a default Query Handler and JSON Serializer, but can be extended to return XML or other content type via custom Serializers.
+This module implements a RESTful API for read/write access to your SilverStripe Models. Comes bundled with a default Token Authenticator, Query Handler and JSON Serializer, but can be extended to return XML or other content type via custom Serializers.
 
 ## API URL structure
 
@@ -16,7 +16,12 @@ This module implements a RESTful API for read/write access to your SilverStripe 
 | Logout                | `*`       | `api/auth/logout`                       |
 | Password reset email  | `*`       | `api/auth/lostPassword?email=***`       |
 
-`Models` being the pluralized calss name of the model you are querying.
+`Models` being the pluralized calss name of the model you are querying. For example with model class named `Book` URLs would look like:
+* `api/Books/33`
+* `api/Books?title=Henry`
+* `api/Books?title__StartsWith=Henry`
+* `api/Books?title__StartsWith=Henry&__rand=123456&__limit=1`
+* `api/Books?title__StartsWith=Henry&__rand=123456&__limit[]=10&__limit[]=5`
 
 ## Requirements
 * [SilverStripe Framework 3.1+](https://github.com/silverstripe/silverstripe-framework)
@@ -79,7 +84,7 @@ Config | Type | Info | Default
 --- | :---: | --- | ---
 `embeddedRecords` | `array` | Defines which classes to embed into relations. NOT IMPLEMENTED | n/a
 `sideloadedRecords` | `array` | Defines which classes to load into the response. NOT IMPLEMENTED | n/a
-`searchFilterModifiersSeparator` | `string` | Separator used in HTTP params between the column name and the search filter modifier (e.g. ?name__StartsWith=Henry will find models with the column name that starts with 'Henry'. ORM equivalent `->filter(array('name::StartsWith' => 'Henry'))` ) | '__'
+`searchFilterModifiersSeparator` | `string` | Separator used in HTTP params between the column name and the search filter modifier (e.g. ?name__StartsWith=Henry will find models with the column name that starts with 'Henry'. ORM equivalent *->filter(array('name::StartsWith' => 'Henry'))* ) | '__'
 
 
 #### RESTfulAPI_DefaultSerializer `RESTfulAPI_DefaultSerializer.`
@@ -91,6 +96,7 @@ This component will serialize the data into JSON with the following conventions:
 Config | Type | Info | Default
 --- | :---: | --- | ---
 `n/a` | `n/a` | n/a | n/a
+
 
 ## API Documentation
 Full API documentation (generated with each releases) available in the [doc subfolder](https://github.com/colymba/silverstripe-restfulapi/tree/master/doc)
