@@ -1,0 +1,32 @@
+# apigen config file
+# run >> apigen --config <path to this file>
+
+# Source file or directory to parse
+source: code
+
+# Directory where to save the generated documentation
+destination: doc
+
+# List of allowed file extensions
+extensions: [php]
+
+# Character set of source files
+charset: auto
+
+# Main project name prefix
+main: SS_RESTfulAPI
+
+# Title of generated documentation
+title: SilverStripe RESTful API
+
+# Generate documentation for methods and properties with given access level
+accessLevels: [private, public, protected]
+
+# Generate tree view of classes, interfaces and exceptions
+tree: No
+
+# Add a link to download documentation as a ZIP archive
+download: No
+
+# Wipe out the destination directory first
+wipeout: Yes
