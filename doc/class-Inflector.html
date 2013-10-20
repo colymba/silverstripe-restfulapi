@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="generator" content="ApiGen 2.8.0" />
+
+	<title>Class Inflector | SilverStripe RESTful API</title>
+
+	<script type="text/javascript" src="resources/combined.js?2884461205"></script>
+	<script type="text/javascript" src="elementlist.js?3556707434"></script>
+	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
+
+</head>
+
+<body>
+<div id="left">
+	<div id="menu">
+		<a href="index.html" title="Overview"><span>Overview</span></a>
+
+
+		<div id="groups">
+			<h3>Packages</h3>
+			<ul>
+				<li class="active"><a href="package-Cake.html">Cake<span></span></a>
+						<ul>
+				<li class="active"><a href="package-Cake.Utility.html">Utility</a>
+						</li>
+							</ul></li>
+				<li><a href="package-PHP.html">PHP</a>
+						</li>
+				<li><a href="package-RESTfulAPI.html">RESTfulAPI<span></span></a>
+						<ul>
+				<li><a href="package-RESTfulAPI.Authentication.html">Authentication</a>
+						</li>
+				<li><a href="package-RESTfulAPI.QueryHandler.html">QueryHandler</a>
+						</li>
+				<li><a href="package-RESTfulAPI.Serializer.html">Serializer</a>
+						</li>
+							</ul></li>
+			</ul>
+		</div>
+
+		<hr />
+
+
+		<div id="elements">
+			<h3>Classes</h3>
+			<ul>
+				<li class="active"><a href="class-Inflector.html">Inflector</a></li>
+			</ul>
+
+
+
+
+
+		</div>
+	</div>
+</div>
+
+<div id="splitter"></div>
+
+<div id="right">
+<div id="rightInner">
+	<form id="search">
+		<input type="hidden" name="cx" value="" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text" name="q" class="text" />
+		<input type="submit" value="Search" />
+	</form>
+
+	<div id="navigation">
+		<ul>
+			<li>
+				<a href="index.html" title="Overview"><span>Overview</span></a>
+			</li>
+			<li>
+				<a href="package-Cake.Utility.html" title="Summary of Cake\Utility"><span>Package</span></a>
+			</li>
+			<li class="active">
+<span>Class</span>			</li>
+		</ul>
+		<ul>
+		</ul>
+		<ul>
+		</ul>
+	</div>
+
+<div id="content" class="class">
+	<h1>Class Inflector</h1>
+
+
+	<div class="description">
+	
+<p>Pluralize and singularize English words.</p>
+
+<p>Inflector pluralizes and singularizes English nouns. Used by Cake's naming
+conventions throughout the framework.</p>
+
+	</div>
+
+
+
+
+
+
+
+
+
+	<div class="info">
+		
+		
+		
+		<b>Package:</b> <a href="package-Cake.html">Cake</a>\<a href="package-Cake.Utility.html">Utility</a><br />
+
+				<b>Copyright:</b>
+				Copyright (c) Cake Software Foundation, Inc. (<a
+href="http://cakefoundation.org">http://cakefoundation.org</a>)<br />
+				<b>License:</b>
+				<a href="http://www.opensource.org/licenses/mit-license.php">MIT License</a><br />
+				<b>Link:</b>
+				<a href="http://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html">http://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html</a><br />
+		<b>Located at</b> <a href="source-class-Inflector.html#17-550" title="Go to source code">thirdparty/Inflector/Inflector.php</a><br />
+	</div>
+
+
+
+	<table class="summary" id="methods">
+	<caption>Methods summary</caption>
+	<tr data-order="_cache" id="__cache">
+
+		<td class="attributes"><code>
+			 protected static
+			string
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#__cache">#</a>
+		<code><a href="source-class-Inflector.html#241-260" title="Go to source code">_cache</a>( <span>string <var>$type</var></span>, <span>string <var>$key</var></span>, <span>string <var>$value</var> = <span class="php-keyword1">false</span></span> )</code>
+
+		<div class="description short">
+			
+<p>Cache inflected values, and return if already available</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>Cache inflected values, and return if already available</p>
+
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$type</var></dt>
+					<dd><code>string</code><br>$type Inflection type</dd>
+					<dt><var>$key</var></dt>
+					<dd><code>string</code><br>$key Original value</dd>
+					<dt><var>$value</var></dt>
+					<dd><code>string</code><br>$value Inflected value</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>string</code><br>Inflected value, from cache<br />
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="reset" id="_reset">
+
+		<td class="attributes"><code>
+			 public static
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_reset">#</a>
+		<code><a href="source-class-Inflector.html#262-278" title="Go to source code">reset</a>( )</code>
+
+		<div class="description short">
+			
+<p>Clears Inflectors inflected value caches. And resets the inflection rules to
+the initial values.</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>Clears Inflectors inflected value caches. And resets the inflection rules to
+the initial values.</p>
+
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="rules" id="_rules">
+
+		<td class="attributes"><code>
+			 public static
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_rules">#</a>
+		<code><a href="source-class-Inflector.html#280-339" title="Go to source code">rules</a>( <span>string <var>$type</var></span>, <span>array <var>$rules</var></span>, <span>boolean <var>$reset</var> = <span class="php-keyword1">false</span></span> )</code>
+
+		<div class="description short">
+			
+<p>Adds custom inflection $rules, of either 'plural', 'singular' or
+'transliteration' $type.</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>Adds custom inflection $rules, of either 'plural', 'singular' or
+'transliteration' $type.</p>
+
+<h1>Usage:</h1>
+
+<p>{{{ Inflector::rules('plural', array('/^(inflect)or$/i' =&gt; '\1ables'));
+Inflector::rules('plural', array( 'rules' =&gt; array('/^(inflect)ors$/i' =&gt;
+'\1ables'), 'uninflected' =&gt; array('dontinflectme'), 'irregular' =&gt;
+array('red' =&gt; 'redlings') )); Inflector::rules('transliteration',
+array('/å/' =&gt; 'aa')); }}}</p>
+
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$type</var></dt>
+					<dd><code>string</code><br>$type The type of inflection, either 'plural', 'singular' or 'transliteration'</dd>
+					<dt><var>$rules</var></dt>
+					<dd><code>array</code><br>$rules Array of rules to be added.</dd>
+					<dt><var>$reset</var></dt>
+					<dd><code>boolean</code><br>$reset If true, will unset default inflections for all new rules that are being
+defined in $rules.</dd>
+				</dl></div>
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="pluralize" id="_pluralize">
+
+		<td class="attributes"><code>
+			 public static
+			string
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_pluralize">#</a>
+		<code><a href="source-class-Inflector.html#341-382" title="Go to source code">pluralize</a>( <span>string <var>$word</var></span> )</code>
+
+		<div class="description short">
+			
+<p>Return $word in plural form.</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>Return $word in plural form.</p>
+
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$word</var></dt>
+					<dd><code>string</code><br>$word Word in singular</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>string</code><br>Word in plural<br />
+				</div>
+
+
+				<h4>Link</h4>
+				<div class="list">
+						<a href="http://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html#Inflector::pluralize">http://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html#Inflector::pluralize</a><br />
+				</div>
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="singularize" id="_singularize">
+
+		<td class="attributes"><code>
+			 public static
+			string
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_singularize">#</a>
+		<code><a href="source-class-Inflector.html#384-433" title="Go to source code">singularize</a>( <span>string <var>$word</var></span> )</code>
+
+		<div class="description short">
+			
+<p>Return $word in singular form.</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>Return $word in singular form.</p>
+
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$word</var></dt>
+					<dd><code>string</code><br>$word Word in plural</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>string</code><br>Word in singular<br />
+				</div>
+
+
+				<h4>Link</h4>
+				<div class="list">
+						<a href="http://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html#Inflector::singularize">http://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html#Inflector::singularize</a><br />
+				</div>
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="camelize" id="_camelize">
+
+		<td class="attributes"><code>
+			 public static
+			string
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_camelize">#</a>
+		<code><a href="source-class-Inflector.html#435-448" title="Go to source code">camelize</a>( <span>string <var>$lowerCaseAndUnderscoredWord</var></span> )</code>
+
+		<div class="description short">
+			
+<p>Returns the given lower_case_and_underscored_word as a CamelCased word.</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>Returns the given lower_case_and_underscored_word as a CamelCased word.</p>
+
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$lowerCaseAndUnderscoredWord</var></dt>
+					<dd><code>string</code><br>$lowerCaseAndUnderscoredWord Word to camelize</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>string</code><br>Camelized word. LikeThis.<br />
+				</div>
+
+
+				<h4>Link</h4>
+				<div class="list">
+						<a href="http://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html#Inflector::camelize">http://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html#Inflector::camelize</a><br />
+				</div>
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="underscore" id="_underscore">
+
+		<td class="attributes"><code>
+			 public static
+			string
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_underscore">#</a>
+		<code><a href="source-class-Inflector.html#450-463" title="Go to source code">underscore</a>( <span>string <var>$camelCasedWord</var></span> )</code>
+
+		<div class="description short">
+			
+<p>Returns the given camelCasedWord as an underscored_word.</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>Returns the given camelCasedWord as an underscored_word.</p>
+
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$camelCasedWord</var></dt>
+					<dd><code>string</code><br>$camelCasedWord Camel-cased word to be "underscorized"</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>string</code><br>Underscore-syntaxed version of the $camelCasedWord<br />
+				</div>
+
+
+				<h4>Link</h4>
+				<div class="list">
+						<a href="http://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html#Inflector::underscore">http://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html#Inflector::underscore</a><br />
+				</div>
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="humanize" id="_humanize">
+
+		<td class="attributes"><code>
+			 public static
+			string
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_humanize">#</a>
+		<code><a href="source-class-Inflector.html#465-479" title="Go to source code">humanize</a>( <span>string <var>$lowerCaseAndUnderscoredWord</var></span> )</code>
+
+		<div class="description short">
+			
+<p>Returns the given underscored_word_group as a Human Readable Word Group.
+(Underscores are replaced by spaces and capitalized following words.)</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>Returns the given underscored_word_group as a Human Readable Word Group.
+(Underscores are replaced by spaces and capitalized following words.)</p>
+
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$lowerCaseAndUnderscoredWord</var></dt>
+					<dd><code>string</code><br>$lowerCaseAndUnderscoredWord String to be made more readable</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>string</code><br>Human-readable string<br />
+				</div>
+
+
+				<h4>Link</h4>
+				<div class="list">
+						<a href="http://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html#Inflector::humanize">http://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html#Inflector::humanize</a><br />
+				</div>
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="tableize" id="_tableize">
+
+		<td class="attributes"><code>
+			 public static
+			string
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_tableize">#</a>
+		<code><a href="source-class-Inflector.html#481-494" title="Go to source code">tableize</a>( <span>string <var>$className</var></span> )</code>
+
+		<div class="description short">
+			
+<p>Returns corresponding table name for given model $className. ("people" for
+the model class "Person").</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>Returns corresponding table name for given model $className. ("people" for
+the model class "Person").</p>
+
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$className</var></dt>
+					<dd><code>string</code><br>$className Name of class to get database table name for</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>string</code><br>Name of the database table for given class<br />
+				</div>
+
+
+				<h4>Link</h4>
+				<div class="list">
+						<a href="http://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html#Inflector::tableize">http://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html#Inflector::tableize</a><br />
+				</div>
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="classify" id="_classify">
+
+		<td class="attributes"><code>
+			 public static
+			string
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_classify">#</a>
+		<code><a href="source-class-Inflector.html#496-509" title="Go to source code">classify</a>( <span>string <var>$tableName</var></span> )</code>
+
+		<div class="description short">
+			
+<p>Returns Cake model class name ("Person" for the database table "people".) for
+given database table.</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>Returns Cake model class name ("Person" for the database table "people".) for
+given database table.</p>
+
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$tableName</var></dt>
+					<dd><code>string</code><br>$tableName Name of database table to get class name for</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>string</code><br>Class name<br />
+				</div>
+
+
+				<h4>Link</h4>
+				<div class="list">
+						<a href="http://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html#Inflector::classify">http://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html#Inflector::classify</a><br />
+				</div>
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="variable" id="_variable">
+
+		<td class="attributes"><code>
+			 public static
+			string
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_variable">#</a>
+		<code><a href="source-class-Inflector.html#511-526" title="Go to source code">variable</a>( <span>string <var>$string</var></span> )</code>
+
+		<div class="description short">
+			
+<p>Returns camelBacked version of an underscored string.</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>Returns camelBacked version of an underscored string.</p>
+
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$string</var></dt>
+					<dd><code>string</code><br>$string</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>string</code><br>in variable form<br />
+				</div>
+
+
+				<h4>Link</h4>
+				<div class="list">
+						<a href="http://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html#Inflector::variable">http://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html#Inflector::variable</a><br />
+				</div>
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="slug" id="_slug">
+
+		<td class="attributes"><code>
+			 public static
+			string
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_slug">#</a>
+		<code><a href="source-class-Inflector.html#528-548" title="Go to source code">slug</a>( <span>string <var>$string</var></span>, <span>string <var>$replacement</var> = <span class="php-quote">'_'</span></span> )</code>
+
+		<div class="description short">
+			
+<p>Returns a string with all spaces converted to underscores (by default),
+accented characters converted to non-accented characters, and non word
+characters removed.</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>Returns a string with all spaces converted to underscores (by default),
+accented characters converted to non-accented characters, and non word
+characters removed.</p>
+
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$string</var></dt>
+					<dd><code>string</code><br>$string the string you want to slug</dd>
+					<dt><var>$replacement</var></dt>
+					<dd><code>string</code><br>$replacement will replace keys in map</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>string</code><br />
+				</div>
+
+
+				<h4>Link</h4>
+				<div class="list">
+						<a href="http://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html#Inflector::slug">http://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html#Inflector::slug</a><br />
+				</div>
+
+
+		</div>
+		</div></td>
+	</tr>
+	</table>
+
+
+
+
+
+
+
+
+
+
+
+
+	<table class="summary" id="properties">
+	<caption>Properties summary</caption>
+	<tr data-order="_plural" id="$_plural">
+		<td class="attributes"><code>
+			protected static 
+			array
+		</code></td>
+
+		<td class="name">
+				<a href="source-class-Inflector.html#28-95" title="Go to source code"><var>$_plural</var></a>
+		</td>
+		<td class="value"><code><span class="php-keyword1">array</span>(
+	<span class="php-quote">'rules'</span> =&gt; <span class="php-keyword1">array</span>(
+		<span class="php-quote">'/(s)tatus$/i'</span> =&gt; <span class="php-quote">'\1\2tatuses'</span>,
+		<span class="php-quote">'/(quiz)$/i'</span> =&gt; <span class="php-quote">'\1zes'</span>,
+		<span class="php-quote">'/^(ox)$/i'</span> =&gt; <span class="php-quote">'\1\2en'</span>,
+		<span class="php-quote">'/([m|l])ouse$/i'</span> =&gt; <span class="php-quote">'\1ice'</span>,
+		<span class="php-quote">'/(matr|vert|ind)(ix|ex)$/i'</span> =&gt; <span class="php-quote">'\1ices'</span>,
+		<span class="php-quote">'/(x|ch|ss|sh)$/i'</span> =&gt; <span class="php-quote">'\1es'</span>,
+		<span class="php-quote">'/([^aeiouy]|qu)y$/i'</span> =&gt; <span class="php-quote">'\1ies'</span>,
+		<span class="php-quote">'/(hive)$/i'</span> =&gt; <span class="php-quote">'\1s'</span>,
+		<span class="php-quote">'/(?:([^f])fe|([lr])f)$/i'</span> =&gt; <span class="php-quote">'\1\2ves'</span>,
+		<span class="php-quote">'/sis$/i'</span> =&gt; <span class="php-quote">'ses'</span>,
+		<span class="php-quote">'/([ti])um$/i'</span> =&gt; <span class="php-quote">'\1a'</span>,
+		<span class="php-quote">'/(p)erson$/i'</span> =&gt; <span class="php-quote">'\1eople'</span>,
+		<span class="php-quote">'/(m)an$/i'</span> =&gt; <span class="php-quote">'\1en'</span>,
+		<span class="php-quote">'/(c)hild$/i'</span> =&gt; <span class="php-quote">'\1hildren'</span>,
+		<span class="php-quote">'/(buffal|tomat)o$/i'</span> =&gt; <span class="php-quote">'\1\2oes'</span>,
+		<span class="php-quote">'/(alumn|bacill|cact|foc|fung|nucle|radi|stimul|syllab|termin|vir)us$/i'</span> =&gt; <span class="php-quote">'\1i'</span>,
+		<span class="php-quote">'/us$/i'</span> =&gt; <span class="php-quote">'uses'</span>,
+		<span class="php-quote">'/(alias)$/i'</span> =&gt; <span class="php-quote">'\1es'</span>,
+		<span class="php-quote">'/(ax|cris|test)is$/i'</span> =&gt; <span class="php-quote">'\1es'</span>,
+		<span class="php-quote">'/s$/'</span> =&gt; <span class="php-quote">'s'</span>,
+		<span class="php-quote">'/^$/'</span> =&gt; <span class="php-quote">''</span>,
+		<span class="php-quote">'/$/'</span> =&gt; <span class="php-quote">'s'</span>,
+	),
+	<span class="php-quote">'uninflected'</span> =&gt; <span class="php-keyword1">array</span>(
+		<span class="php-quote">'.*[nrlm]ese'</span>, <span class="php-quote">'.*deer'</span>, <span class="php-quote">'.*fish'</span>, <span class="php-quote">'.*measles'</span>, <span class="php-quote">'.*ois'</span>, <span class="php-quote">'.*pox'</span>, <span class="php-quote">'.*sheep'</span>, <span class="php-quote">'people'</span>
+	),
+	<span class="php-quote">'irregular'</span> =&gt; <span class="php-keyword1">array</span>(
+		<span class="php-quote">'atlas'</span> =&gt; <span class="php-quote">'atlases'</span>,
+		<span class="php-quote">'beef'</span> =&gt; <span class="php-quote">'beefs'</span>,
+		<span class="php-quote">'brother'</span> =&gt; <span class="php-quote">'brothers'</span>,
+		<span class="php-quote">'cafe'</span> =&gt; <span class="php-quote">'cafes'</span>,
+		<span class="php-quote">'child'</span> =&gt; <span class="php-quote">'children'</span>,
+		<span class="php-quote">'cookie'</span> =&gt; <span class="php-quote">'cookies'</span>,
+		<span class="php-quote">'corpus'</span> =&gt; <span class="php-quote">'corpuses'</span>,
+		<span class="php-quote">'cow'</span> =&gt; <span class="php-quote">'cows'</span>,
+		<span class="php-quote">'ganglion'</span> =&gt; <span class="php-quote">'ganglions'</span>,
+		<span class="php-quote">'genie'</span> =&gt; <span class="php-quote">'genies'</span>,
+		<span class="php-quote">'genus'</span> =&gt; <span class="php-quote">'genera'</span>,
+		<span class="php-quote">'graffito'</span> =&gt; <span class="php-quote">'graffiti'</span>,
+		<span class="php-quote">'hoof'</span> =&gt; <span class="php-quote">'hoofs'</span>,
+		<span class="php-quote">'loaf'</span> =&gt; <span class="php-quote">'loaves'</span>,
+		<span class="php-quote">'man'</span> =&gt; <span class="php-quote">'men'</span>,
+		<span class="php-quote">'money'</span> =&gt; <span class="php-quote">'monies'</span>,
+		<span class="php-quote">'mongoose'</span> =&gt; <span class="php-quote">'mongooses'</span>,
+		<span class="php-quote">'move'</span> =&gt; <span class="php-quote">'moves'</span>,
+		<span class="php-quote">'mythos'</span> =&gt; <span class="php-quote">'mythoi'</span>,
+		<span class="php-quote">'niche'</span> =&gt; <span class="php-quote">'niches'</span>,
+		<span class="php-quote">'numen'</span> =&gt; <span class="php-quote">'numina'</span>,
+		<span class="php-quote">'occiput'</span> =&gt; <span class="php-quote">'occiputs'</span>,
+		<span class="php-quote">'octopus'</span> =&gt; <span class="php-quote">'octopuses'</span>,
+		<span class="php-quote">'opus'</span> =&gt; <span class="php-quote">'opuses'</span>,
+		<span class="php-quote">'ox'</span> =&gt; <span class="php-quote">'oxen'</span>,
+		<span class="php-quote">'penis'</span> =&gt; <span class="php-quote">'penises'</span>,
+		<span class="php-quote">'person'</span> =&gt; <span class="php-quote">'people'</span>,
+		<span class="php-quote">'sex'</span> =&gt; <span class="php-quote">'sexes'</span>,
+		<span class="php-quote">'soliloquy'</span> =&gt; <span class="php-quote">'soliloquies'</span>,
+		<span class="php-quote">'testis'</span> =&gt; <span class="php-quote">'testes'</span>,
+		<span class="php-quote">'trilby'</span> =&gt; <span class="php-quote">'trilbys'</span>,
+		<span class="php-quote">'turf'</span> =&gt; <span class="php-quote">'turfs'</span>
+	)
+)</code></td>
+		<td class="description"><div>
+			<a href="#$_plural" class="anchor">#</a>
+
+			<div class="description short">
+				
+<p>Plural inflector rules</p>
+
+			</div>
+
+			<div class="description detailed hidden">
+				
+<p>Plural inflector rules</p>
+
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="_singular" id="$_singular">
+		<td class="attributes"><code>
+			protected static 
+			array
+		</code></td>
+
+		<td class="name">
+				<a href="source-class-Inflector.html#97-147" title="Go to source code"><var>$_singular</var></a>
+		</td>
+		<td class="value"><code><span class="php-keyword1">array</span>(
+	<span class="php-quote">'rules'</span> =&gt; <span class="php-keyword1">array</span>(
+		<span class="php-quote">'/(s)tatuses$/i'</span> =&gt; <span class="php-quote">'\1\2tatus'</span>,
+		<span class="php-quote">'/^(.*)(menu)s$/i'</span> =&gt; <span class="php-quote">'\1\2'</span>,
+		<span class="php-quote">'/(quiz)zes$/i'</span> =&gt; <span class="php-quote">'\\1'</span>,
+		<span class="php-quote">'/(matr)ices$/i'</span> =&gt; <span class="php-quote">'\1ix'</span>,
+		<span class="php-quote">'/(vert|ind)ices$/i'</span> =&gt; <span class="php-quote">'\1ex'</span>,
+		<span class="php-quote">'/^(ox)en/i'</span> =&gt; <span class="php-quote">'\1'</span>,
+		<span class="php-quote">'/(alias)(es)*$/i'</span> =&gt; <span class="php-quote">'\1'</span>,
+		<span class="php-quote">'/(alumn|bacill|cact|foc|fung|nucle|radi|stimul|syllab|termin|viri?)i$/i'</span> =&gt; <span class="php-quote">'\1us'</span>,
+		<span class="php-quote">'/([ftw]ax)es/i'</span> =&gt; <span class="php-quote">'\1'</span>,
+		<span class="php-quote">'/(cris|ax|test)es$/i'</span> =&gt; <span class="php-quote">'\1is'</span>,
+		<span class="php-quote">'/(shoe|slave)s$/i'</span> =&gt; <span class="php-quote">'\1'</span>,
+		<span class="php-quote">'/(o)es$/i'</span> =&gt; <span class="php-quote">'\1'</span>,
+		<span class="php-quote">'/ouses$/'</span> =&gt; <span class="php-quote">'ouse'</span>,
+		<span class="php-quote">'/([^a])uses$/'</span> =&gt; <span class="php-quote">'\1us'</span>,
+		<span class="php-quote">'/([m|l])ice$/i'</span> =&gt; <span class="php-quote">'\1ouse'</span>,
+		<span class="php-quote">'/(x|ch|ss|sh)es$/i'</span> =&gt; <span class="php-quote">'\1'</span>,
+		<span class="php-quote">'/(m)ovies$/i'</span> =&gt; <span class="php-quote">'\1\2ovie'</span>,
+		<span class="php-quote">'/(s)eries$/i'</span> =&gt; <span class="php-quote">'\1\2eries'</span>,
+		<span class="php-quote">'/([^aeiouy]|qu)ies$/i'</span> =&gt; <span class="php-quote">'\1y'</span>,
+		<span class="php-quote">'/([lr])ves$/i'</span> =&gt; <span class="php-quote">'\1f'</span>,
+		<span class="php-quote">'/(tive)s$/i'</span> =&gt; <span class="php-quote">'\1'</span>,
+		<span class="php-quote">'/(hive)s$/i'</span> =&gt; <span class="php-quote">'\1'</span>,
+		<span class="php-quote">'/(drive)s$/i'</span> =&gt; <span class="php-quote">'\1'</span>,
+		<span class="php-quote">'/([^fo])ves$/i'</span> =&gt; <span class="php-quote">'\1fe'</span>,
+		<span class="php-quote">'/(^analy)ses$/i'</span> =&gt; <span class="php-quote">'\1sis'</span>,
+		<span class="php-quote">'/(analy|diagno|^ba|(p)arenthe|(p)rogno|(s)ynop|(t)he)ses$/i'</span> =&gt; <span class="php-quote">'\1\2sis'</span>,
+		<span class="php-quote">'/([ti])a$/i'</span> =&gt; <span class="php-quote">'\1um'</span>,
+		<span class="php-quote">'/(p)eople$/i'</span> =&gt; <span class="php-quote">'\1\2erson'</span>,
+		<span class="php-quote">'/(m)en$/i'</span> =&gt; <span class="php-quote">'\1an'</span>,
+		<span class="php-quote">'/(c)hildren$/i'</span> =&gt; <span class="php-quote">'\1\2hild'</span>,
+		<span class="php-quote">'/(n)ews$/i'</span> =&gt; <span class="php-quote">'\1\2ews'</span>,
+		<span class="php-quote">'/eaus$/'</span> =&gt; <span class="php-quote">'eau'</span>,
+		<span class="php-quote">'/^(.*us)$/'</span> =&gt; <span class="php-quote">'\\1'</span>,
+		<span class="php-quote">'/s$/i'</span> =&gt; <span class="php-quote">''</span>
+	),
+	<span class="php-quote">'uninflected'</span> =&gt; <span class="php-keyword1">array</span>(
+		<span class="php-quote">'.*[nrlm]ese'</span>, <span class="php-quote">'.*deer'</span>, <span class="php-quote">'.*fish'</span>, <span class="php-quote">'.*measles'</span>, <span class="php-quote">'.*ois'</span>, <span class="php-quote">'.*pox'</span>, <span class="php-quote">'.*sheep'</span>, <span class="php-quote">'.*ss'</span>
+	),
+	<span class="php-quote">'irregular'</span> =&gt; <span class="php-keyword1">array</span>(
+		<span class="php-quote">'foes'</span> =&gt; <span class="php-quote">'foe'</span>,
+		<span class="php-quote">'waves'</span> =&gt; <span class="php-quote">'wave'</span>,
+		<span class="php-quote">'curves'</span> =&gt; <span class="php-quote">'curve'</span>
+	)
+)</code></td>
+		<td class="description"><div>
+			<a href="#$_singular" class="anchor">#</a>
+
+			<div class="description short">
+				
+<p>Singular inflector rules</p>
+
+			</div>
+
+			<div class="description detailed hidden">
+				
+<p>Singular inflector rules</p>
+
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="_uninflected" id="$_uninflected">
+		<td class="attributes"><code>
+			protected static 
+			array
+		</code></td>
+
+		<td class="name">
+				<a href="source-class-Inflector.html#149-167" title="Go to source code"><var>$_uninflected</var></a>
+		</td>
+		<td class="value"><code><span class="php-keyword1">array</span>(
+	<span class="php-quote">'Amoyese'</span>, <span class="php-quote">'bison'</span>, <span class="php-quote">'Borghese'</span>, <span class="php-quote">'bream'</span>, <span class="php-quote">'breeches'</span>, <span class="php-quote">'britches'</span>, <span class="php-quote">'buffalo'</span>, <span class="php-quote">'cantus'</span>,
+	<span class="php-quote">'carp'</span>, <span class="php-quote">'chassis'</span>, <span class="php-quote">'clippers'</span>, <span class="php-quote">'cod'</span>, <span class="php-quote">'coitus'</span>, <span class="php-quote">'Congoese'</span>, <span class="php-quote">'contretemps'</span>, <span class="php-quote">'corps'</span>,
+	<span class="php-quote">'debris'</span>, <span class="php-quote">'diabetes'</span>, <span class="php-quote">'djinn'</span>, <span class="php-quote">'eland'</span>, <span class="php-quote">'elk'</span>, <span class="php-quote">'equipment'</span>, <span class="php-quote">'Faroese'</span>, <span class="php-quote">'flounder'</span>,
+	<span class="php-quote">'Foochowese'</span>, <span class="php-quote">'gallows'</span>, <span class="php-quote">'Genevese'</span>, <span class="php-quote">'Genoese'</span>, <span class="php-quote">'Gilbertese'</span>, <span class="php-quote">'graffiti'</span>,
+	<span class="php-quote">'headquarters'</span>, <span class="php-quote">'herpes'</span>, <span class="php-quote">'hijinks'</span>, <span class="php-quote">'Hottentotese'</span>, <span class="php-quote">'information'</span>, <span class="php-quote">'innings'</span>,
+	<span class="php-quote">'jackanapes'</span>, <span class="php-quote">'Kiplingese'</span>, <span class="php-quote">'Kongoese'</span>, <span class="php-quote">'Lucchese'</span>, <span class="php-quote">'mackerel'</span>, <span class="php-quote">'Maltese'</span>, <span class="php-quote">'.*?media'</span>,
+	<span class="php-quote">'mews'</span>, <span class="php-quote">'moose'</span>, <span class="php-quote">'mumps'</span>, <span class="php-quote">'Nankingese'</span>, <span class="php-quote">'news'</span>, <span class="php-quote">'nexus'</span>, <span class="php-quote">'Niasese'</span>,
+	<span class="php-quote">'Pekingese'</span>, <span class="php-quote">'Piedmontese'</span>, <span class="php-quote">'pincers'</span>, <span class="php-quote">'Pistoiese'</span>, <span class="php-quote">'pliers'</span>, <span class="php-quote">'Portuguese'</span>,
+	<span class="php-quote">'proceedings'</span>, <span class="php-quote">'rabies'</span>, <span class="php-quote">'rice'</span>, <span class="php-quote">'rhinoceros'</span>, <span class="php-quote">'salmon'</span>, <span class="php-quote">'Sarawakese'</span>, <span class="php-quote">'scissors'</span>,
+	<span class="php-quote">'sea[- ]bass'</span>, <span class="php-quote">'series'</span>, <span class="php-quote">'Shavese'</span>, <span class="php-quote">'shears'</span>, <span class="php-quote">'siemens'</span>, <span class="php-quote">'species'</span>, <span class="php-quote">'swine'</span>, <span class="php-quote">'testes'</span>,
+	<span class="php-quote">'trousers'</span>, <span class="php-quote">'trout'</span>, <span class="php-quote">'tuna'</span>, <span class="php-quote">'Vermontese'</span>, <span class="php-quote">'Wenchowese'</span>, <span class="php-quote">'whiting'</span>, <span class="php-quote">'wildebeest'</span>,
+	<span class="php-quote">'Yengeese'</span>
+)</code></td>
+		<td class="description"><div>
+			<a href="#$_uninflected" class="anchor">#</a>
+
+			<div class="description short">
+				
+<p>Words that should not be inflected</p>
+
+			</div>
+
+			<div class="description detailed hidden">
+				
+<p>Words that should not be inflected</p>
+
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="_transliteration" id="$_transliteration">
+		<td class="attributes"><code>
+			protected static 
+			array
+		</code></td>
+
+		<td class="name">
+				<a href="source-class-Inflector.html#169-225" title="Go to source code"><var>$_transliteration</var></a>
+		</td>
+		<td class="value"><code><span class="php-keyword1">array</span>(
+	<span class="php-quote">'/ä|æ|ǽ/'</span> =&gt; <span class="php-quote">'ae'</span>,
+	<span class="php-quote">'/ö|œ/'</span> =&gt; <span class="php-quote">'oe'</span>,
+	<span class="php-quote">'/ü/'</span> =&gt; <span class="php-quote">'ue'</span>,
+	<span class="php-quote">'/Ä/'</span> =&gt; <span class="php-quote">'Ae'</span>,
+	<span class="php-quote">'/Ü/'</span> =&gt; <span class="php-quote">'Ue'</span>,
+	<span class="php-quote">'/Ö/'</span> =&gt; <span class="php-quote">'Oe'</span>,
+	<span class="php-quote">'/À|Á|Â|Ã|Å|Ǻ|Ā|Ă|Ą|Ǎ/'</span> =&gt; <span class="php-quote">'A'</span>,
+	<span class="php-quote">'/à|á|â|ã|å|ǻ|ā|ă|ą|ǎ|ª/'</span> =&gt; <span class="php-quote">'a'</span>,
+	<span class="php-quote">'/Ç|Ć|Ĉ|Ċ|Č/'</span> =&gt; <span class="php-quote">'C'</span>,
+	<span class="php-quote">'/ç|ć|ĉ|ċ|č/'</span> =&gt; <span class="php-quote">'c'</span>,
+	<span class="php-quote">'/Ð|Ď|Đ/'</span> =&gt; <span class="php-quote">'D'</span>,
+	<span class="php-quote">'/ð|ď|đ/'</span> =&gt; <span class="php-quote">'d'</span>,
+	<span class="php-quote">'/È|É|Ê|Ë|Ē|Ĕ|Ė|Ę|Ě/'</span> =&gt; <span class="php-quote">'E'</span>,
+	<span class="php-quote">'/è|é|ê|ë|ē|ĕ|ė|ę|ě/'</span> =&gt; <span class="php-quote">'e'</span>,
+	<span class="php-quote">'/Ĝ|Ğ|Ġ|Ģ/'</span> =&gt; <span class="php-quote">'G'</span>,
+	<span class="php-quote">'/ĝ|ğ|ġ|ģ/'</span> =&gt; <span class="php-quote">'g'</span>,
+	<span class="php-quote">'/Ĥ|Ħ/'</span> =&gt; <span class="php-quote">'H'</span>,
+	<span class="php-quote">'/ĥ|ħ/'</span> =&gt; <span class="php-quote">'h'</span>,
+	<span class="php-quote">'/Ì|Í|Î|Ï|Ĩ|Ī|Ĭ|Ǐ|Į|İ/'</span> =&gt; <span class="php-quote">'I'</span>,
+	<span class="php-quote">'/ì|í|î|ï|ĩ|ī|ĭ|ǐ|į|ı/'</span> =&gt; <span class="php-quote">'i'</span>,
+	<span class="php-quote">'/Ĵ/'</span> =&gt; <span class="php-quote">'J'</span>,
+	<span class="php-quote">'/ĵ/'</span> =&gt; <span class="php-quote">'j'</span>,
+	<span class="php-quote">'/Ķ/'</span> =&gt; <span class="php-quote">'K'</span>,
+	<span class="php-quote">'/ķ/'</span> =&gt; <span class="php-quote">'k'</span>,
+	<span class="php-quote">'/Ĺ|Ļ|Ľ|Ŀ|Ł/'</span> =&gt; <span class="php-quote">'L'</span>,
+	<span class="php-quote">'/ĺ|ļ|ľ|ŀ|ł/'</span> =&gt; <span class="php-quote">'l'</span>,
+	<span class="php-quote">'/Ñ|Ń|Ņ|Ň/'</span> =&gt; <span class="php-quote">'N'</span>,
+	<span class="php-quote">'/ñ|ń|ņ|ň|ŉ/'</span> =&gt; <span class="php-quote">'n'</span>,
+	<span class="php-quote">'/Ò|Ó|Ô|Õ|Ō|Ŏ|Ǒ|Ő|Ơ|Ø|Ǿ/'</span> =&gt; <span class="php-quote">'O'</span>,
+	<span class="php-quote">'/ò|ó|ô|õ|ō|ŏ|ǒ|ő|ơ|ø|ǿ|º/'</span> =&gt; <span class="php-quote">'o'</span>,
+	<span class="php-quote">'/Ŕ|Ŗ|Ř/'</span> =&gt; <span class="php-quote">'R'</span>,
+	<span class="php-quote">'/ŕ|ŗ|ř/'</span> =&gt; <span class="php-quote">'r'</span>,
+	<span class="php-quote">'/Ś|Ŝ|Ş|Š/'</span> =&gt; <span class="php-quote">'S'</span>,
+	<span class="php-quote">'/ś|ŝ|ş|š|ſ/'</span> =&gt; <span class="php-quote">'s'</span>,
+	<span class="php-quote">'/Ţ|Ť|Ŧ/'</span> =&gt; <span class="php-quote">'T'</span>,
+	<span class="php-quote">'/ţ|ť|ŧ/'</span> =&gt; <span class="php-quote">'t'</span>,
+	<span class="php-quote">'/Ù|Ú|Û|Ũ|Ū|Ŭ|Ů|Ű|Ų|Ư|Ǔ|Ǖ|Ǘ|Ǚ|Ǜ/'</span> =&gt; <span class="php-quote">'U'</span>,
+	<span class="php-quote">'/ù|ú|û|ũ|ū|ŭ|ů|ű|ų|ư|ǔ|ǖ|ǘ|ǚ|ǜ/'</span> =&gt; <span class="php-quote">'u'</span>,
+	<span class="php-quote">'/Ý|Ÿ|Ŷ/'</span> =&gt; <span class="php-quote">'Y'</span>,
+	<span class="php-quote">'/ý|ÿ|ŷ/'</span> =&gt; <span class="php-quote">'y'</span>,
+	<span class="php-quote">'/Ŵ/'</span> =&gt; <span class="php-quote">'W'</span>,
+	<span class="php-quote">'/ŵ/'</span> =&gt; <span class="php-quote">'w'</span>,
+	<span class="php-quote">'/Ź|Ż|Ž/'</span> =&gt; <span class="php-quote">'Z'</span>,
+	<span class="php-quote">'/ź|ż|ž/'</span> =&gt; <span class="php-quote">'z'</span>,
+	<span class="php-quote">'/Æ|Ǽ/'</span> =&gt; <span class="php-quote">'AE'</span>,
+	<span class="php-quote">'/ß/'</span> =&gt; <span class="php-quote">'ss'</span>,
+	<span class="php-quote">'/Ĳ/'</span> =&gt; <span class="php-quote">'IJ'</span>,
+	<span class="php-quote">'/ĳ/'</span> =&gt; <span class="php-quote">'ij'</span>,
+	<span class="php-quote">'/Œ/'</span> =&gt; <span class="php-quote">'OE'</span>,
+	<span class="php-quote">'/ƒ/'</span> =&gt; <span class="php-quote">'f'</span>
+)</code></td>
+		<td class="description"><div>
+			<a href="#$_transliteration" class="anchor">#</a>
+
+			<div class="description short">
+				
+<p>Default map of accented and special characters to ASCII characters</p>
+
+			</div>
+
+			<div class="description detailed hidden">
+				
+<p>Default map of accented and special characters to ASCII characters</p>
+
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="_cache" id="$_cache">
+		<td class="attributes"><code>
+			protected static 
+			array
+		</code></td>
+
+		<td class="name">
+				<a href="source-class-Inflector.html#227-232" title="Go to source code"><var>$_cache</var></a>
+		</td>
+		<td class="value"><code><span class="php-keyword1">array</span>()</code></td>
+		<td class="description"><div>
+			<a href="#$_cache" class="anchor">#</a>
+
+			<div class="description short">
+				
+<p>Method cache array.</p>
+
+			</div>
+
+			<div class="description detailed hidden">
+				
+<p>Method cache array.</p>
+
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="_initialState" id="$_initialState">
+		<td class="attributes"><code>
+			protected static 
+			array
+		</code></td>
+
+		<td class="name">
+				<a href="source-class-Inflector.html#234-239" title="Go to source code"><var>$_initialState</var></a>
+		</td>
+		<td class="value"><code><span class="php-keyword1">array</span>()</code></td>
+		<td class="description"><div>
+			<a href="#$_initialState" class="anchor">#</a>
+
+			<div class="description short">
+				
+<p>The initial state of Inflector so reset() works.</p>
+
+			</div>
+
+			<div class="description detailed hidden">
+				
+<p>The initial state of Inflector so reset() works.</p>
+
+
+			</div>
+		</div></td>
+	</tr>
+	</table>
+
+
+
+
+
+
+</div>
+
+	<div id="footer">
+		SilverStripe RESTful API API documentation generated by <a href="http://apigen.org">ApiGen 2.8.0</a>
+	</div>
+</div>
+</div>
+</body>
+</html>
