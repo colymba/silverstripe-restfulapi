@@ -44,7 +44,10 @@ You can create you own classes by implementing the right interface or extending 
 API and Component settings can be updated via the config API (use `config.yml`).
 
 ### Config
+
 #### RESTfulAPI `RESTfulAPI.`
+This handles/redirect all api request. The API is accesses via the `api/` url (can be changed with a `Director` rule). The `api/auth/ACTION` request will need the Authentication component to have the *ACTION* defined.
+
 Config | Type | Info | Default
 --- | :---: | --- | ---
 `authenticator` | `boolean` | If true, the API will use authentication | false
@@ -59,19 +62,32 @@ Config | Type | Info | Default
 `cors.Allow-Methods` | `string` | 'HTTPMETHODE1, HTTPMETHODE12' coma separated list of HTTP methodes to allow | 'OPTIONS, POST, GET, PUT, DELETE'
 `cors.Max-Age` | `integer` | Preflight/OPTIONS request caching time in seconds | 86400
 
+
 #### RESTfulAPI_TokenAuthenticator `RESTfulAPI_TokenAuthenticator.`
+This component takes care of authenticating all API requests against a token stored in a HTTP header or query var as fallback. The authentication token is returned by the `login` function. Also available, a `logout` function and `lostpassword` function that will email a password rest link to the user.
+You can define a `onBeforeSerialize()` function on your model to add/remove field to your model before being serialized.
+
 Config | Type | Info | Default
 --- | :---: | --- | ---
 `tokenLife` | `integer` | Authentication token life in ms | 10800000
 
+
 #### RESTfulAPI_DefaultQueryHandler `RESTfulAPI_DefaultQueryHandler.`
+This component handles database queries and return the data to the API. This also accept search filter modifiers in HTTP variables (see [Search Filter Modifiers](http://doc.silverstripe.org/framework/en/topics/datamodel#search-filter-modifiers)) as well as 2 special modifiers (rand=seed and limit=count).
+
 Config | Type | Info | Default
 --- | :---: | --- | ---
 `embeddedRecords` | `array` | Defines which classes to embed into relations. NOT IMPLEMENTED | n/a
 `sideloadedRecords` | `array` | Defines which classes to load into the response. NOT IMPLEMENTED | n/a
 `searchFilterModifiersSeparator` | `string` | Separator used in HTTP params between the column name and the search filter modifier (e.g. ?name__StartsWith=Henry will find models with the column name that starts with 'Henry'. ORM equivalent `->filter(array('name::StartsWith' => 'Henry'))` ) | '__'
 
+
 #### RESTfulAPI_DefaultSerializer `RESTfulAPI_DefaultSerializer.`
+This component will serialize the data into JSON with the following conventions:
+* SilverStripe Classes and fields name are UpperCamelCase
+* The client api uses lowerCamelCase variable.
+* Results are returned in a JSON root with the requested model as key (plurialized when returning mulitple results)
+
 Config | Type | Info | Default
 --- | :---: | --- | ---
 `n/a` | `n/a` | n/a | n/a
@@ -89,6 +105,7 @@ Originally made for use with EmberJS/Ember Data DS.RESTAdapter. This RESTful API
 * [Using CORS](http://www.html5rocks.com/en/tutorials/cors/)
 
 ## Todo
+* RESTfulAPI_TokenAuthenticator configurable token header/var name
 * Implement API's PermissionProvider
 * JSON ActiveModel Serializer
 * Check components interface implementation 
