@@ -112,6 +112,8 @@ Originally made for use with EmberJS/Ember Data DS.RESTAdapter. This RESTful API
 
 ## Todo
 * RESTfulAPI_TokenAuthenticator configurable token header/var name
+* RESTfulAPI_TokenAuthenticator : validateAPIToken should have configurable class to check the token against (e.g. other than Member) + configurable token column name
+* RESTfulAPI_Authenticator interface should not have login or logout
 * Implement API's PermissionProvider
 * JSON ActiveModel Serializer
 * Check components interface implementation 
