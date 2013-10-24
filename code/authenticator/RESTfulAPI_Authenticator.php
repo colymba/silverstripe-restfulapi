@@ -12,21 +12,6 @@
  */
 interface RESTfulAPI_Authenticator
 {
-  
-	/**
-   * Login a user into the Framework and generates API token
-   * 
-   * @param  SS_HTTPRequest   $request  HTTP request containing 'email' & 'pwd' vars
-   */
-   public function login(SS_HTTPRequest $request);
-
-  /**
-   * Logout a user and update member's API token with an expired one
-   * 
-   * @param  SS_HTTPRequest   $request    HTTP request containing 'email' var
-   */
-  public function logout(SS_HTTPRequest $request);
-
   /**
    * Checks if a request to the API is authenticated
    * 
