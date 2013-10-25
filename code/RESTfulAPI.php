@@ -216,6 +216,7 @@ class RESTfulAPI extends Controller
       if ( method_exists($this->authenticator, $action) )
       {
         $response = $this->authenticator->$action($request);
+        $response = $this->serializer->serialize( $response );
         $this->answer($response);
       }
       else{
