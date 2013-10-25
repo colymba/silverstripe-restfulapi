@@ -99,49 +99,54 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
 
   /**
    * Login a user into the Framework and generates API token
+   * Only works if the token owner is a Member
    *
-   * @todo token may not be store on Member class
    * @param  SS_HTTPRequest   $request  HTTP request containing 'email' & 'pwd' vars
-   * @return string                     JSON object of the result {result, message, code, token, member}
+   * @return array                      login result with token
    */
   public function login(SS_HTTPRequest $request)
   {
-    $email    = $request->requestVar('email');
-    $pwd      = $request->requestVar('pwd');
-    $member   = false;
     $response = array();
 
-    if( $email && $pwd )
+    if ( $this->tokenConfig['owner'] === 'Member' )
     {
-      $member = MemberAuthenticator::authenticate(array(
-        'Email'    => $email,
-        'Password' => $pwd
-      ));
-      if ( $member )
-      {
-        $life   = $this->tokenConfig['life'];
-        $expire = time() + $life;
-        $token  = sha1( $member->Email . $member->ID . time() );
+      $email    = $request->requestVar('email');
+      $pwd      = $request->requestVar('pwd');
+      $member   = false;
+      
 
-        $member->ApiToken = $token;
-        $member->ApiTokenExpire = $expire;
-        $member->write();
-        $member->login();
+      if( $email && $pwd )
+      {
+        $member = MemberAuthenticator::authenticate(array(
+          'Email'    => $email,
+          'Password' => $pwd
+        ));
+        if ( $member )
+        {
+          $life   = $this->tokenConfig['life'];
+          $expire = time() + $life;
+          $token  = sha1( $member->Email . $member->ID . time() );
+
+          $member->ApiToken = $token;
+          $member->ApiTokenExpire = $expire;
+          $member->write();
+          $member->login();
+        }
       }
-    }
-    
-    if ( !$member )
-    {
-      $response['result']  = false;
-      $response['message'] = 'Authentication fail.';
-      $response['code']    = self::AUTH_CODE_LOGIN_FAIL;
-    }
-    else{
-      $response['result']       = true;
-      $response['message']      = 'Logged in.';
-      $response['code']         = self::AUTH_CODE_LOGGED_IN;
-      $response['token']        = $token;
-      //$response['member']       = $this->parseObject($member);
+      
+      if ( !$member )
+      {
+        $response['result']  = false;
+        $response['message'] = 'Authentication fail.';
+        $response['code']    = self::AUTH_CODE_LOGIN_FAIL;
+      }
+      else{
+        $response['result']       = true;
+        $response['message']      = 'Logged in.';
+        $response['code']         = self::AUTH_CODE_LOGGED_IN;
+        $response['token']        = $token;
+        //$response['member']       = $this->parseObject($member);
+      }
     }
 
     return $response;
@@ -149,7 +154,9 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
 
 
   /**
-   * Logout a user and update member's API token with an expired one
+   * Logout a user from framework
+   * and update token with an expired one
+   * if token owner class is a Member
    * 
    * @param  SS_HTTPRequest   $request    HTTP request containing 'email' var
    */
@@ -161,14 +168,18 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
     {
       //logout
       $member->logout();
-      //generate expired token
-      $token  = sha1( $member->Email . $member->ID . time() );
-      $life   = $this->tokenConfig['life'];
-      $expire = time() - ($life * 2);
-      //write
-      $member->ApiToken = $token;
-      $member->ApiTokenExpire = $expire;
-      $member->write();
+
+      if ( $this->tokenConfig['owner'] === 'Member' )
+      {
+        //generate expired token
+        $token  = sha1( $member->Email . $member->ID . time() );
+        $life   = $this->tokenConfig['life'];
+        $expire = time() - ($life * 2);
+        //write
+        $member->ApiToken = $token;
+        $member->ApiTokenExpire = $expire;
+        $member->write();
+      }      
     }
   }
 
