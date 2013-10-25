@@ -22,6 +22,38 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
   private static $tokenLife = 10800000; //3 * 60 * 60 * 1000;
 
 
+  /**
+   * HTTP Header name storing authentication token
+   * 
+   * @var string
+   */
+  private static $tokenHeader = 'X-Silverstripe-Apitoken';
+
+
+  /**
+   * Fallback GET/POST HTTP query var storing authentication token
+   * 
+   * @var string
+   */
+  private static $tokenQueryVar = 'token';
+
+
+  /**
+   * Class name to query for token validation
+   * 
+   * @var string
+   */
+  private static $tokenOwnerClass = 'Member';
+
+  /**
+   * Stores current token authentication configurations
+   * header, var, class, db columns....
+   * 
+   * @var array
+   */
+  protected $tokenConfig;
+
+
   const AUTH_CODE_LOGGED_IN     = 0;
   const AUTH_CODE_LOGIN_FAIL    = 1;
   const AUTH_CODE_TOKEN_INVALID = 2;
@@ -29,8 +61,46 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
 
 
   /**
+   * Instanciation + config aquisition
+   */
+  public function __construct()
+  {
+    $config = array();
+    $configInstance = Config::inst();    
+
+    $config['life']     = $configInstance->get( 'RESTfulAPI_TokenAuthenticator', 'tokenLife', Config::INHERITED );
+    $config['header']   = $configInstance->get( 'RESTfulAPI_TokenAuthenticator', 'tokenHeader', Config::INHERITED );
+    $config['queryVar'] = $configInstance->get( 'RESTfulAPI_TokenAuthenticator', 'tokenQueryVar', Config::INHERITED );
+    $config['owner']    = $configInstance->get( 'RESTfulAPI_TokenAuthenticator', 'tokenOwnerClass', Config::INHERITED );
+
+    $tokenDBColumns = $configInstance->get( 'RESTfulAPI_TokenAuthExtension', 'db', Config::INHERITED );
+    $tokenDBColumn  = array_search('Varchar', $tokenDBColumns);
+    $expireDBColumn = array_search('Int', $tokenDBColumns);
+
+    if ( $tokenDBColumn !== false )
+    {
+      $config['DBColumn'] = $tokenDBColumn;
+    }
+    else{
+      $config['DBColumn'] = 'ApiToken';
+    }
+
+    if ( $expireDBColumn !== false )
+    {
+      $config['expireDBColumn'] = $expireDBColumn;
+    }
+    else{
+      $config['expireDBColumn'] = 'ApiTokenExpire';
+    }
+
+    $this->tokenConfig = $config;
+  }
+
+
+  /**
    * Login a user into the Framework and generates API token
-   * 
+   *
+   * @todo token may not be store on Member class
    * @param  SS_HTTPRequest   $request  HTTP request containing 'email' & 'pwd' vars
    * @return string                     JSON object of the result {result, message, code, token, member}
    */
@@ -49,7 +119,7 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
       ));
       if ( $member )
       {
-        $life   = Config::inst()->get( 'APIController', 'tokenLife', Config::INHERITED );
+        $life   = $this->tokenConfig['life'];
         $expire = time() + $life;
         $token  = sha1( $member->Email . $member->ID . time() );
 
@@ -74,8 +144,6 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
       //$response['member']       = $this->parseObject($member);
     }
 
-    //return Convert::raw2json($response);
-    //$this->answer( Convert::raw2json($response) );
     return $response;
   }
 
@@ -95,7 +163,7 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
       $member->logout();
       //generate expired token
       $token  = sha1( $member->Email . $member->ID . time() );
-      $life   = Config::inst()->get( 'APIController', 'tokenLife', Config::INHERITED );
+      $life   = $this->tokenConfig['life'];
       $expire = time() - ($life * 2);
       //write
       $member->ApiToken = $token;
@@ -151,10 +219,10 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
   public function authenticate(SS_HTTPRequest $request)
   {
     //get the token
-    $token = $request->getHeader("X-Silverstripe-Apitoken");
+    $token = $request->getHeader( $this->tokenConfig['header'] );
     if (!$token)
     {
-      $token = $request->requestVar('token');
+      $token = $request->requestVar( $this->tokenConfig['queryVar'] );
     }
 
     if ( $token )
@@ -182,18 +250,25 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
   private function validateAPIToken(string $token)
   {
     //get Member with that token
-    $member = Member::get()->filter(array('ApiToken' => $token))->first();
-    if ( $member )
+    $tokenOwner = DataObject::get_one( $this->tokenConfig['owner'] )->filter(
+                    $this->tokenConfig['DBColumn'],
+                    $token
+                  );
+
+    if ( $tokenOwner )
     {
       //check token expiry
-      $tokenExpire  = $member->ApiTokenExpire;
+      $tokenExpire  = $tokenOwner->{$this->tokenConfig['expireDBColumn']};
       $now          = time();
-      $life         = Config::inst()->get( 'RESTfulAPI_TokenAuthenticator', 'tokenLife', Config::INHERITED );
+      $life         = $this->tokenConfig['life'];
 
       if ( $tokenExpire > ($now - $life) )
       {
         //all good, log Member in
-        $member->logIn();
+        if ( is_a($tokenOwner, 'Member') )
+        {
+          $tokenOwner->logIn();
+        }        
 
         return array(
           'valid'   => true,
