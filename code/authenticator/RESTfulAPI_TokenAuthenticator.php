@@ -188,7 +188,7 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
    * Sends password recovery email
    * 
    * @param  SS_HTTPRequest   $request    HTTP request containing 'email' vars
-   * @return string                       JSON 'email' = false if email fails (Member doesn't will not be reported)
+   * @return array                        'email' => false if email fails (Member doesn't exist will not be reported)
    */
   public function lostPassword(SS_HTTPRequest $request)
   {
@@ -209,9 +209,7 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
       $sent = $e->send();
     }
 
-    $this->answer( Convert::raw2json(array(
-      'email' => $sent
-    )));
+    return array( 'email' => $sent ;)
   }
 
 
