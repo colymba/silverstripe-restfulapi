@@ -305,12 +305,12 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
     $generator = new RandomGenerator();
     $tokenString = $generator->randomToken();
 
-    $e = PasswordEncryptor::create_for_algorithm('blowfish');
+    $e = PasswordEncryptor::create_for_algorithm('blowfish'); //blowfish isn't URL safe and maybe too long?
     $salt = $e->salt($tokenString);
     $token = $e->encrypt($tokenString, $salt);
 
     return array(
-      'token' => $token,
+      'token' => substr($token, 7),
       'expire' => $expire
     ); 
   }
