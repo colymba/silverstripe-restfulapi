@@ -215,20 +215,35 @@ class RESTfulAPI extends Controller
 
     if ( $this->authenticator )
     {
-      if ( method_exists($this->authenticator, $action) )
+      $className = get_class($this->authenticator);
+      $allowedActions = Config::inst()->get( $className, 'allowed_actions', Config::INHERITED );
+      if ( !$allowedActions )
       {
-        $response = $this->authenticator->$action($request);
-        $response = $this->serializer->serialize( $response );
-        $this->answer($response);
+        $allowedActions = array();
+      }
+
+      if ( in_array($action, $allowedActions) )
+      {
+        if ( method_exists($this->authenticator, $action) )
+        {
+          $response = $this->authenticator->$action($request);
+          $response = $this->serializer->serialize( $response );
+          $this->answer($response);
+        }
+        else{
+          $this->answer(null, array(
+            'code' => 404,
+            'description' => "Action '$action' isn't available on class $className."
+          ));
+        }
       }
       else{
-        $className = get_class($this->authenticator);
-
         $this->answer(null, array(
-          'code' => 404,
-          'description' => "Action '$action' isn't available on class $className."
+          'code' => 403,
+          'description' => "Action '$action' not allowed."
         ));
       }
+      
     }
   }
   

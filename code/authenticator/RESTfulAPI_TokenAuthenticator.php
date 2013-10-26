@@ -62,6 +62,18 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
 
 
   /**
+   * List of URL accessible actions
+   * 
+   * @var array
+   */
+  private static $allowed_actions = array(
+    'login',
+    'logout',
+    'lostPassword'
+  );
+
+
+  /**
    * Instanciation + config aquisition
    */
   public function __construct()
