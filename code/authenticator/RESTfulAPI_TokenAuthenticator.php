@@ -75,7 +75,7 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
     $config['owner']    = $configInstance->get( 'RESTfulAPI_TokenAuthenticator', 'tokenOwnerClass', Config::INHERITED );
 
     $tokenDBColumns = $configInstance->get( 'RESTfulAPI_TokenAuthExtension', 'db', Config::INHERITED );
-    $tokenDBColumn  = array_search('Varchar', $tokenDBColumns);
+    $tokenDBColumn  = array_search('Varchar(160)', $tokenDBColumns);
     $expireDBColumn = array_search('Int', $tokenDBColumns);
 
     if ( $tokenDBColumn !== false )

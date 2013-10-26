@@ -15,7 +15,7 @@
 class RESTfulAPI_TokenAuthExtension extends DataExtension
 {
 	private static $db = array(
-		'ApiToken' => 'Varchar',
+		'ApiToken' => 'Varchar(160)',
 		'ApiTokenExpire' => 'Int'
 	);
 
