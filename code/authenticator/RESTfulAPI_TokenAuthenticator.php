@@ -361,11 +361,15 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
    */
   private function validateAPIToken(string $token)
   {
-    //get Member with that token
-    $tokenOwner = DataObject::get_one( $this->tokenConfig['owner'] )->filter(
-                    $this->tokenConfig['DBColumn'],
-                    $token
-                  );
+    //get owner with that token
+    $SQL_token = Convert::raw2sql($token);
+    $tokenColumn = $this->tokenConfig['DBColumn'];
+
+    $tokenOwner = DataObject::get_one(
+      $this->tokenConfig['owner'],
+      "\"".$this->tokenConfig['DBColumn']."\"='" . $SQL_token . "'",
+      false
+    );
 
     if ( $tokenOwner )
     {
