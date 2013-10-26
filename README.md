@@ -23,6 +23,8 @@ This module implements a RESTful API for read/write access to your SilverStripe 
 * `api/Books?title__StartsWith=Henry&__rand=123456&__limit=1`
 * `api/Books?title__StartsWith=Henry&__rand=123456&__limit[]=10&__limit[]=5`
 
+The allowed `/auth/$Action` must be defined on the `RESTfulAPI_Authenticator` class used via `$allowed_actions` config.
+
 ## Requirements
 * [SilverStripe Framework 3.1+](https://github.com/silverstripe/silverstripe-framework)
 
@@ -45,6 +47,8 @@ This API comes with defaults for each of those components:
 * `RESTfulAPI_DefaultSerializer` serialize query results into JSON
 
 You can create you own classes by implementing the right interface or extending the existing components.
+
+** `WARNING` By default API authentication is disabled, exposing your whole database. Make sure to enable it via config. **
 
 ### Config
 

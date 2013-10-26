@@ -21,15 +21,18 @@ Config | Type | Info | Default
 
 
 ## RESTfulAPI_TokenAuthenticator `RESTfulAPI_TokenAuthenticator.`
-This component takes care of authenticating all API requests against a token stored in a HTTP header or query var as fallback. The authentication token is returned by the `login` function. Also available, a `logout` function and `lostpassword` function that will email a password rest link to the user.
-You can define a `onBeforeSerialize()` function on your model to add/remove field to your model before being serialized.
+This component takes care of authenticating all API requests against a token stored in a HTTP header or query var as fallback.
+
+The authentication token is returned by the `login` function. Also available, a `logout` function and `lostpassword` function that will email a password reset link to the user.
+
+The token can also be retrieved with an `RESTfulAPI_TokenAuthenticator` instance calling `getToken()` and it can be reset via `resetToken()`.
 
 Config | Type | Info | Default
 --- | :---: | --- | ---
 `tokenLife` | `integer` | Authentication token life in ms | 10800000
-`tokenHeader`
-`tokenQueryVar`
-`tokenOwnerClass`
+`tokenHeader` | `string` | Custom HTTP header storing the token | 'X-Silverstripe-Apitoken'
+`tokenQueryVar` | `string` | Fallback GET/POST HTTP query var storing the token | 'token'
+`tokenOwnerClass` | `string` | DataObject class name for the token's owner | 'Member'
 
 ## RESTfulAPI_DefaultQueryHandler `RESTfulAPI_DefaultQueryHandler.`
 This component handles database queries and return the data to the API. This also accept search filter modifiers in HTTP variables (see [Search Filter Modifiers](http://doc.silverstripe.org/framework/en/topics/datamodel#search-filter-modifiers)) as well as 2 special modifiers (rand=seed and limit=count).
@@ -46,6 +49,8 @@ This component will serialize the data into JSON with the following conventions:
 * SilverStripe Classes and fields name are UpperCamelCase
 * The client api uses lowerCamelCase variable.
 * Results are returned in a JSON root with the requested model as key (plurialized when returning mulitple results)
+
+You can define an `onBeforeSerialize()` function on your model to add/remove field to your model before being serialized (e.g. remove Password from Member).
 
 Config | Type | Info | Default
 --- | :---: | --- | ---
