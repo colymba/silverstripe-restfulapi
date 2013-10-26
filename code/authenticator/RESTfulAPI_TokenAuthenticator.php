@@ -219,6 +219,71 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
 
 
   /**
+   * Return the stored API token for a specific owner
+   * 
+   * @param  integer $id ID of the token owner
+   * @return string      API token for the owner
+   */
+  public function getToken(integer $id)
+  {
+    if ( $id )
+    {
+      $ownerClass = $this->tokenConfig['owner'];
+      $owner      = DataObject::get_by_id($ownerClass, $id);
+
+      if ( $owner )
+      {
+        $tokenDBColumn = $this->tokenConfig['DBColumn'];
+        return $owner->{$tokenDBColumn};
+      }
+      else{
+        user_error("API Token owner '$ownerClass' not found with ID = $id", E_USER_WARNING);
+      }
+    }
+    else{
+      user_error("RESTfulAPI_TokenAuthenticator::getToken() requires an ID as argument.", E_USER_WARNING);
+    }
+  }
+
+
+  /**
+   * Reset an owner's token
+   * if $expired is set to true the owner's will have a new invalidated/expired token
+   * 
+   * @param  integer $id      ID of the token owner
+   * @param  boolean $expired if true the token will be invalidated
+   */
+  public function resetToken(integer $id, $expired = false)
+  {
+    if ( $id )
+    {
+      $ownerClass = $this->tokenConfig['owner'];
+      $owner      = DataObject::get_by_id($ownerClass, $id);
+
+      if ( $owner )
+      {
+        //generate token
+        $tokenData = $this->generateToken( $expired );
+
+        //write
+        $tokenDBColumn  = $this->tokenConfig['DBColumn'];
+        $expireDBColumn = $this->tokenConfig['expireDBColumn'];
+
+        $owner->{$tokenDBColumn}  = $tokenData['token'];
+        $owner->{$expireDBColumn} = $tokenData['expire'];
+        $owner->write();
+      }
+      else{
+        user_error("API Token owner '$ownerClass' not found with ID = $id", E_USER_WARNING);
+      }
+    }
+    else{
+      user_error("RESTfulAPI_TokenAuthenticator::resetToken() requires an ID as argument.", E_USER_WARNING);
+    }
+  }
+
+
+  /**
    * Generates an encrypted random token
    * and an expiry date
    * 
