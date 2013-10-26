@@ -90,7 +90,7 @@ class RESTfulAPI extends Controller
     'Allow-Headers' => '*',
     'Allow-Methods' => 'OPTIONS, POST, GET, PUT, DELETE',
     'Max-Age'       => 86400
-  );  
+  );
 
 
   /**
@@ -144,14 +144,17 @@ class RESTfulAPI extends Controller
    */
   public function __construct()
   {  
+    $configInstance = Config::inst();
+    $injectorInstance = Injector::inst();
+
     //creates authenticator instance if required
-    $requiresAuth = Config::inst()->get( 'RESTfulAPI', 'requiresAuthentication', Config::INHERITED );
+    $requiresAuth = $configInstance->get( 'RESTfulAPI', 'requiresAuthentication', Config::INHERITED );
     if ( $requiresAuth )
     {
-      $authClass = Config::inst()->get( 'RESTfulAPI', 'authenticatorClass', Config::INHERITED );
+      $authClass = $configInstance->get( 'RESTfulAPI', 'authenticatorClass', Config::INHERITED );
       if ( $authClass && class_exists($authClass) )
       {
-        $this->authenticator = Injector::inst()->create($authClass);
+        $this->authenticator = $injectorInstance->create($authClass);
       }
       else{
         user_error("JSON API Authenticator class '$authClass' doesn't exist."
@@ -161,10 +164,10 @@ class RESTfulAPI extends Controller
 
 
     //creates serializer instance    
-    $serializerClass = Config::inst()->get( 'RESTfulAPI', 'serializerClass', Config::INHERITED );
+    $serializerClass = $configInstance->get( 'RESTfulAPI', 'serializerClass', Config::INHERITED );
     if ( class_exists($serializerClass) )
     {
-      $this->serializer = Injector::inst()->create($serializerClass, $this);
+      $this->serializer = $injectorInstance->create($serializerClass, $this);
     }
     else{
       user_error("JSON API Serializer class '$serializerClass' doesn't exist.", E_USER_ERROR);
@@ -172,15 +175,14 @@ class RESTfulAPI extends Controller
 
 
     //creates query handler instance
-    $queryHandlerClass = Config::inst()->get( 'RESTfulAPI', 'queryHandlerClass', Config::INHERITED );
+    $queryHandlerClass = $configInstance->get( 'RESTfulAPI', 'queryHandlerClass', Config::INHERITED );
     if ( class_exists($queryHandlerClass) )
     {
-      $this->queryHandler = Injector::inst()->create($queryHandlerClass, $this);
+      $this->queryHandler = $injectorInstance->create($queryHandlerClass, $this);
     }
     else{
       user_error("JSON API Query Handler class '$queryHandlerClass' doesn't exist.", E_USER_ERROR);
     }
-
 
     parent::__construct();
   }
