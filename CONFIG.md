@@ -2,7 +2,8 @@
 
 API and Component settings can be updated via the config API (use `config.yml`).
 
-## RESTfulAPI `RESTfulAPI.`
+
+## Main REST API `RESTfulAPI.`
 This handles/redirect all api request. The API is accesses via the `api/` url (can be changed with a `Director` rule). The `api/auth/ACTION` request will need the Authentication component to have the *ACTION* defined.
 
 Config | Type | Info | Default
@@ -20,12 +21,14 @@ Config | Type | Info | Default
 `cors.Max-Age` | `integer` | Preflight/OPTIONS request caching time in seconds | 86400
 
 
-## RESTfulAPI_TokenAuthenticator `RESTfulAPI_TokenAuthenticator.`
+## Token Authenticator `RESTfulAPI_TokenAuthenticator.`
 This component takes care of authenticating all API requests against a token stored in a HTTP header or query var as fallback.
 
 The authentication token is returned by the `login` function. Also available, a `logout` function and `lostpassword` function that will email a password reset link to the user.
 
 The token can also be retrieved with an `RESTfulAPI_TokenAuthenticator` instance calling `getToken()` and it can be reset via `resetToken()`.
+
+The `RESTfulAPI_TokenAuthExtension` `DataExtension` must be applied to a `DataObject` and the `tokenOwnerClass` config updated with the correct classname.
 
 Config | Type | Info | Default
 --- | :---: | --- | ---
@@ -34,7 +37,26 @@ Config | Type | Info | Default
 `tokenQueryVar` | `string` | Fallback GET/POST HTTP query var storing the token | 'token'
 `tokenOwnerClass` | `string` | DataObject class name for the token's owner | 'Member'
 
-## RESTfulAPI_DefaultQueryHandler `RESTfulAPI_DefaultQueryHandler.`
+
+## Token Authentication Data Extension `RESTfulAPI_TokenAuthExtension`
+This extension **MUST** be applied to a `DataObject` to use `RESTfulAPI_TokenAuthenticator` and update the `tokenOwnerClass` config accordingly. e.g.
+```yaml
+Member:
+  extensions:
+    - RESTfulAPI_TokenAuthExtension
+```
+```yaml
+ApiUser:
+  extensions:
+    - RESTfulAPI_TokenAuthExtension
+RESTfulAPI_TokenAuthenticator:
+  tokenOwnerClass: 'ApiUser'
+```
+
+The `$db` keys can be changed to anything you want but keep the types to `Varchar(160)` and `Int`.
+
+
+## Default QueryHandler `RESTfulAPI_DefaultQueryHandler.`
 This component handles database queries and return the data to the API. This also accept search filter modifiers in HTTP variables (see [Search Filter Modifiers](http://doc.silverstripe.org/framework/en/topics/datamodel#search-filter-modifiers)) as well as 2 special modifiers (rand=seed and limit=count).
 
 Config | Type | Info | Default
@@ -44,7 +66,7 @@ Config | Type | Info | Default
 `searchFilterModifiersSeparator` | `string` | Separator used in HTTP params between the column name and the search filter modifier (e.g. ?name__StartsWith=Henry will find models with the column name that starts with 'Henry'. ORM equivalent *->filter(array('name::StartsWith' => 'Henry'))* ) | '__'
 
 
-## RESTfulAPI_DefaultSerializer `RESTfulAPI_DefaultSerializer.`
+## Default Serializer `RESTfulAPI_DefaultSerializer.`
 This component will serialize the data into JSON with the following conventions:
 * SilverStripe Classes and fields name are UpperCamelCase
 * The client api uses lowerCamelCase variable.

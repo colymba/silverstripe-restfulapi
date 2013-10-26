@@ -48,6 +48,9 @@ This API comes with defaults for each of those components:
 
 You can create you own classes by implementing the right interface or extending the existing components.
 
+### Token Authentication Extension
+When using `RESTfulAPI_TokenAuthenticator` you must add the `RESTfulAPI_TokenAuthExtension` `DataExtension` to a `DataObject` and setup `RESTfulAPI_TokenAuthenticator` with the right classname.
+
 ** `WARNING` By default API authentication is disabled, exposing your whole database. Make sure to enable it via config. **
 
 ### Config
