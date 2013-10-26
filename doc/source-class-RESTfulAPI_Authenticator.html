@@ -8,7 +8,7 @@
 	<title>File authenticator/RESTfulAPI_Authenticator.php | SilverStripe RESTful API</title>
 
 	<script type="text/javascript" src="resources/combined.js?2884461205"></script>
-	<script type="text/javascript" src="elementlist.js?3556707434"></script>
+	<script type="text/javascript" src="elementlist.js?2800862825"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
 
 </head>
@@ -48,6 +48,7 @@
 			<h3>Classes</h3>
 			<ul>
 				<li><a href="class-RESTfulAPI_TokenAuthenticator.html">RESTfulAPI_TokenAuthenticator</a></li>
+				<li><a href="class-RESTfulAPI_TokenAuthExtension.html">RESTfulAPI_TokenAuthExtension</a></li>
 			</ul>
 
 			<h3>Interfaces</h3>
@@ -105,34 +106,19 @@
 </span></span><span id="12" class="l"><a class="l" href="#12">12: </a><span class="php-comment"> */</span>
 </span><span id="13" class="l"><a class="l" href="#13">13: </a><span class="php-keyword1">interface</span> <a id="RESTfulAPI_Authenticator" href="#RESTfulAPI_Authenticator">RESTfulAPI_Authenticator</a>
 </span><span id="14" class="l"><a class="l" href="#14">14: </a>{
-</span><span id="15" class="l"><a class="l" href="#15">15: </a>  
-</span><span id="16" class="l"><a class="l" href="#16">16: </a>    <span class="php-comment">/**
-</span></span><span id="17" class="l"><a class="l" href="#17">17: </a><span class="php-comment">   * Login a user into the Framework and generates API token
-</span></span><span id="18" class="l"><a class="l" href="#18">18: </a><span class="php-comment">   * 
-</span></span><span id="19" class="l"><a class="l" href="#19">19: </a><span class="php-comment">   * @param  SS_HTTPRequest   $request  HTTP request containing 'email' &amp; 'pwd' vars
-</span></span><span id="20" class="l"><a class="l" href="#20">20: </a><span class="php-comment">   */</span>
-</span><span id="21" class="l"><a class="l" href="#21">21: </a>   <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_login" href="#_login">login</a>(SS_HTTPRequest <span class="php-var">$request</span>);
-</span><span id="22" class="l"><a class="l" href="#22">22: </a>
-</span><span id="23" class="l"><a class="l" href="#23">23: </a>  <span class="php-comment">/**
-</span></span><span id="24" class="l"><a class="l" href="#24">24: </a><span class="php-comment">   * Logout a user and update member's API token with an expired one
-</span></span><span id="25" class="l"><a class="l" href="#25">25: </a><span class="php-comment">   * 
-</span></span><span id="26" class="l"><a class="l" href="#26">26: </a><span class="php-comment">   * @param  SS_HTTPRequest   $request    HTTP request containing 'email' var
-</span></span><span id="27" class="l"><a class="l" href="#27">27: </a><span class="php-comment">   */</span>
-</span><span id="28" class="l"><a class="l" href="#28">28: </a>  <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_logout" href="#_logout">logout</a>(SS_HTTPRequest <span class="php-var">$request</span>);
-</span><span id="29" class="l"><a class="l" href="#29">29: </a>
-</span><span id="30" class="l"><a class="l" href="#30">30: </a>  <span class="php-comment">/**
-</span></span><span id="31" class="l"><a class="l" href="#31">31: </a><span class="php-comment">   * Checks if a request to the API is authenticated
-</span></span><span id="32" class="l"><a class="l" href="#32">32: </a><span class="php-comment">   * 
-</span></span><span id="33" class="l"><a class="l" href="#33">33: </a><span class="php-comment">   * @param  SS_HTTPRequest   $request    HTTP API request
-</span></span><span id="34" class="l"><a class="l" href="#34">34: </a><span class="php-comment">   * @return array                                              authentication result:
-</span></span><span id="35" class="l"><a class="l" href="#35">35: </a><span class="php-comment">   * array(
-</span></span><span id="36" class="l"><a class="l" href="#36">36: </a><span class="php-comment">   *    'valid' =&gt; boolean  // true if the request is authorize
-</span></span><span id="37" class="l"><a class="l" href="#37">37: </a><span class="php-comment">   *    'message' =&gt; string // message to return to the client
-</span></span><span id="38" class="l"><a class="l" href="#38">38: </a><span class="php-comment">   *    'code' =&gt; integer   // response code associated with result if any
-</span></span><span id="39" class="l"><a class="l" href="#39">39: </a><span class="php-comment">   * )
-</span></span><span id="40" class="l"><a class="l" href="#40">40: </a><span class="php-comment">   */</span>
-</span><span id="41" class="l"><a class="l" href="#41">41: </a>  <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_authenticate" href="#_authenticate">authenticate</a>(SS_HTTPRequest <span class="php-var">$request</span>);
-</span><span id="42" class="l"><a class="l" href="#42">42: </a></span>}</code></pre>
+</span><span id="15" class="l"><a class="l" href="#15">15: </a>  <span class="php-comment">/**
+</span></span><span id="16" class="l"><a class="l" href="#16">16: </a><span class="php-comment">   * Checks if a request to the API is authenticated
+</span></span><span id="17" class="l"><a class="l" href="#17">17: </a><span class="php-comment">   * 
+</span></span><span id="18" class="l"><a class="l" href="#18">18: </a><span class="php-comment">   * @param  SS_HTTPRequest   $request    HTTP API request
+</span></span><span id="19" class="l"><a class="l" href="#19">19: </a><span class="php-comment">   * @return array                                              authentication result:
+</span></span><span id="20" class="l"><a class="l" href="#20">20: </a><span class="php-comment">   * array(
+</span></span><span id="21" class="l"><a class="l" href="#21">21: </a><span class="php-comment">   *    'valid' =&gt; boolean  // true if the request is authorize
+</span></span><span id="22" class="l"><a class="l" href="#22">22: </a><span class="php-comment">   *    'message' =&gt; string // message to return to the client
+</span></span><span id="23" class="l"><a class="l" href="#23">23: </a><span class="php-comment">   *    'code' =&gt; integer   // response code associated with result if any
+</span></span><span id="24" class="l"><a class="l" href="#24">24: </a><span class="php-comment">   * )
+</span></span><span id="25" class="l"><a class="l" href="#25">25: </a><span class="php-comment">   */</span>
+</span><span id="26" class="l"><a class="l" href="#26">26: </a>  <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_authenticate" href="#_authenticate">authenticate</a>(SS_HTTPRequest <span class="php-var">$request</span>);
+</span><span id="27" class="l"><a class="l" href="#27">27: </a></span>}</code></pre>
 
 	<div id="footer">
 		SilverStripe RESTful API API documentation generated by <a href="http://apigen.org">ApiGen 2.8.0</a>

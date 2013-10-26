@@ -4,7 +4,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta name="generator" content="ApiGen 2.8.0" />
 
-	<title>Interface RESTfulAPI_Authenticator | SilverStripe RESTful API</title>
+	<title>Class RESTfulAPI_TokenAuthExtension | SilverStripe RESTful API</title>
 
 	<script type="text/javascript" src="resources/combined.js?2884461205"></script>
 	<script type="text/javascript" src="elementlist.js?2800862825"></script>
@@ -47,12 +47,12 @@
 			<h3>Classes</h3>
 			<ul>
 				<li><a href="class-RESTfulAPI_TokenAuthenticator.html">RESTfulAPI_TokenAuthenticator</a></li>
-				<li><a href="class-RESTfulAPI_TokenAuthExtension.html">RESTfulAPI_TokenAuthExtension</a></li>
+				<li class="active"><a href="class-RESTfulAPI_TokenAuthExtension.html">RESTfulAPI_TokenAuthExtension</a></li>
 			</ul>
 
 			<h3>Interfaces</h3>
 			<ul>
-				<li class="active"><a href="class-RESTfulAPI_Authenticator.html">RESTfulAPI_Authenticator</a></li>
+				<li><a href="class-RESTfulAPI_Authenticator.html">RESTfulAPI_Authenticator</a></li>
 			</ul>
 
 
@@ -91,23 +91,33 @@
 	</div>
 
 <div id="content" class="class">
-	<h1>Interface RESTfulAPI_Authenticator</h1>
+	<h1>Class RESTfulAPI_TokenAuthExtension</h1>
 
 
 	<div class="description">
 	
-<p>Basic required structure for any RESTfulAPI Authenticator</p>
+<p>RESTfulAPI Token authentication data extension Add to any DataObject that
+will store the authentication token e.g. Member</p>
 
 	</div>
 
+	<dl class="tree">
+		<dd style="padding-left:0px">
+DataExtension
+			
+			
+		</dd>
+		<dd style="padding-left:30px">
+			<img src="resources/inherit.png" alt="Extended by" />
+<b><span>RESTfulAPI_TokenAuthExtension</span></b>			
+			
+			
+		</dd>
+	</dl>
 
 
 
 
-	<div>
-		<h4>Direct known implementers</h4>
-			<a href="class-RESTfulAPI_TokenAuthenticator.html">RESTfulAPI_TokenAuthenticator</a>
-	</div>
 
 
 
@@ -125,50 +135,35 @@
 				<b>Author:</b>
 				Thierry Francois @colymba <a
 href="mailto:thierry&#64;colymba.com">thierry&#64;<!-- -->colymba.com</a><br />
-		<b>Located at</b> <a href="source-class-RESTfulAPI_Authenticator.html#2-27" title="Go to source code">authenticator/RESTfulAPI_Authenticator.php</a><br />
+		<b>Located at</b> <a href="source-class-RESTfulAPI_TokenAuthExtension.html#2-27" title="Go to source code">authenticator/RESTfulAPI_TokenAuthExtension.php</a><br />
 	</div>
 
 
 
 	<table class="summary" id="methods">
 	<caption>Methods summary</caption>
-	<tr data-order="authenticate" id="_authenticate">
+	<tr data-order="updateCMSFields" id="_updateCMSFields">
 
 		<td class="attributes"><code>
 			 public 
-			array
+			
 			
 			</code>
 		</td>
 
 		<td class="name"><div>
-		<a class="anchor" href="#_authenticate">#</a>
-		<code><a href="source-class-RESTfulAPI_Authenticator.html#15-26" title="Go to source code">authenticate</a>( <span>SS_HTTPRequest <var>$request</var></span> )</code>
+		<a class="anchor" href="#_updateCMSFields">#</a>
+		<code><a href="source-class-RESTfulAPI_TokenAuthExtension.html#22-26" title="Go to source code">updateCMSFields</a>( <span>FieldList <var>$fields</var></span> )</code>
 
 		<div class="description short">
 			
-<p>Checks if a request to the API is authenticated</p>
-
 		</div>
 
 		<div class="description detailed hidden">
 			
-<p>Checks if a request to the API is authenticated</p>
 
 
 
-				<h4>Parameters</h4>
-				<div class="list"><dl>
-					<dt><var>$request</var></dt>
-					<dd><code>SS_HTTPRequest</code><br>$request HTTP API request</dd>
-				</dl></div>
-
-				<h4>Returns</h4>
-				<div class="list">
-					<code>array</code><br>authentication result: array( 'valid' =&gt; boolean // true if the request is
-authorize 'message' =&gt; string // message to return to the client 'code' =&gt;
-integer // response code associated with result if any )<br />
-				</div>
 
 
 
@@ -189,6 +184,35 @@ integer // response code associated with result if any )<br />
 
 
 
+	<table class="summary" id="properties">
+	<caption>Properties summary</caption>
+	<tr data-order="db" id="$db">
+		<td class="attributes"><code>
+			private static 
+			array
+		</code></td>
+
+		<td class="name">
+				<a href="source-class-RESTfulAPI_TokenAuthExtension.html#17-20" title="Go to source code"><var>$db</var></a>
+		</td>
+		<td class="value"><code><span class="php-keyword1">array</span>(
+	<span class="php-quote">'ApiToken'</span> =&gt; <span class="php-quote">'Varchar(160)'</span>,
+	<span class="php-quote">'ApiTokenExpire'</span> =&gt; <span class="php-quote">'Int'</span>
+)</code></td>
+		<td class="description"><div>
+			<a href="#$db" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	</table>
 
 
 

@@ -1,5 +1,5 @@
 # apigen config file
-# run >> apigen --config <path to this file>
+# run >> apigen --config apigen.neon
 
 # Source file or directory to parse
 source: code
