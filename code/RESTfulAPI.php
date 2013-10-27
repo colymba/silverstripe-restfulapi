@@ -18,10 +18,22 @@ class RESTfulAPI extends Controller
 
   /**
    * Lets you select if the API requires authentication for access
+   * false = no authentication required
+   * true  = authentication required for all HTTP methods
+   * array = authentication required for selected HTTP methods e.g. array('POST', 'PUT', 'DELETE')
    * 
-   * @var boolean
+   * @var boolean|array
    */
   private static $requiresAuthentication = false;
+
+
+  /**
+   * Stores the current API's authentication settings
+   * as set by the $requiresAuthentication config
+   *  
+   * @var boolean|array
+   */
+  protected $authenticationPolicy;
 
 
   /**
@@ -149,8 +161,15 @@ class RESTfulAPI extends Controller
 
     //creates authenticator instance if required
     $requiresAuth = $configInstance->get( 'RESTfulAPI', 'requiresAuthentication', Config::INHERITED );
-    if ( $requiresAuth )
+    $this->authenticationPolicy = $requiresAuth;
+
+    if ( $requiresAuth !== false )
     {
+      if ( $requiresAuth !== true && !is_array($requiresAuth) )
+      {
+        user_error("RESTfulAPI::requiresAuthentication must be a boolean or array", E_USER_WARNING);
+      }
+
       $authClass = $configInstance->get( 'RESTfulAPI', 'authenticatorClass', Config::INHERITED );
       if ( $authClass && class_exists($authClass) )
       {
@@ -262,23 +281,29 @@ class RESTfulAPI extends Controller
     //check authentication if enabled
     if ( $this->authenticator )
     {
-      $auth = $this->authenticator->authenticate($request);
+      $authALL    = $this->authenticationPolicy === true;
+      $authMethod = is_array($this->authenticationPolicy) && in_array($request->httpMethod(), $this->authenticationPolicy);
 
-      if ( !$auth['valid'] )
+      if ( $authALL || $authMethod )
       {
-        //Authentication failed return error to client
-        $response = Convert::raw2json(array(
-          'message' => $auth['message'],
-          'code'    => $auth['code']
-        ));
+        $authResult = $this->authenticator->authenticate($request);
 
-        $this->answer(
-          $response,
-          array(
-            'code' => 403,
-            'description' => $auth['message']
-          )
-        );
+        if ( !$authResult['valid'] )
+        {
+          //Authentication failed return error to client
+          $response = Convert::raw2json(array(
+            'message' => $authResult['message'],
+            'code'    => $authResult['code']
+          ));
+
+          $this->answer(
+            $response,
+            array(
+              'code' => 403,
+              'description' => $authResult['message']
+            )
+          );
+        }
       }
     }
 
