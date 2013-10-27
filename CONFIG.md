@@ -8,7 +8,7 @@ This handles/redirect all api request. The API is accesses via the `api/` url (c
 
 Config | Type | Info | Default
 --- | :---: | --- | ---
-`authenticator` | `boolean` | If true, the API will use authentication | false
+`requiresAuthentication` | `boolean`/`array` | If true, the API will use authentication, if false no authentication required. Or an array of HTTP methods that require authentication | false
 `authenticatorClass` | `string` | The Authenticator class to use for all authentication requests | 'RESTfulAPI_TokenAuthenticator'
 `queryHandlerClass` | `string` | The QueryHandler class that will handle the model/database queries (find, create, edit, delete....) | 'RESTfulAPI_DefaultQueryHandler'
 `serializerClass` | `string` | The Serializer class that will handle models/data serialization before returning the data to the client (e.g. convert data into JSON) | 'RESTfulAPI_DefaultSerializer'

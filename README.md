@@ -58,7 +58,7 @@ When using `RESTfulAPI_TokenAuthenticator` you must add the `RESTfulAPI_TokenAut
 See [CONFIG.md](CONFIG.md) for individual component configuration options.
 
 ## API Documentation
-Full API documentation (generated with each releases) available in the [doc subfolder](https://github.com/colymba/silverstripe-restfulapi/tree/master/doc)
+Full API documentation (v1.1.0) available in the [doc subfolder](https://github.com/colymba/silverstripe-restfulapi/tree/master/doc)
 
 ## Note
 Originally made for use with EmberJS/Ember Data DS.RESTAdapter. This RESTful API with the default JSON Serializer should work out of the box with the latest version of Ember Data.
@@ -70,8 +70,9 @@ Originally made for use with EmberJS/Ember Data DS.RESTAdapter. This RESTful API
 * [Using CORS](http://www.html5rocks.com/en/tutorials/cors/)
 
 ## Todo
-* Authentication requirements levels (none vs all vs read vs write)
-* Implement API's PermissionProvider
+* API access IP throttling (limit request per minute for each IP or token)
+* Max response record count (e.g. 1000 records is too much)
+* Implement API's PermissionProvider ? necessity
 * JSON ActiveModel Serializer component
 * Check components interface implementation 
 
