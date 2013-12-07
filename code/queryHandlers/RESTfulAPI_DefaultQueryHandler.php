@@ -354,7 +354,6 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
   /**
    * Update databse record or $model
    *
-   * @todo  $modelData = array_shift( $payload ); is EmberData dependent >> do in DeSerializer
    * @todo  return a freshly fetched DataBase record (allow to see if write was succesful)
    *
    * @param String $model the model class to update
@@ -375,11 +374,10 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
       $many_many          = Config::inst()->get( $model->ClassName, 'many_many', Config::INHERITED );
       $belongs_many_many  = Config::inst()->get( $model->ClassName, 'belongs_many_many', Config::INHERITED );
 
-      $modelData          = array_shift( $payload );
       $hasChanges         = false;
       $hasRelationChanges = false;
 
-      foreach ($modelData as $attribute => $value)
+      foreach ($payload as $attribute => $value)
       {
         if ( !is_array($value) )
         {

@@ -74,7 +74,13 @@ class RESTfulAPI_DefaultDeSerializer implements RESTfulAPI_DeSerializer
 	 * Convert client JSON data to an array of data
 	 * ready to be consumed by SilverStripe
 	 *
-	 * @todo  $data should be shifted
+	 * Expects payload to be formatted:
+	 * {
+	 *   "className": {
+	 *     "fieldName": "Field value",
+	 *     "relations": [1]
+	 *   }
+	 * }
 	 * 
 	 * @param  string        $data   JSON to be converted to data ready to be consumed by SilverStripe
 	 * @return array|false           Formatted array representation of the JSON data or false if failed
@@ -85,6 +91,8 @@ class RESTfulAPI_DefaultDeSerializer implements RESTfulAPI_DeSerializer
 
     if ( $data )
     {    	
+    	$data = array_shift($data);
+
       foreach ($data as $column => $value)
       {
       	$newColumn = $this->deserializeColumnName( $column );
