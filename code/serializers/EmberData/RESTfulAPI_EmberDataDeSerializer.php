@@ -1,6 +1,6 @@
 <?php
 /**
- * Default RESTfulAPI Model Serializer
+ * EmberData RESTfulAPI Model DeSerializer
  * handles DataObject, DataList etc.. JSON serialization and de-serialization
  * 
  * @author  Thierry Francois @colymba thierry@colymba.com
@@ -11,7 +11,7 @@
  * @package RESTfulAPI
  * @subpackage Serializer
  */
-class RESTfulAPI_DefaultDeSerializer implements RESTfulAPI_DeSerializer
+class RESTfulAPI_EmberDataDeSerializer implements RESTfulAPI_DeSerializer
 {
 
 	/**

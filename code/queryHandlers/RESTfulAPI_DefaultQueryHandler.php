@@ -29,7 +29,7 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
    * @var array
    */
   private static $dependencies = array(
-    'deSerializer' => '%$RESTfulAPI_DefaultDeSerializer'
+    'deSerializer' => '%$RESTfulAPI_BasicDeSerializer'
   );
 
 

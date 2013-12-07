@@ -1,6 +1,6 @@
 <?php
 /**
- * Default RESTfulAPI Model Serializer
+ * Basic RESTfulAPI Model Serializer
  * handles DataObject, DataList etc.. JSON serialization and de-serialization
  * 
  * @author  Thierry Francois @colymba thierry@colymba.com
@@ -11,7 +11,7 @@
  * @package RESTfulAPI
  * @subpackage Serializer
  */
-class RESTfulAPI_DefaultSerializer implements RESTfulAPI_Serializer
+class RESTfulAPI_BasicSerializer implements RESTfulAPI_Serializer
 {
 
 	/**
@@ -49,13 +49,10 @@ class RESTfulAPI_DefaultSerializer implements RESTfulAPI_Serializer
 
 		if ( $data instanceof DataObject )
 		{
-			$className = $this->formatName( $data->ClassName );
 			$formattedData = $this->formatDataObject( $data );
 		}
 		else if ( $data instanceof DataList )
 		{
-			$className = $this->formatName( $data->dataClass );
-			$className = Inflector::pluralize( $className );
 			$formattedData = $this->formatDataList( $data );
 		}
 		else if ( is_array($data) )
@@ -69,10 +66,7 @@ class RESTfulAPI_DefaultSerializer implements RESTfulAPI_Serializer
 
 		if ( $formattedData )
 		{
-			$root = new stdClass();
-	    $root->{$className} = $formattedData;
-
-			$json = Convert::raw2json($root);
+			$json = Convert::raw2json($formattedData);
 		}		
 
 		return $json;
@@ -188,15 +182,6 @@ class RESTfulAPI_DefaultSerializer implements RESTfulAPI_Serializer
 	 */
 	public function formatName(string $name)
 	{
-		if ( ClassInfo::exists($name) )
-		{
-			$name = Inflector::singularize( $name );
-			$name = lcfirst( $name );
-		}
-		else{
-			$name = $this->serializeColumnName( $name );
-		}
-
 		return $name;
 	}
 
@@ -210,8 +195,8 @@ class RESTfulAPI_DefaultSerializer implements RESTfulAPI_Serializer
 	 */
 	private function serializeColumnName(string $name)
 	{
-		$name = str_replace('ID', 'Id', $name);
-		$name = lcfirst($name);
+		//remove trailing ID from has_one
+		$name = preg_replace( '/(.+)ID$/', '$1', $name);
 
 		return $name;
 	}

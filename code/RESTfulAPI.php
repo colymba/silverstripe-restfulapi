@@ -69,7 +69,7 @@ class RESTfulAPI extends Controller
   private static $dependencies = array(
     'authenticator' => '%$RESTfulAPI_TokenAuthenticator',
     'queryHandler'  => '%$RESTfulAPI_DefaultQueryHandler',
-    'serializer'    => '%$RESTfulAPI_DefaultSerializer'
+    'serializer'    => '%$RESTfulAPI_BasicSerializer'
   );
 
 
