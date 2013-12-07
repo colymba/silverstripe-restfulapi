@@ -24,7 +24,7 @@ class RESTfulAPI extends Controller
    * 
    * @var boolean|array
    */
-  private static $requiresAuthentication = false;
+  private static $authentication_policy = false;
 
 
   /**
@@ -146,7 +146,7 @@ class RESTfulAPI extends Controller
     parent::__construct();
 
     //get authentication policy config
-    $this->authenticationPolicy = $this->config()->get('requiresAuthentication');
+    $this->authenticationPolicy = $this->config()->authentication_policy;
   }
 
 
