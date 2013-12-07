@@ -26,7 +26,7 @@ interface RESTfulAPI_Serializer
 	 * 
 	 * @return RESTfulAPI_QueryHandler QueryHandler instance
 	 */
-	public function getserializer();
+	public function getqueryHandler();
 
 
 	/**

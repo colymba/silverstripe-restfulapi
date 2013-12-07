@@ -55,7 +55,7 @@ class RESTfulAPI_DefaultSerializer implements RESTfulAPI_Serializer
 	 * 
 	 * @return RESTfulAPI_QueryHandler QueryHandler instance
 	 */
-	public function getserializer()
+	public function getqueryHandler() 
 	{
 		return $this->queryHandler;
 	}
