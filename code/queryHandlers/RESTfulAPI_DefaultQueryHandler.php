@@ -354,8 +354,6 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
   /**
    * Update databse record or $model
    *
-   * @todo  return a freshly fetched DataBase record (allow to see if write was succesful)
-   *
    * @param String $model the model class to update
    * @param Integer $id The ID of the model to update
    * @param SS_HTTPRequest the original request
@@ -414,7 +412,7 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
       }
     }
 
-    return $model;
+    return DataObject::get_by_id($model->ClassName, $model->ID);
   }
 
 
