@@ -14,27 +14,11 @@ interface RESTfulAPI_QueryHandler
 {
 
 	/**
-	 * Return current RESTfulAPI instance
-	 * 
-	 * @return RESTfulAPI RESTfulAPI instance
-	 */
-	public function getapi();
-
-
-	/**
 	 * Return current RESTfulAPI DeSerializer instance
 	 * 
 	 * @return RESTfulAPI_DeSerializer DeSerializer instance
 	 */
 	public function getdeSerializer();
-
-
-	/**
-	 * Create instance and saves current api reference
-	 * 
-	 * @param RESTfulAPI $api current RESTfulAPI instance
-	 */
-	public function __construct(RESTfulAPI $api);
 
 
 	/**

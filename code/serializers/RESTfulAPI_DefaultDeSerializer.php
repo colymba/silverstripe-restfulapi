@@ -13,62 +13,6 @@
  */
 class RESTfulAPI_DefaultDeSerializer implements RESTfulAPI_DeSerializer
 {
-	
-	/**
-	 * Stores current RESTfulAPI instance
-	 * 
-	 * @var RESTfulAPI
-	 */
-	private $api = null;
-	
-
-	/**
-	 * Stores current RESTfulAPI Query Handler
-	 * 
-	 * @var RESTfulAPI_QueryHandler
-	 */
-	private $queryHandler = null;
-
-
-  /**
-	 * Return current RESTfulAPI instance
-	 * 
-	 * @return RESTfulAPI RESTfulAPI instance
-	 */
-	public function getapi()
-	{
-		return $this->api;
-	}
-
-
-	/**
-	 * Return current RESTfulAPI Query Handler instance
-	 * 
-	 * @return RESTfulAPI_QueryHandler QueryHandler instance
-	 */
-	public function getqueryHandler() 
-	{
-		return $this->queryHandler;
-	}
-
-
-	/**
-	 * Create instance and saves current api reference
-	 * 
-	 * @param RESTfulAPI $api current RESTfulAPI instance
-	 */
-	public function __construct(RESTfulAPI $api)
-	{
-		if ( $api instanceof RESTfulAPI )
-		{
-			$this->api = $api;
-			$this->queryHandler = $api->getqueryHandler();
-		}
-		else{
-			user_error("RESTfulAPI_DefaultDeSerializer __constuct requires a RESTfulAPI instance as argument.", E_USER_ERROR);
-		}		
-	}
-
 
 	/**
 	 * Convert client JSON data to an array of data

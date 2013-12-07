@@ -14,20 +14,23 @@
 class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
 {
 
-	/**
-	 * Stores current RESTfulAPI instance
+  /**
+   * Current deSerializer instance
    * 
-	 * @var RESTfulAPI
-	 */
-	private $api = null;
+   * @var RESTfulAPI_DeSerializer
+   */
+  public $deSerializer;
 
 
-	/**
-	 * Stores current RESTfulAPI DeSerializer instance
+  /**
+   * Injector dependencies
+   * Override in configuration to use your custom classes
    * 
-	 * @var RESTfulAPI_DeSerializer
-	 */
-	private $deSerializer = null;
+   * @var array
+   */
+  private static $dependencies = array(
+    'deSerializer' => '%$RESTfulAPI_DefaultDeSerializer'
+  );
 
 
 	/**
@@ -96,43 +99,14 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
   );
 
 
-  /**
-	 * Return current RESTfulAPI instance
-   * 
-	 * @return RESTfulAPI RESTfulAPI instance
-	 */
-	public function getapi()
-	{
-		return $this->api;
-	}
-
-
 	/**
-	 * Return current RESTfulAPI Serializer instance
+	 * Return current RESTfulAPI DeSerializer instance
    * 
-	 * @return RESTfulAPI_Serializer Serializer instance
+	 * @return RESTfulAPI_DeSerializer DeSerializer instance
 	 */
 	public function getdeSerializer()
 	{
 		return $this->deSerializer;
-	}
-
-
-	/**
-	 * Create instance and saves current api reference
-   * 
-	 * @param RESTfulAPI $api current RESTfulAPI instance
-	 */
-	public function __construct(RESTfulAPI $api)
-	{
-		if ( $api instanceof RESTfulAPI )
-		{
-			$this->api = $api;
-			$this->deSerializer = $api->getdeSerializer();
-		}
-		else{
-			user_error("RESTfulAPI_DefaultQueryHandler __constuct requires a RESTfulAPI instance as argument.", E_USER_ERROR);
-		}		
 	}
 
 	
@@ -144,7 +118,7 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
    */
   public function handleQuery(SS_HTTPRequest $request)
   { 
-  	//get requested model(s) details
+    //get requested model(s) details
     $model       = $request->param('ClassName');
     $id          = $request->param('ID');
     $response    = false;

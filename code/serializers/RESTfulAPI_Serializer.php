@@ -14,36 +14,12 @@ interface RESTfulAPI_Serializer
 {
 
 	/**
-	 * Return current RESTfulAPI instance
-	 * 
-	 * @return RESTfulAPI RESTfulAPI instance
-	 */
-	public function getapi();
-
-
-	/**
-	 * Return current RESTfulAPI Query Handler instance
-	 * 
-	 * @return RESTfulAPI_QueryHandler QueryHandler instance
-	 */
-	public function getqueryHandler();
-
-
-	/**
 	 * Return Content-type header definition
 	 * to be used in the API response
 	 * 
 	 * @return string Content-type
 	 */
 	public function getcontentType();
-
-
-	/**
-	 * Create instance and saves current api reference
-	 * 
-	 * @param RESTfulAPI $api current RESTfulAPI instance
-	 */
-	public function __construct(RESTfulAPI $api);
 
 
 	/**

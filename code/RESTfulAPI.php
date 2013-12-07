@@ -37,27 +37,11 @@ class RESTfulAPI extends Controller
 
 
   /**
-   * Lets you select which class handles authentication
-   * 
-   * @var string
-   */
-  private static $authenticatorClass = 'RESTfulAPI_TokenAuthenticator';
-
-
-  /**
    * Current Authenticator instance
    * 
-   * @var class
+   * @var RESTfulAPI_Authenticator
    */
-  private $authenticator = null;
-
-
-  /**
-   * Lets you select which class handles model queries
-   * 
-   * @var string
-   */
-  private static $queryHandlerClass = 'RESTfulAPI_DefaultQueryHandler';
+  public $authenticator;
 
 
   /**
@@ -65,15 +49,7 @@ class RESTfulAPI extends Controller
    * 
    * @var RESTfulAPI_QueryHandler
    */
-  private $queryHandler = null;
-
-
-  /**
-   * Lets you select which class handles model serialization
-   * 
-   * @var string
-   */
-  private static $serializerClass = 'RESTfulAPI_DefaultSerializer';
+  public $queryHandler;
 
 
   /**
@@ -81,23 +57,20 @@ class RESTfulAPI extends Controller
    * 
    * @var RESTfulAPI_Serializer
    */
-  private $serializer = null;
+  public $serializer;
 
 
   /**
-   * Lets you select which class handles model deSerialization
+   * Injector dependencies
+   * Override in configuration to use your custom classes
    * 
-   * @var string
+   * @var array
    */
-  private static $deSerializerClass = 'RESTfulAPI_DefaultDeSerializer';
-
-
-  /**
-   * Current deSerializer instance
-   * 
-   * @var RESTfulAPI_DeSerializer
-   */
-  private $deSerializer = null;
+  private static $dependencies = array(
+    'authenticator' => '%$RESTfulAPI_TokenAuthenticator',
+    'queryHandler'  => '%$RESTfulAPI_DefaultQueryHandler',
+    'serializer'    => '%$RESTfulAPI_DefaultSerializer'
+  );
 
 
   /**
@@ -163,86 +136,19 @@ class RESTfulAPI extends Controller
   {
     return $this->serializer;
   }
-
-
-  /**
-   * Returns current DeSerializer instance
-   * 
-   * @return RESTfulAPI_DeSerializer DeSerializer instance
-   */
-  public function getdeSerializer()
-  {
-    return $this->deSerializer;
-  }
   
 
   /**
-   * Handles modules instanciation etc...
-   * 
-   * @todo Check if module implement the right interface
+   * Constructor....
    */
   public function __construct()
   {  
-    $configInstance = Config::inst();
-    $injectorInstance = Injector::inst();
-
-    //creates authenticator instance if required
-    $requiresAuth = $configInstance->get( 'RESTfulAPI', 'requiresAuthentication', Config::INHERITED );
-    $this->authenticationPolicy = $requiresAuth;
-
-    if ( $requiresAuth !== false )
-    {
-      if ( $requiresAuth !== true && !is_array($requiresAuth) )
-      {
-        user_error("RESTfulAPI::requiresAuthentication must be a boolean or array", E_USER_WARNING);
-      }
-
-      $authClass = $configInstance->get( 'RESTfulAPI', 'authenticatorClass', Config::INHERITED );
-      if ( $authClass && class_exists($authClass) )
-      {
-        $this->authenticator = $injectorInstance->create($authClass);
-      }
-      else{
-        user_error("JSON API Authenticator class '$authClass' doesn't exist."
-        . "No Authenticator defined.", E_USER_WARNING);
-      }
-    }
-
-
-    //creates serializer instance    
-    $serializerClass = $configInstance->get( 'RESTfulAPI', 'serializerClass', Config::INHERITED );
-    if ( class_exists($serializerClass) )
-    {
-      $this->serializer = $injectorInstance->create($serializerClass, $this);
-    }
-    else{
-      user_error("JSON API Serializer class '$serializerClass' doesn't exist.", E_USER_ERROR);
-    }
-
-
-    //creates deSerializer instance    
-    $deSerializerClass = $configInstance->get( 'RESTfulAPI', 'deSerializerClass', Config::INHERITED );
-    if ( class_exists($deSerializerClass) )
-    {
-      $this->deSerializer = $injectorInstance->create($deSerializerClass, $this);
-    }
-    else{
-      user_error("JSON API DeSerializer class '$deSerializerClass' doesn't exist.", E_USER_ERROR);
-    }
-
-
-    //creates query handler instance
-    $queryHandlerClass = $configInstance->get( 'RESTfulAPI', 'queryHandlerClass', Config::INHERITED );
-    if ( class_exists($queryHandlerClass) )
-    {
-      $this->queryHandler = $injectorInstance->create($queryHandlerClass, $this);
-    }
-    else{
-      user_error("JSON API Query Handler class '$queryHandlerClass' doesn't exist.", E_USER_ERROR);
-    }
-
     parent::__construct();
+
+    //get authentication policy config
+    $this->authenticationPolicy = $this->config()->get('requiresAuthentication');
   }
+
 
   /**
    * Controller inititalisation

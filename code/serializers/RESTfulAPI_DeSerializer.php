@@ -12,31 +12,7 @@
  */
 interface RESTfulAPI_DeSerializer
 {
-
-	/**
-	 * Return current RESTfulAPI instance
-	 * 
-	 * @return RESTfulAPI RESTfulAPI instance
-	 */
-	public function getapi();
-
-
-	/**
-	 * Return current RESTfulAPI Query Handler instance
-	 * 
-	 * @return RESTfulAPI_QueryHandler QueryHandler instance
-	 */
-	public function getqueryHandler();
-
-
-	/**
-	 * Create instance and saves current api reference
-	 * 
-	 * @param RESTfulAPI $api current RESTfulAPI instance
-	 */
-	public function __construct(RESTfulAPI $api);
-
-
+	
 	/**
 	 * Convert client JSON data to an array of data
 	 * ready to be consumed by SilverStripe
