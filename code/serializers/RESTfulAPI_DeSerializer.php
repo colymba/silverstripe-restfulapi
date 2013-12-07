@@ -1,6 +1,6 @@
 <?php
 /**
- * Defines requirements for RESTfulAPI Serializer
+ * Defines requirements for RESTfulAPI DeSerializer
  * 
  * @author  Thierry Francois @colymba thierry@colymba.com
  * @copyright Copyright (c) 2013, Thierry Francois
@@ -10,7 +10,7 @@
  * @package RESTfulAPI
  * @subpackage Serializer
  */
-interface RESTfulAPI_Serializer
+interface RESTfulAPI_DeSerializer
 {
 
 	/**
@@ -30,15 +30,6 @@ interface RESTfulAPI_Serializer
 
 
 	/**
-	 * Return Content-type header definition
-	 * to be used in the API response
-	 * 
-	 * @return string Content-type
-	 */
-	public function getcontentType();
-
-
-	/**
 	 * Create instance and saves current api reference
 	 * 
 	 * @param RESTfulAPI $api current RESTfulAPI instance
@@ -47,21 +38,21 @@ interface RESTfulAPI_Serializer
 
 
 	/**
-	 * Convert raw data (DataObject, DataList or Array) to JSON
-	 * ready to be consumed by the client API
+	 * Convert client JSON data to an array of data
+	 * ready to be consumed by SilverStripe
 	 * 
-	 * @param  DataObject|DataList|Array  $data  data to serialize
-	 * @return string                            JSON representation of data
+	 * @param  string  $data   JSON to be converted to data ready to be consumed by SilverStripe
+	 * @return array           Formatted array representation of the JSON data
 	 */
-	public function serialize($data);
+	public function deserialize(string $json);
 
 
 	/**
-	 * Format a SilverStripe ClassName of DBField
-	 * to be used by the client API
+	 * Format a ClassName of DBField name sent by client API
+	 * to be used by SilverStripe
 	 * 
 	 * @param  string $name ClassName of DBField name
 	 * @return string       Formatted name
 	 */
-	public function formatName(string $name);
+	public function unformatName(string $name);
 }

@@ -23,11 +23,11 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
 
 
 	/**
-	 * Stores current RESTfulAPI Serializer instance
+	 * Stores current RESTfulAPI DeSerializer instance
    * 
-	 * @var RESTfulAPI
+	 * @var RESTfulAPI_DeSerializer
 	 */
-	private $serializer = null;
+	private $deSerializer = null;
 
 
 	/**
@@ -112,9 +112,9 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
    * 
 	 * @return RESTfulAPI_Serializer Serializer instance
 	 */
-	public function getserializer()
+	public function getdeSerializer()
 	{
-		return $this->serializer;
+		return $this->deSerializer;
 	}
 
 
@@ -128,7 +128,7 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
 		if ( $api instanceof RESTfulAPI )
 		{
 			$this->api = $api;
-			$this->serializer = $api->getserializer();
+			$this->deSerializer = $api->getdeSerializer();
 		}
 		else{
 			user_error("RESTfulAPI_DefaultQueryHandler __constuct requires a RESTfulAPI instance as argument.", E_USER_ERROR);
@@ -153,7 +153,7 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
     //convert model name to SS conventions
     if ($model)
     {
-      $model = $this->serializer->unformatName( $model );
+      $model = $this->deSerializer->unformatName( $model );
     }
     else{
       //if model missing, stop + return blank object
@@ -227,7 +227,7 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
         $key__mod
       );
 
-      $param['Column'] = $this->serializer->unformatName( $key__mod[0] );
+      $param['Column'] = $this->deSerializer->unformatName( $key__mod[0] );
 
       $param['Value'] = $value;
 
@@ -354,6 +354,9 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
   /**
    * Update databse record or $model
    *
+   * @todo  $modelData = array_shift( $payload ); is EmberData dependent >> do in DeSerializer
+   * @todo  return a freshly fetched DataBase record (allow to see if write was succesful)
+   *
    * @param String $model the model class to update
    * @param Integer $id The ID of the model to update
    * @param SS_HTTPRequest the original request
@@ -363,7 +366,7 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
   function updateModel($model, $id, $request)
   {
     $model = DataObject::get_by_id($model, $id);
-    $payload = $this->serializer->deserialize( $request->getBody() );
+    $payload = $this->deSerializer->deserialize( $request->getBody() );
 
     if ( $model && $payload )
     {

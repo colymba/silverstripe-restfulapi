@@ -85,6 +85,22 @@ class RESTfulAPI extends Controller
 
 
   /**
+   * Lets you select which class handles model deSerialization
+   * 
+   * @var string
+   */
+  private static $deSerializerClass = 'RESTfulAPI_DefaultDeSerializer';
+
+
+  /**
+   * Current deSerializer instance
+   * 
+   * @var RESTfulAPI_DeSerializer
+   */
+  private $deSerializer = null;
+
+
+  /**
    * Cross-Origin Resource Sharing (CORS)
    * API settings for cross domain XMLHTTPRequest
    *
@@ -147,6 +163,17 @@ class RESTfulAPI extends Controller
   {
     return $this->serializer;
   }
+
+
+  /**
+   * Returns current DeSerializer instance
+   * 
+   * @return RESTfulAPI_DeSerializer DeSerializer instance
+   */
+  public function getdeSerializer()
+  {
+    return $this->deSerializer;
+  }
   
 
   /**
@@ -190,6 +217,17 @@ class RESTfulAPI extends Controller
     }
     else{
       user_error("JSON API Serializer class '$serializerClass' doesn't exist.", E_USER_ERROR);
+    }
+
+
+    //creates deSerializer instance    
+    $deSerializerClass = $configInstance->get( 'RESTfulAPI', 'deSerializerClass', Config::INHERITED );
+    if ( class_exists($deSerializerClass) )
+    {
+      $this->deSerializer = $injectorInstance->create($deSerializerClass, $this);
+    }
+    else{
+      user_error("JSON API DeSerializer class '$deSerializerClass' doesn't exist.", E_USER_ERROR);
     }
 
 

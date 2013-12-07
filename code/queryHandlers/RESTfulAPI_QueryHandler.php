@@ -22,11 +22,11 @@ interface RESTfulAPI_QueryHandler
 
 
 	/**
-	 * Return current RESTfulAPI Serializer instance
+	 * Return current RESTfulAPI DeSerializer instance
 	 * 
-	 * @return RESTfulAPI_Serializer Serializer instance
+	 * @return RESTfulAPI_DeSerializer DeSerializer instance
 	 */
-	public function getserializer();
+	public function getdeSerializer();
 
 
 	/**
