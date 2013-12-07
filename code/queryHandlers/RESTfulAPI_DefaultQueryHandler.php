@@ -128,6 +128,10 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
     if ($model)
     {
       $model = $this->deSerializer->unformatName( $model );
+      if ( !class_exists($model) )
+      {
+        return false;
+      }
     }
     else{
       //if model missing, stop + return blank object
