@@ -193,8 +193,10 @@ class RESTfulAPI extends Controller
           $response = $this->serializer->serialize( $response );
           $this->answer($response);
         }
-        else{
-          $this->error(404, "Action '$action' isn't available on class $className.");
+        else{          
+          //$this->error(404, "Action '$action' isn't available on class $className.");
+          //let's be shady here instead
+          $this->error(403, "Action '$action' not allowed.");
         }
       }
       else{
@@ -226,10 +228,10 @@ class RESTfulAPI extends Controller
       {
         $authResult = $this->authenticator->authenticate($request);
 
-        if ( !$authResult['valid'] )
+        if ( $authResult instanceof RESTfulAPI_Error )
         {
           //Authentication failed return error to client
-          $this->error($authResult['code'], $authResult['message']);
+          $this->error($authResult);
         }
       }
     }
@@ -239,7 +241,7 @@ class RESTfulAPI extends Controller
     //catch + return errors
     if ( $data instanceof RESTfulAPI_Error )
     {
-      $this->error($data->code, $data->message);
+      $this->error($data);
     }
 
     //serialize response
@@ -247,7 +249,7 @@ class RESTfulAPI extends Controller
     //catch + return errors
     if ( $json instanceof RESTfulAPI_Error )
     {
-      $this->error($json->code, $json->message);
+      $this->error($json);
     }
 
     //all is good reply normally
@@ -256,13 +258,11 @@ class RESTfulAPI extends Controller
 
 
   /**
-   * Returns the API response to client
-   *
-   * @todo  get 'Content-Type' header from Serializer object
+   * Output the API response to client
+   * then exit.
    * 
    * @param  string           $json             Response body
    * @param  boolean          $corsPreflight    Set to true if this is a XHR preflight request answer. CORS shoud be enabled.
-   * @return SS_HTTPResponse                    API response to client
    */
   function answer( $json = null, $corsPreflight = false )
   {
@@ -286,28 +286,22 @@ class RESTfulAPI extends Controller
 
 
   /**
-   * Handles formatting and answering
-   * client requests with error message
+   * Handles formatting and output error message
+   * then exit.
    * 
-   * @param  integer $code    HTTP Status code
-   * @param  string  $message HTTP Status message
+   * @param  RESTfulAPI_Error $error Error object to return
    */
-  function error(integer $code, string $message)
+  function error(RESTfulAPI_Error $error)
   {
     $answer = new SS_HTTPResponse();
 
-    $error = array(
-      'code'    => $code,
-      'message' => $message
-    );
+    $body = $this->serializer->serialize($error->body);
+    $answer->setBody($body);
 
-    $json = $this->serializer->serialize($error);
-    
-    $answer->setBody($json); 
-    $answer->setStatusCode($code, $message);
+    $answer->setStatusCode($error->code, $error->message);
+    $answer->addHeader('Content-Type', $this->serializer->getcontentType() );
 
     $answer = $this->setAnswerCORS($answer);
-    $answer->addHeader('Content-Type', $this->serializer->getcontentType() );
 
     $answer->output();
     exit;

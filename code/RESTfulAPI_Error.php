@@ -30,15 +30,35 @@ class RESTfulAPI_Error
 
 
 	/**
+	 * Error response body
+	 * to be serialized
+	 * 
+	 * @var mixed
+	 */
+	public $body;
+
+
+	/**
 	 * Creates the error object and sets properties
 	 * 
 	 * @param integer $code    HTTP status code
 	 * @param string  $message Error message
 	 */
-	function __construct(integer $code, string $message)
+	function __construct(integer $code, string $message, $body = null)
 	{
     $this->code    = $code;
     $this->message = $message;
+
+    if ( $body !== null )
+    {
+      $this->body = $body;
+    }
+    else{
+      $this->body = array(
+        'code'    => $code,
+        'message' => $message
+      );
+    }
 	}
 
 

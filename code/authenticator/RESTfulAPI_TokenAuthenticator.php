@@ -356,10 +356,12 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
     }
     else{
       //no token, bad news
-      return array(
-        'valid'   => false,
-        'message' => 'Token invalid.',
-        'code'    => self::AUTH_CODE_TOKEN_INVALID
+      return new RESTfulAPI_Error(403,
+        'Token invalid.',
+        array(
+          'message' => 'Token invalid.',
+          'code'    => self::AUTH_CODE_TOKEN_INVALID
+        )
       );
     }
   }
@@ -398,27 +400,34 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
           $tokenOwner->logIn();
         }        
 
+        /*
         return array(
           'valid'   => true,
           'message' => 'Token valid.',
           'code'    => self::AUTH_CODE_LOGGED_IN
-        );
+        );*/
+        return true;
       }
       else{
-        //too old
-        return array(
-          'valid'   => false,
-          'message' => 'Token expired.',
-          'code'    => self::AUTH_CODE_TOKEN_EXPIRED
+        //too old        
+        return new RESTfulAPI_Error(403,
+          'Token expired.',
+          array(
+            'message' => 'Token expired.',
+            'code'    => self::AUTH_CODE_TOKEN_EXPIRED
+          )
         );
       }        
     }
     else{
       //token not found
-      return array(
-        'valid'   => false,
-        'message' => 'Token invalid.', //not sure it's wise to say it doesn't exist. Let's be shady here
-        'code'    => self::AUTH_CODE_TOKEN_INVALID
+      //not sure it's wise to say it doesn't exist. Let's be shady here
+      return new RESTfulAPI_Error(403,
+        'Token invalid.',
+        array(
+          'message' => 'Token invalid.',
+          'code'    => self::AUTH_CODE_TOKEN_INVALID
+        )
       );
     }    
   }
