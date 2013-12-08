@@ -60,8 +60,8 @@ class RESTfulAPI_BasicSerializer implements RESTfulAPI_Serializer
 	 * Convert raw data (DataObject or DataList) to JSON
 	 * ready to be consumed by the client API
 	 * 
-	 * @param  DataObject|DataList  $data  Data to serialize
-	 * @return string                      JSON representation of data
+	 * @param  mixed   $data  Data to serialize
+	 * @return string         JSON representation of data
 	 */
 	public function serialize($data)
 	{
@@ -76,19 +76,19 @@ class RESTfulAPI_BasicSerializer implements RESTfulAPI_Serializer
 		{
 			$formattedData = $this->formatDataList( $data );
 		}
-		else if ( is_array($data) )
-		{
-			$json = $this->jsonify($data);
-		}
-		else{
-			//no usable $data -> empty response
-      $json = '';
-		}
 
 		if ( $formattedData )
 		{
 			$json = $this->jsonify($formattedData);
-		}		
+		}
+		else{
+			//fallback: convert non array to object then encode
+			if ( !is_array($data) )
+			{
+				$data = (object) $data;
+			}
+			$json = $this->jsonify($data);
+		}
 
 		return $json;
 	}

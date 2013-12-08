@@ -79,14 +79,6 @@ class RESTfulAPI_EmberDataSerializer implements RESTfulAPI_Serializer
 			$className = Inflector::pluralize( $className );
 			$formattedData = $this->formatDataList( $data );
 		}
-		else if ( is_array($data) )
-		{
-			$json = $this->jsonify($data);
-		}
-		else{
-			//no usable $data -> empty response
-      $json = NULL;
-		}
 
 		if ( $formattedData )
 		{
@@ -94,7 +86,15 @@ class RESTfulAPI_EmberDataSerializer implements RESTfulAPI_Serializer
 	    $root->{$className} = $formattedData;
 
 			$json = $this->jsonify($root);
-		}		
+		}
+		else{
+			//fallback: convert non array to object then encode
+			if ( !is_array($data) )
+			{
+				$data = (object) $data;
+			}
+			$json = $this->jsonify($data);
+		}
 
 		return $json;
 	}
