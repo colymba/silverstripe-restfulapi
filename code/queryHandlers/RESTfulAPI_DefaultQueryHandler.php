@@ -124,26 +124,46 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
     $response    = false;
     $queryParams = $this->parseQueryParameters( $request->getVars() );
 
-    //convert model name to SS conventions
+    //validate Model name + store
     if ($model)
     {
       $model = $this->deSerializer->unformatName( $model );
       if ( !class_exists($model) )
-      {
-        return false;
+      {  
+        return new RESTfulAPI_Error(400,
+          "Model does not exist. Received '$model'."
+        );
+      }
+      else{
+        //store requested model data and query data
+        $this->requestedData['model'] = $model;
       }
     }
     else{
       //if model missing, stop + return blank object
-      return false;
+      return new RESTfulAPI_Error(400,
+        "Missing Model parameter."
+      );
     }
-
-    //store requested model data and query data
-    $this->requestedData['model'] = $model;
-    if ($id)
+    
+    //validate ID + store
+    if ( ($request->isPUT() || $request->isDELETE()) && !is_numeric($id) )
     {
+      return new RESTfulAPI_Error(400,
+        "Invalid or missing ID. Received '$id'."
+      );
+    }
+    else if ( $id !== NULL && !is_numeric($id) )
+    {
+      return new RESTfulAPI_Error(400,
+        "Invalid ID. Received '$id'."
+      );
+    }
+    else{
       $this->requestedData['id'] = $id;
     }
+
+    //store query parameters
     if ($queryParams)
     {
       $this->requestedData['params'] = $queryParams;
@@ -167,7 +187,9 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
       $result = $this->deleteModel($model, $id, $request);
     }
     else{
-    	$result = false;
+    	return new RESTfulAPI_Error(403,
+        "HTTP method mismatch."
+      );
     }
     
     return $result;
@@ -226,6 +248,8 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
 
  	/**
    * Finds 1 or more objects of class $model
+   *
+   * @todo  handle empty results? Return 404?
    * 
    * @param  string                 $model          Model(s) class to find
    * @param  boolean\integr         $id             The ID of the model to find or false
@@ -341,7 +365,18 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
   function updateModel($model, $id, $request)
   {
     $model = DataObject::get_by_id($model, $id);
+    if ( !$model )
+    {
+      return new RESTfulAPI_Error(404,
+        "Record not found."
+      );
+    }
+
     $payload = $this->deSerializer->deserialize( $request->getBody() );
+    if ( RESTfulAPI_Toolkit::is_error($payload) )
+    {
+      return $payload;
+    }
 
     if ( $model && $payload )
     {
@@ -396,16 +431,16 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
 
   /**
    * Delete object of Class $model and ID $id
+   *
+   * @todo  Respond with a 204 status message on success?
    * 
    * @param  string          $model     Model class
    * @param  integer 				 $id        Model ID
    * @param  SS_HTTPRequest  $request   Model ID
-   * @return boolean|array              true if successful or array with error detail              
+   * @return NULL|array                 NULL if successful or array with error detail              
    */
   function deleteModel(string $model, integer $id, SS_HTTPRequest $request)
   {
-    $deleted = true;
-
     if ( $id )
     {
       $object = DataObject::get_by_id($model, $id);
@@ -415,13 +450,18 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
         $object->delete();
       }
       else{
-        $deleted = array('error' => 'Record not found');
+        return new RESTfulAPI_Error(404,
+          "Record not found."
+        );
       }
     }
     else{
-      $deleted = array('error' => 'ID missing');
+      //shouldn't happen but just in case
+      return new RESTfulAPI_Error(400,
+        "Invalid or missing ID. Received '$id'."
+      );
     }
     
-    return $deleted;
+    return NULL;
   }
 }

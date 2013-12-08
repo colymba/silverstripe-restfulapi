@@ -159,7 +159,7 @@ class RESTfulAPI extends Controller
     //catch preflight request
     if ( $this->request->httpMethod() === 'OPTIONS' )
     {
-      $this->answer(null, false, true);
+      $this->answer(null, true);
     }
 
     parent::init();
@@ -194,17 +194,11 @@ class RESTfulAPI extends Controller
           $this->answer($response);
         }
         else{
-          $this->answer(null, array(
-            'code' => 404,
-            'description' => "Action '$action' isn't available on class $className."
-          ));
+          $this->error(404, "Action '$action' isn't available on class $className.");
         }
       }
       else{
-        $this->answer(null, array(
-          'code' => 403,
-          'description' => "Action '$action' not allowed."
-        ));
+        $this->error(403, "Action '$action' not allowed.");
       }
       
     }
@@ -235,26 +229,28 @@ class RESTfulAPI extends Controller
         if ( !$authResult['valid'] )
         {
           //Authentication failed return error to client
-          $response = Convert::raw2json(array(
-            'message' => $authResult['message'],
-            'code'    => $authResult['code']
-          ));
-
-          $this->answer(
-            $response,
-            array(
-              'code' => 403,
-              'description' => $authResult['message']
-            )
-          );
+          $this->error($authResult['code'], $authResult['message']);
         }
       }
     }
 
+    //pass control to query handler
     $data = $this->queryHandler->handleQuery( $request );
+    //catch + return errors
+    if ( $data instanceof RESTfulAPI_Error )
+    {
+      $this->error($data->code, $data->message);
+    }
 
+    //serialize response
     $json = $this->serializer->serialize( $data );
+    //catch + return errors
+    if ( $json instanceof RESTfulAPI_Error )
+    {
+      $this->error($json->code, $json->message);
+    }
 
+    //all is good reply normally
     $this->answer( $json );
   }
 
@@ -265,24 +261,17 @@ class RESTfulAPI extends Controller
    * @todo  get 'Content-Type' header from Serializer object
    * 
    * @param  string           $json             Response body
-   * @param  boolean|array    $error            Use false if not an error otherwise pass array('code' => statusCode, 'description' => statusDescription)
    * @param  boolean          $corsPreflight    Set to true if this is a XHR preflight request answer. CORS shoud be enabled.
    * @return SS_HTTPResponse                    API response to client
    */
-  function answer( $json = null, $error = false, $corsPreflight = false )
+  function answer( $json = null, $corsPreflight = false )
   {
     $answer = new SS_HTTPResponse();
 
     //set response body
     if ( !$corsPreflight )
     {
-      $answer->setBody($json); 
-
-      //Set status code+descript, i.e. 403 Access denied
-      if ( $error !== false )
-      {
-        $answer->setStatusCode($error['code'], $error['description']);
-      }     
+      $answer->setBody($json);
     }
 
     //set CORS if needed
@@ -291,6 +280,35 @@ class RESTfulAPI extends Controller
     $answer->addHeader('Content-Type', $this->serializer->getcontentType() );
     
     //Output + exit
+    $answer->output();
+    exit;
+  }
+
+
+  /**
+   * Handles formatting and answering
+   * client requests with error message
+   * 
+   * @param  integer $code    HTTP Status code
+   * @param  string  $message HTTP Status message
+   */
+  function error(integer $code, string $message)
+  {
+    $answer = new SS_HTTPResponse();
+
+    $error = array(
+      'code'    => $code,
+      'message' => $message
+    );
+
+    $json = $this->serializer->serialize($error);
+    
+    $answer->setBody($json); 
+    $answer->setStatusCode($code, $message);
+
+    $answer = $this->setAnswerCORS($answer);
+    $answer->addHeader('Content-Type', $this->serializer->getcontentType() );
+
     $answer->output();
     exit;
   }

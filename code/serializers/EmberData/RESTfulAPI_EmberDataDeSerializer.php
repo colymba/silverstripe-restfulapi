@@ -32,6 +32,13 @@ class RESTfulAPI_EmberDataDeSerializer implements RESTfulAPI_DeSerializer
 	public function deserialize(string $json)
 	{
 		$data = json_decode( $json, true );
+		
+		//catch JSON parsing error
+		$error = RESTfulAPI_Error::get_json_error();
+		if ( $error !== false )
+		{
+			return new RESTfulAPI_Error(400, $error);
+		}
 
     if ( $data )
     {    	
@@ -48,7 +55,9 @@ class RESTfulAPI_EmberDataDeSerializer implements RESTfulAPI_DeSerializer
       }
     }
     else{
-      return false;
+    	return new RESTfulAPI_Error(400,
+    		'Malformed JSON payload.'
+    	);
     }
 
 		return $data;

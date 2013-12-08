@@ -31,6 +31,13 @@ class RESTfulAPI_BasicDeSerializer implements RESTfulAPI_DeSerializer
 	{
 		$data = json_decode( $json, true );
 
+		//catch JSON parsing error
+		$error = RESTfulAPI_Error::get_json_error();
+		if ( $error !== false )
+		{
+			return new RESTfulAPI_Error(400, $error);
+		}
+
     if ( $data )
     {    	
       foreach ($data as $column => $value)
@@ -44,7 +51,9 @@ class RESTfulAPI_BasicDeSerializer implements RESTfulAPI_DeSerializer
       }
     }
     else{
-      return false;
+      return new RESTfulAPI_Error(400,
+        "No data received."
+      );
     }
 
 		return $data;
@@ -74,5 +83,5 @@ class RESTfulAPI_BasicDeSerializer implements RESTfulAPI_DeSerializer
 	private function deserializeColumnName(string $name)
 	{
 		return $name;
-	}	
+	}
 }

@@ -37,15 +37,22 @@ class RESTfulAPI_EmberDataSerializer implements RESTfulAPI_Serializer
 
 	/**
 	 * Convert data into a JSON string
-	 *
-	 * @todo  handle error (json_last_error + json_last_error_msg)
 	 * 
 	 * @param  mixed  $data Data to convert
 	 * @return string       JSON data
 	 */
 	public function jsonify($data)
 	{
-		return json_encode($data, JSON_NUMERIC_CHECK);
+		$json = json_encode($data, JSON_NUMERIC_CHECK);
+		
+		//catch JSON parsing error
+		$error = RESTfulAPI_Error::get_json_error();
+		if ( $error !== false )
+		{
+			return new RESTfulAPI_Error(400, $error);
+		}
+		
+		return $json;
 	}
 
 
@@ -78,7 +85,7 @@ class RESTfulAPI_EmberDataSerializer implements RESTfulAPI_Serializer
 		}
 		else{
 			//no usable $data -> empty response
-      $json = '';
+      $json = NULL;
 		}
 
 		if ( $formattedData )
