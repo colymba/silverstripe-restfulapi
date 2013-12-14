@@ -88,6 +88,18 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
 
 
   /**
+   * Set a maximum numbers of records returned by the API.
+   * Only affectects "GET All". Useful to avoid returning millions of records at once.
+   * 
+   * Set to -1 to disable.
+   * 
+   * @var integer
+   * @config
+   */
+  private static $max_records_limit = 100;
+
+
+  /**
    * Stores the currently requested data
    * 
    * @var array
@@ -330,6 +342,15 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
           }
 
         }
+      }
+
+      //sets default limit if none given
+      $limits = $return->dataQuery()->query()->getLimit();
+      $limitConfig = Config::inst()->get('RESTfulAPI_DefaultQueryHandler', 'max_records_limit', Config::INHERITED);
+
+      if ( is_array($limits) && !array_key_exists('limit', $limits) && $limitConfig >= 0 )
+      {
+        $return = $return->limit($limitConfig);
       }
     }
 
