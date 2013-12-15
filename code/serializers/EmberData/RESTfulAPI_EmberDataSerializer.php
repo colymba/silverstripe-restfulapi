@@ -11,7 +11,7 @@
  * @package RESTfulAPI
  * @subpackage Serializer
  */
-class RESTfulAPI_EmberDataSerializer implements RESTfulAPI_Serializer
+class RESTfulAPI_EmberDataSerializer extends RESTfulAPI_BasicSerializer
 {
 
 	/**
@@ -21,39 +21,6 @@ class RESTfulAPI_EmberDataSerializer implements RESTfulAPI_Serializer
 	 * @var string
 	 */
 	private $contentType = 'application/vnd.api+json; charset=utf-8';
-
-	
-	/**
-	 * Return Content-type header definition
-	 * to be used in the API response
-	 * 
-	 * @return string Content-type
-	 */
-	public function getcontentType()
-	{
-		return $this->contentType;
-	}
-
-
-	/**
-	 * Convert data into a JSON string
-	 * 
-	 * @param  mixed  $data Data to convert
-	 * @return string       JSON data
-	 */
-	public function jsonify($data)
-	{
-		$json = json_encode($data, JSON_NUMERIC_CHECK);
-		
-		//catch JSON parsing error
-		$error = RESTfulAPI_Error::get_json_error();
-		if ( $error !== false )
-		{
-			return new RESTfulAPI_Error(400, $error);
-		}
-		
-		return $json;
-	}
 
 
 	/**
@@ -101,106 +68,6 @@ class RESTfulAPI_EmberDataSerializer implements RESTfulAPI_Serializer
 
 
 	/**
-	 * Format a DataObject keys and values
-	 * ready to be turned into JSON
-	 * 
-	 * @param  DataObject $dataObject The data object to format
-	 * @return array                  The formatted array map representation of the DataObject
-	 */
-	private function formatDataObject(DataObject $dataObject)
-	{
-		if( method_exists($dataObject, 'onBeforeSerialize') )
-    {
-      $dataObject->onBeforeSerialize();
-    }
-
-    // setup
-    $formattedDataObjectMap = array();
-    $dataObjectMap          = $dataObject->toMap();
-
-    // get DataObject realtions config
-    $has_one           = Config::inst()->get( $dataObject->ClassName, 'has_one',           Config::INHERITED );
-    $has_many          = Config::inst()->get( $dataObject->ClassName, 'has_many',          Config::INHERITED );
-    $many_many         = Config::inst()->get( $dataObject->ClassName, 'many_many',         Config::INHERITED );
-    $belongs_many_many = Config::inst()->get( $dataObject->ClassName, 'belongs_many_many', Config::INHERITED );
-
-    // iterate $db fields and $has_one realtions
-    foreach ($dataObjectMap as $columnName => $value)
-    {
-    	$hasOneColumnName = preg_replace( '/ID$/i', '', $columnName );
-    	$columnName = $this->serializeColumnName( $columnName );
-
-    	// if this column is a has_one relation
-    	if ( array_key_exists( $hasOneColumnName, $has_one ) )
-    	{
-    		// convert value to integer
-        $value = intVal( $value );
-
-        // skip
-        if ( $value === 0 ) continue;
-
-        // remove ID suffix from realation name
-        $columnName = $this->serializeColumnName( $hasOneColumnName );
-    	}
-
-    	// save formatted data
-    	$formattedDataObjectMap[$columnName] = $value;
-    }
-
-    // combine defined '_many' relations into 1 array
-    $many_relations = array();
-    if ( is_array($has_many) )          $many_relations = array_merge($many_relations, $has_many);
-    if ( is_array($many_many) )         $many_relations = array_merge($many_relations, $many_many);
-    if ( is_array($belongs_many_many) ) $many_relations = array_merge($many_relations, $belongs_many_many);
-    
-    // iterate '_many' relations
-    foreach ($many_relations as $relationName => $relationClassname)
-    {
-    	//get the DataList for this realtion's name
-      $dataList = $dataObject->{$relationName}();
-
-      //if there actually are objects in the relation
-      if ( $dataList->count() )
-      {
-        // set column value to ID list
-        $idList = $dataList->map('ID', 'ID')->keys();
-
-        $columnName = $this->serializeColumnName( $relationName );
-        $formattedDataObjectMap[$columnName] = $idList;
-      }
-    }
-
-    if( method_exists($dataObject, 'onAfterSerialize') )
-    {
-      $formattedDataObjectMap = $dataObject->onAfterSerialize( $formattedDataObjectMap );
-    }
-
-    return $formattedDataObjectMap;
-	}
-
-
-	/**
-	 * Format a DataList into a formatted array
-	 * ready to be turned into JSON
-	 * 
-	 * @param  DataList  $dataList  The DataList to format
-	 * @return array                The formatted array representation of the DataList
-	 */
-	private function formatDataList(DataList $dataList)
-	{
-		$formattedDataListMap = array();
-
-		foreach ($dataList as $dataObject)
-    {
-      $formattedDataObjectMap = $this->formatDataObject( $dataObject );
-      array_push($formattedDataListMap, $formattedDataObjectMap);
-    }
-
-    return $formattedDataListMap;
-	}
-
-
-	/**
 	 * Format a SilverStripe ClassName or Field name
 	 * to be used by the client API
 	 * 
@@ -229,7 +96,7 @@ class RESTfulAPI_EmberDataSerializer implements RESTfulAPI_Serializer
 	 * @param  string $name Field name
 	 * @return string       Formatted name
 	 */
-	private function serializeColumnName(string $name)
+	protected function serializeColumnName(string $name)
 	{
 		$name = str_replace('ID', 'Id', $name);
 		$name = lcfirst($name);
