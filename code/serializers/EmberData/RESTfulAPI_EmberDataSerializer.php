@@ -148,10 +148,11 @@ class RESTfulAPI_EmberDataSerializer extends RESTfulAPI_BasicSerializer
 	 */
 	public function formatName(string $name)
 	{
-		if ( ClassInfo::exists($name) )
+		$class = Inflector::singularize( $name );
+
+		if ( ClassInfo::exists($class) )
 		{
-			$name = Inflector::singularize( $name );
-			$name = lcfirst( $name );
+			$name = lcfirst( $class );
 		}
 		else{
 			$name = $this->serializeColumnName( $name );
@@ -170,8 +171,15 @@ class RESTfulAPI_EmberDataSerializer extends RESTfulAPI_BasicSerializer
 	 */
 	protected function serializeColumnName(string $name)
 	{
-		$name = str_replace('ID', 'Id', $name);
-		$name = lcfirst($name);
+		//$name = str_replace('ID', 'Id', $name);
+		$name = preg_replace( '/(.+)ID$/', '$1', $name);
+		if ( $name === 'ID' )
+		{
+			$name = strtolower($name);
+		}
+		else{
+			$name = lcfirst($name);
+		}		
 
 		return $name;
 	}

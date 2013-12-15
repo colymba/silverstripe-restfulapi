@@ -69,7 +69,14 @@ class RESTfulAPI_BasicDeSerializer implements RESTfulAPI_DeSerializer
 	 */
 	public function unformatName(string $name)
 	{
-		return $name;
+		$class = ucfirst( $name );
+		if ( ClassInfo::exists($class) )
+		{
+			return $class;
+		}
+		else{
+			return $name;
+		}
 	}
 
 
