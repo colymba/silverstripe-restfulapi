@@ -34,16 +34,6 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
 
 
   /**
-   * Sideloaded records settings
-   * 
-   * @todo not implemented
-   * 
-   * @var array
-   */
-  private static $sideloadedRecords = array();
-
-
-  /**
    * Search Filter Modifiers Separator used in the query var
    * i.e. ?column__EndsWith=value
    * 

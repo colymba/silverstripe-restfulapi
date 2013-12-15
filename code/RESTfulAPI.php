@@ -84,7 +84,7 @@ class RESTfulAPI extends Controller
    * {
    *   'member': {
    *     'name': 'John',
-   *     'favourite_ids': [1, 2]
+   *     'favourites': [1, 2]
    *   }
    * }
    *
@@ -103,7 +103,6 @@ class RESTfulAPI extends Controller
    * }
    * 
    * @var array
-   * @todo embeded records are deprecated (for now)
    */
   private static $embedded_records;
 

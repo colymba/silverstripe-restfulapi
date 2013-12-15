@@ -38,6 +38,7 @@ class RESTfulAPI_BasicSerializer implements RESTfulAPI_Serializer
   /**
    * Stores the current $embedded_records @config
    * Config set on {@link RESTfulAPI}
+   * 
    * @var array
    */
   protected $embeddedRecords;
@@ -311,7 +312,7 @@ class RESTfulAPI_BasicSerializer implements RESTfulAPI_Serializer
   {
     if ( array_key_exists($model, $this->embeddedRecords) )
     {
-      return in_array($relation, $this->embeddedRecords[$model]);
+    	return is_array($this->embeddedRecords[$model]) && in_array($relation, $this->embeddedRecords[$model]);
     }
 
     return false;
