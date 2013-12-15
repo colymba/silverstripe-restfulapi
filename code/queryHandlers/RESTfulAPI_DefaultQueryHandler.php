@@ -33,41 +33,6 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
   );
 
 
-	/**
-   * Embedded records setting
-   * Specify which relation ($has_one, $has_many, $many_many) model data should be embedded into the response
-   *
-   * Map of classes to embed for specific record
-   * 'RequestedClass' => array('ClassToEmbed', 'Another')
-   *
-   * Non embedded response:
-   * {
-   *   'member': {
-   *     'name': 'John',
-   *     'favourite_ids': [1, 2]
-   *   }
-   * }
-   *
-   * Response with embedded record:
-   * {
-   *   'member': {
-   *     'name': 'John',
-   *     'favourites': [{
-   *         'id': 1,
-   *         'name': 'Mark'
-   *      },{
-   *         'id': 2,
-   *         'name': 'Maggie'
-   *      }]
-   *    }
-   * }
-   * 
-   * @var array
-   * @todo embeded records are deprecated (for now)
-   */
-  private static $embeddedRecords = array();	
-
-
   /**
    * Sideloaded records settings
    * 

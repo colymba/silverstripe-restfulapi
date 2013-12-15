@@ -35,13 +35,37 @@ class RESTfulAPI_BasicSerializer implements RESTfulAPI_Serializer
 	}
 
 
+  /**
+   * Stores the current $embedded_records @config
+   * Config set on {@link RESTfulAPI}
+   * @var array
+   */
+  protected $embeddedRecords;
+
+
+  /**
+   * Construct and set current config
+   */
+  public function __construct()
+  {
+    $embedded_records = Config::inst()->get('RESTfulAPI', 'embedded_records');
+    if ( is_array($embedded_records) )
+    {
+      $this->embeddedRecords = $embedded_records;
+    }
+    else{
+      $this->embeddedRecords = array();
+    }
+  }
+
+
 	/**
 	 * Convert data into a JSON string
 	 * 
 	 * @param  mixed  $data Data to convert
 	 * @return string       JSON data
 	 */
-	public function jsonify($data)
+	protected function jsonify($data)
 	{
 		$json = json_encode($data, JSON_NUMERIC_CHECK);
 		
@@ -101,7 +125,7 @@ class RESTfulAPI_BasicSerializer implements RESTfulAPI_Serializer
 	 * @param  DataObject $dataObject The data object to format
 	 * @return array                  The formatted array map representation of the DataObject
 	 */
-	private function formatDataObject(DataObject $dataObject)
+	protected function formatDataObject(DataObject $dataObject)
 	{
 		if( method_exists($dataObject, 'onBeforeSerialize') )
     {
@@ -118,27 +142,39 @@ class RESTfulAPI_BasicSerializer implements RESTfulAPI_Serializer
     $many_many         = Config::inst()->get( $dataObject->ClassName, 'many_many',         Config::INHERITED );
     $belongs_many_many = Config::inst()->get( $dataObject->ClassName, 'belongs_many_many', Config::INHERITED );
 
-    // iterate $db fields and $has_one realtions
+    // iterate $db fields and $has_one relations
     foreach ($dataObjectMap as $columnName => $value)
     {
-    	$hasOneColumnName = preg_replace( '/ID$/i', '', $columnName );
     	$columnName = $this->serializeColumnName( $columnName );
 
-    	// if this column is a has_one relation
-    	if ( array_key_exists( $hasOneColumnName, $has_one ) )
+    	// if NOT has_one relation
+    	if ( !array_key_exists( $columnName, $has_one ) )
     	{
-    		// convert value to integer
+    		// straight copy
+    		$formattedDataObjectMap[$columnName] = $value;
+    	}
+    	else{
+    		// convert foreign ID to integer
         $value = intVal( $value );
-
-        // skip
+        // skip empty relations
         if ( $value === 0 ) continue;
 
-        // remove ID suffix from realation name
-        $columnName = $this->serializeColumnName( $hasOneColumnName );
-    	}
-
-    	// save formatted data
-    	$formattedDataObjectMap[$columnName] = $value;
+        // check if this should be embedded
+        if ( $this->isEmbeddable($dataObject->ClassName, $columnName) )
+        {
+        	// get the relation's record ready to embed
+	      	$embedData = $this->getEmbedData($dataObject, $columnName);
+	      	// embed the data if any
+	      	if ( $embedData !== null )
+	      	{	      		
+	      		$formattedDataObjectMap[$columnName] = $embedData;
+	      	}
+        }
+        else{
+        	// save formatted data
+    			$formattedDataObjectMap[$columnName] = $value;
+        }        
+    	}    	
     }
 
     // combine defined '_many' relations into 1 array
@@ -156,11 +192,25 @@ class RESTfulAPI_BasicSerializer implements RESTfulAPI_Serializer
       //if there actually are objects in the relation
       if ( $dataList->count() )
       {
-        // set column value to ID list
-        $idList = $dataList->map('ID', 'ID')->keys();
+      	// check if this relation should be embedded
+      	if ( $this->isEmbeddable($dataObject->ClassName, $relationName) )
+	      {
+	      	// get the relation's record(s) ready to embed
+	      	$embedData = $this->getEmbedData($dataObject, $relationName);
+	      	// embed the data if any
+	      	if ( $embedData !== null )
+	      	{
+	      		$columnName = $this->serializeColumnName( $relationName );
+	      		$formattedDataObjectMap[$columnName] = $embedData;
+	      	}
+	      }
+	      else{
+	      	// set column value to ID list
+	        $idList = $dataList->map('ID', 'ID')->keys();
 
-        $columnName = $this->serializeColumnName( $relationName );
-        $formattedDataObjectMap[$columnName] = $idList;
+	        $columnName = $this->serializeColumnName( $relationName );
+	        $formattedDataObjectMap[$columnName] = $idList;
+	      }
       }
     }
 
@@ -180,7 +230,7 @@ class RESTfulAPI_BasicSerializer implements RESTfulAPI_Serializer
 	 * @param  DataList  $dataList  The DataList to format
 	 * @return array                The formatted array representation of the DataList
 	 */
-	private function formatDataList(DataList $dataList)
+	protected function formatDataList(DataList $dataList)
 	{
 		$formattedDataListMap = array();
 
@@ -214,11 +264,56 @@ class RESTfulAPI_BasicSerializer implements RESTfulAPI_Serializer
 	 * @param  string $name Field name
 	 * @return string       Formatted name
 	 */
-	private function serializeColumnName(string $name)
+	protected function serializeColumnName(string $name)
 	{
 		//remove trailing ID from has_one
 		$name = preg_replace( '/(.+)ID$/', '$1', $name);
 
 		return $name;
 	}
+
+
+  /**
+   * Returns a DataObject relation's data
+   * formatted and ready to embed.
+   * 
+   * @param  DataObject $record       The DataObject to get the data from
+   * @param  string     $relationName The name of the relation
+   * @return array|null               Formatted DataObject or RelationList ready to embed or null if nothing to embed
+   */
+  protected function getEmbedData(DataObject $record, string $relationName)
+  {
+  	if ( $record->hasMethod($relationName) )
+    {
+      $relationData = $record->$relationName();
+      if ( $relationData instanceof RelationList )
+      {
+        return $this->formatDataList($relationData);
+      }
+      else{
+        return $this->formatDataObject($relationData);
+      }        
+    }
+
+    return null;
+  }
+
+
+  /**
+   * Checks if a speicific model's relation
+   * should have its records embedded.
+   * 
+   * @param  string  $model    Model's classname
+   * @param  string  $relation Relation name
+   * @return boolean           [description]
+   */
+  protected function isEmbeddable(string $model, string $relation)
+  {
+    if ( array_key_exists($model, $this->embeddedRecords) )
+    {
+      return in_array($relation, $this->embeddedRecords[$model]);
+    }
+
+    return false;
+  }
 }
