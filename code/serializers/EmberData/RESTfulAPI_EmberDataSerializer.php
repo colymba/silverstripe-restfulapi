@@ -210,16 +210,25 @@ class RESTfulAPI_EmberDataSerializer extends RESTfulAPI_BasicSerializer
 
 		if ( $dataSource instanceof DataObject )
 		{
+			$realtionsMap = $dataSource->stat('has_one');
+			$realtionsMap = array_merge($realtionsMap, $dataSource->stat('has_many'));
+			$realtionsMap = array_merge($realtionsMap, $dataSource->stat('many_many'));
+			$realtionsMap = array_merge($realtionsMap, $dataSource->stat('belongs_many_many'));
+
 			// if a single DataObject get the data for each relation
 			foreach ($this->sideloadedRecords[$dataSource->ClassName] as $relationName)
 			{
+				// check if the relation has api_access enabled, skip if not
+				$relationClass = $realtionsMap[$relationName];
+				if ( !RESTfulAPI::isAPIEnabled($relationClass) ) continue;
+
 				$newData = $this->getEmbedData($dataSource, $relationName);
 				// has_one are only simple array and we want arrays or array
 	  		if ( in_array($relationName, $dataSource->stat('has_one')) )
 				{
 					$newData = array($newData);
 				}
-				//print_r($newData);
+				
 				$data[$relationName] = $newData;
 			}
 		}
@@ -255,14 +264,6 @@ class RESTfulAPI_EmberDataSerializer extends RESTfulAPI_BasicSerializer
 	 */
 	protected function insertSideloadData(stdClass $root, $dataSource)
 	{
-		if ( $dataSource instanceof DataObject )
-		{
-			$dataClass = $dataSource->ClassName;
-		}
-		else{
-			$dataClass = $dataSource->dataClass;
-		}
-
 		// get the extra data
   	$sideloadData = $this->getSideloadData($dataSource);
 
@@ -271,13 +272,6 @@ class RESTfulAPI_EmberDataSerializer extends RESTfulAPI_BasicSerializer
   	{
   		$rootRelationName = $this->formatName( $relationName );
   		$rootRelationName = Inflector::pluralize( $rootRelationName );
-
-  		// has_one are only simple array and we want arrays or array
-  		/*
-  		if ( in_array($relationName, singleton($dataClass)->stat('has_one')) )
-			{
-				$relationData = array($relationData);
-			}*/
 
 			// attach to root
 			$root->{$rootRelationName} = $relationData;
