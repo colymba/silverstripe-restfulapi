@@ -137,7 +137,7 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
     }
 
     //check API access rules on model
-    if ( !$this->isAPIEnabled($model, $request->httpMethod()) )
+    if ( !RESTfulAPI::isAPIEnabled($model, $request->httpMethod()) )
     {
       return new RESTfulAPI_Error(403,
         "API access denied."
@@ -447,37 +447,5 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
     }
     
     return NULL;
-  }
-
-
-  /**
-   * Checks and returns a model api_access config.
-   * api_access config can be:
-   * - unset, default to false
-   * - false, access is always denied
-   * - true, access is always granted
-   * - comma separated list of allowed HTTP methods
-   * 
-   * @param  string  $model      Model's classname
-   * @param  string  $httpMethod API request HTTP method
-   * @return boolean             true if access is granted, false otherwise
-   */
-  function isAPIEnabled(string $model, string $httpMethod)
-  {
-    $rules = singleton($model)->stat('api_access');
-
-    if ( is_string($rules) )
-    {
-      $rules = explode(',', strtoupper($rules));
-      if ( in_array($httpMethod, $rules) )
-      {
-        return true;
-      }
-      else{
-        return false;
-      }
-    }
-
-    return $rules;
   }
 }
