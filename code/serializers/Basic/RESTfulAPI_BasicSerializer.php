@@ -161,7 +161,7 @@ class RESTfulAPI_BasicSerializer implements RESTfulAPI_Serializer
         if ( $value === 0 ) continue;
 
         // check if this should be embedded
-        if ( $this->isEmbeddable($dataObject->ClassName, $columnName) && RESTfulAPI::isAPIEnabled($columnName) )
+        if ( $this->isEmbeddable($dataObject->ClassName, $columnName) && RESTfulAPI::isAPIEnabled($has_one[$columnName]) )
         {
         	// get the relation's record ready to embed
 	      	$embedData = $this->getEmbedData($dataObject, $columnName);
