@@ -236,7 +236,14 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
   {
     if ($id)
     {
-    	$return = DataObject::get_by_id($model, $id);
+      $return = DataObject::get_by_id($model, $id);
+      
+      if ( !$return )
+      {
+        return new RESTfulAPI_Error(404,
+          "Model $id of $model not found."
+        );
+      }
     }
     else{
       // ":StartsWith", ":EndsWith", ":PartialMatch", ":GreaterThan", ":LessThan", ":Negation"

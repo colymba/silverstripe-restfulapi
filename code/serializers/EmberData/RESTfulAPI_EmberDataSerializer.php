@@ -97,29 +97,29 @@ class RESTfulAPI_EmberDataSerializer extends RESTfulAPI_BasicSerializer
 	public function serialize($data)
 	{
 		$json = '';
-		$formattedData = false;
+		$formattedData = null;
 
 		if ( $data instanceof DataObject )
-		{
-			$dataClass = $data->ClassName;
-			$rootClassName = $this->formatName( $data->ClassName );
-			$formattedData = $this->formatDataObject( $data );
+		{			
+      $dataClass     = $data->ClassName;
+      $rootClassName = $this->formatName( $dataClass );
+      $formattedData = $this->formatDataObject( $data );
 		}
 		else if ( $data instanceof DataList )
 		{
-			$dataClass = $data->dataClass;
-			$rootClassName = $this->formatName( $data->dataClass );
-			$rootClassName = Inflector::pluralize( $rootClassName );
-			$formattedData = $this->formatDataList( $data );
+      $dataClass     = $data->dataClass;
+      $rootClassName = $this->formatName( $data->dataClass );
+      $rootClassName = Inflector::pluralize( $rootClassName );
+      $formattedData = $this->formatDataList( $data );
 		}
 
-		if ( $formattedData )
+		if ( $formattedData !== null )
 		{
 			$root = new stdClass();
 	    $root->{$rootClassName} = $formattedData;
 
-	    // check if we should be sideloading some data
-	    if ( $this->hasSideloadedRecords($dataClass) )
+	    // if it's not an empty response >> check if we should be sideloading some data
+	    if ( $formattedData && $this->hasSideloadedRecords($dataClass) )
 	    {
 	    	$root = $this->insertSideloadData($root, $data);
 	    }

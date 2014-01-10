@@ -91,7 +91,7 @@ class RESTfulAPI_BasicSerializer implements RESTfulAPI_Serializer
 	public function serialize($data)
 	{
 		$json = '';
-		$formattedData = false;
+		$formattedData = null;
 
 		if ( $data instanceof DataObject )
 		{
@@ -102,7 +102,7 @@ class RESTfulAPI_BasicSerializer implements RESTfulAPI_Serializer
 			$formattedData = $this->formatDataList( $data );
 		}
 
-		if ( $formattedData )
+		if ( $formattedData !== null )
 		{
 			$json = $this->jsonify($formattedData);
 		}
