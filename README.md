@@ -62,7 +62,8 @@ This API comes with defaults for each of those components:
 * `RESTfulAPI_BasicSerializer` / `RESTfulAPI_BasicDeSerializer` serialize query results into JSON and deserialize client payloads
 * `RESTfulAPI_EmberDataSerializer` / `RESTfulAPI_EmberDataDeSerializer` same as the `Basic` version but with specific fomatting fo Ember Data.
 
-You can create you own classes by implementing the right interface or extending the existing components.
+You can create you own classes by implementing the right interface or extending the existing components. When creating you own components, any error should be return as a `RESTfulAPI_Error` object to the `RESTfulAPI`.
+
 
 ### Token Authentication Extension
 When using `RESTfulAPI_TokenAuthenticator` you must add the `RESTfulAPI_TokenAuthExtension` `DataExtension` to a `DataObject` and setup `RESTfulAPI_TokenAuthenticator` with the right config.
@@ -111,7 +112,7 @@ RESTfulAPI:
     serializer: '%$RESTfulAPI_EmberDataSerializer'
   cors:
     Enabled: true
-    Allow-Origin: 'http://localhost:9000'
+    Allow-Origin: 'http://mydomain.com'
     Allow-Headers: '*'
     Allow-Methods: 'OPTIONS, GET'
     Max-Age: 86400
