@@ -5,7 +5,7 @@
 source: code
 
 # Directory where to save the generated documentation
-destination: doc
+destination: doc/api
 
 # List of allowed file extensions
 extensions: [php]
