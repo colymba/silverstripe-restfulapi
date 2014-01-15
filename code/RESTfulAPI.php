@@ -316,9 +316,17 @@ class RESTfulAPI extends Controller
 
     $answer->addHeader('Content-Type', $this->serializer->getcontentType() );
     
-    //Output + exit
-    $answer->output();
-    exit;
+    // save controller's response then return/output
+    $this->response = $answer;
+
+    if( Director::is_cli() )
+    {
+      return $answer;
+    }
+    else{
+      $answer->output();
+      exit;
+    }
   }
 
 
@@ -339,9 +347,18 @@ class RESTfulAPI extends Controller
     $answer->addHeader('Content-Type', $this->serializer->getcontentType() );
 
     $answer = $this->setAnswerCORS($answer);
+    
+    // save controller's response then return/output
+    $this->response = $answer;
 
-    $answer->output();
-    exit;
+    if( Director::is_cli() )
+    {
+      return $answer;
+    }
+    else{
+      $answer->output();
+      exit;
+    }
   }
 
 
