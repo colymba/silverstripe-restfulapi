@@ -411,7 +411,7 @@ class RESTfulAPI extends Controller
    * @param  string  $httpMethod API request HTTP method
    * @return boolean             true if access is granted, false otherwise
    */
-  public static function isAPIEnabled(string $model, $httpMethod = 'GET')
+  public static function isAPIEnabled($model, $httpMethod = 'GET')
   {
     $rules = singleton($model)->stat('api_access');
 

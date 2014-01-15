@@ -39,5 +39,5 @@ interface RESTfulAPI_Serializer
 	 * @param  string $name ClassName of DBField name
 	 * @return string       Formatted name
 	 */
-	public function formatName(string $name);
+	public function formatName($name);
 }

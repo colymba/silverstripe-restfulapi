@@ -44,7 +44,7 @@ class RESTfulAPI_Error
 	 * @param integer $code    HTTP status code
 	 * @param string  $message Error message
 	 */
-	function __construct(integer $code, string $message, $body = null)
+	function __construct($code, $message, $body = null)
 	{
     $this->code    = $code;
     $this->message = $message;

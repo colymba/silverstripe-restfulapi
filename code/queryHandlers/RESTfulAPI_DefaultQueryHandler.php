@@ -232,7 +232,7 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
    * @param  SS_HTTPRequest         $request        The original HTTP request
    * @return DataObject|DataList                    Result of the search (note: DataList can be empty) 
    */
-  function findModel(string $model, $id = false, $queryParams, SS_HTTPRequest $request)
+  function findModel($model, $id = false, $queryParams, SS_HTTPRequest $request)
   {
     if ($id)
     {
@@ -335,7 +335,7 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
    * @param  SS_HTTPRequest $request
    * @return DataObject
    */
-  function createModel(string $model, SS_HTTPRequest $request)
+  function createModel($model, SS_HTTPRequest $request)
   {
     $newModel = Injector::inst()->create($model);
     $newModel->write();
@@ -430,7 +430,7 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
    * @param  SS_HTTPRequest  $request   Model ID
    * @return NULL|array                 NULL if successful or array with error detail              
    */
-  function deleteModel(string $model, integer $id, SS_HTTPRequest $request)
+  function deleteModel($model, $id, SS_HTTPRequest $request)
   {
     if ( $id )
     {

@@ -236,7 +236,7 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
    * @param  integer $id ID of the token owner
    * @return string      API token for the owner
    */
-  public function getToken(integer $id)
+  public function getToken($id)
   {
     if ( $id )
     {
@@ -265,7 +265,7 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
    * @param  integer $id      ID of the token owner
    * @param  boolean $expired if true the token will be invalidated
    */
-  public function resetToken(integer $id, $expired = false)
+  public function resetToken($id, $expired = false)
   {
     if ( $id )
     {
@@ -373,7 +373,7 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
    * @param  SS_HTTPRequest   $request    HTTP request with API token header "X-Silverstripe-Apitoken" or 'token' request var
    * @return array                        Result and eventual error message (valid, message, code)
    */
-  private function validateAPIToken(string $token)
+  private function validateAPIToken($token)
   {
     //get owner with that token
     $SQL_token = Convert::raw2sql($token);

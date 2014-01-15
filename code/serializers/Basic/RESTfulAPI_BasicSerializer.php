@@ -252,7 +252,7 @@ class RESTfulAPI_BasicSerializer implements RESTfulAPI_Serializer
 	 * @param  string $name ClassName of DBField name
 	 * @return string       Formatted name
 	 */
-	public function formatName(string $name)
+	public function formatName($name)
 	{
 		return $name;
 	}
@@ -265,7 +265,7 @@ class RESTfulAPI_BasicSerializer implements RESTfulAPI_Serializer
 	 * @param  string $name Field name
 	 * @return string       Formatted name
 	 */
-	protected function serializeColumnName(string $name)
+	protected function serializeColumnName($name)
 	{
 		//remove trailing ID from has_one
 		$name = preg_replace( '/(.+)ID$/', '$1', $name);
@@ -282,7 +282,7 @@ class RESTfulAPI_BasicSerializer implements RESTfulAPI_Serializer
    * @param  string     $relationName The name of the relation
    * @return array|null               Formatted DataObject or RelationList ready to embed or null if nothing to embed
    */
-  protected function getEmbedData(DataObject $record, string $relationName)
+  protected function getEmbedData(DataObject $record, $relationName)
   {
   	if ( $record->hasMethod($relationName) )
     {
@@ -308,7 +308,7 @@ class RESTfulAPI_BasicSerializer implements RESTfulAPI_Serializer
    * @param  string  $relation Relation name
    * @return boolean           [description]
    */
-  protected function isEmbeddable(string $model, string $relation)
+  protected function isEmbeddable($model, $relation)
   {
     if ( array_key_exists($model, $this->embeddedRecords) )
     {

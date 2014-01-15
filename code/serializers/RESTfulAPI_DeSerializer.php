@@ -20,7 +20,7 @@ interface RESTfulAPI_DeSerializer
 	 * @param  string  $data   JSON to be converted to data ready to be consumed by SilverStripe
 	 * @return array           Formatted array representation of the JSON data
 	 */
-	public function deserialize(string $json);
+	public function deserialize($json);
 
 
 	/**
@@ -30,5 +30,5 @@ interface RESTfulAPI_DeSerializer
 	 * @param  string $name ClassName of DBField name
 	 * @return string       Formatted name
 	 */
-	public function unformatName(string $name);
+	public function unformatName($name);
 }

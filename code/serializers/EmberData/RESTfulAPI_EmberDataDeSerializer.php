@@ -29,7 +29,7 @@ class RESTfulAPI_EmberDataDeSerializer implements RESTfulAPI_DeSerializer
 	 * @param  string        $data   JSON to be converted to data ready to be consumed by SilverStripe
 	 * @return array|false           Formatted array representation of the JSON data or false if failed
 	 */
-	public function deserialize(string $json)
+	public function deserialize($json)
 	{
 		$data = json_decode( $json, true );
 		
@@ -71,7 +71,7 @@ class RESTfulAPI_EmberDataDeSerializer implements RESTfulAPI_DeSerializer
 	 * @param  string $name ClassName of Field name
 	 * @return string       Formatted name
 	 */
-	public function unformatName(string $name)
+	public function unformatName($name)
 	{
 		$class = Inflector::singularize( $name );
 		$class = ucfirst( $class );
@@ -95,7 +95,7 @@ class RESTfulAPI_EmberDataDeSerializer implements RESTfulAPI_DeSerializer
 	 * @param  string $name Field name
 	 * @return string       Formatted name
 	 */
-	private function deserializeColumnName(string $name)
+	private function deserializeColumnName($name)
 	{
 		$name = preg_replace( '/(.*)ID(s)?$/i', '$1ID', $name);
 		$name = ucfirst($name);

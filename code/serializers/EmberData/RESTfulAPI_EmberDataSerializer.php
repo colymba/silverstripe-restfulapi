@@ -146,7 +146,7 @@ class RESTfulAPI_EmberDataSerializer extends RESTfulAPI_BasicSerializer
 	 * @param  string $name ClassName of DBField name
 	 * @return string       Formatted name
 	 */
-	public function formatName(string $name)
+	public function formatName($name)
 	{
 		$class = Inflector::singularize( $name );
 
@@ -169,7 +169,7 @@ class RESTfulAPI_EmberDataSerializer extends RESTfulAPI_BasicSerializer
 	 * @param  string $name Field name
 	 * @return string       Formatted name
 	 */
-	protected function serializeColumnName(string $name)
+	protected function serializeColumnName($name)
 	{
 		//$name = str_replace('ID', 'Id', $name);
 		$name = preg_replace( '/(.+)ID$/', '$1', $name);
@@ -191,7 +191,7 @@ class RESTfulAPI_EmberDataSerializer extends RESTfulAPI_BasicSerializer
 	 * @param  string  $classname Requested data classname
 	 * @return boolean            True if some relations should be sideloaded
 	 */
-	protected function hasSideloadedRecords(string $classname)
+	protected function hasSideloadedRecords($classname)
 	{
 		return array_key_exists($classname, $this->sideloadedRecords);
 	}
