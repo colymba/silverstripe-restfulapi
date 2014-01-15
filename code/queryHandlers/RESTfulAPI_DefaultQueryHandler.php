@@ -371,10 +371,10 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
 
     if ( $model && $payload )
     {
-      $has_one            = Config::inst()->get( $model->ClassName, 'has_one', Config::INHERITED );
-      $has_many           = Config::inst()->get( $model->ClassName, 'has_many', Config::INHERITED );
-      $many_many          = Config::inst()->get( $model->ClassName, 'many_many', Config::INHERITED );
-      $belongs_many_many  = Config::inst()->get( $model->ClassName, 'belongs_many_many', Config::INHERITED );
+      $has_one            = Config::inst()->get( $model->ClassName, 'has_one' );
+      $has_many           = Config::inst()->get( $model->ClassName, 'has_many' );
+      $many_many          = Config::inst()->get( $model->ClassName, 'many_many' );
+      $belongs_many_many  = Config::inst()->get( $model->ClassName, 'belongs_many_many' );
 
       $hasChanges         = false;
       $hasRelationChanges = false;
@@ -383,7 +383,7 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
       {
         if ( !is_array($value) )
         {
-          if ( array_key_exists($attribute, $has_one) )
+          if ( is_array($has_one) && array_key_exists($attribute, $has_one) )
           {
             $relation         = $attribute . 'ID';
             $model->$relation = $value;
@@ -397,8 +397,10 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
         }
         else{
           //has_many, many_many or $belong_many_many
-          if ( array_key_exists($attribute, $has_many) || array_key_exists($attribute, $many_many) || array_key_exists($attribute, $belongs_many_many) )
-          {
+          if ( (is_array($has_many) && array_key_exists($attribute, $has_many))
+               || (is_array($many_many) && array_key_exists($attribute, $many_many))
+               || (is_array($belongs_many_many) && array_key_exists($attribute, $belongs_many_many))
+          ) {
             $hasRelationChanges = true;
             $ssList = $model->{$attribute}();            
             $ssList->removeAll(); //reset list

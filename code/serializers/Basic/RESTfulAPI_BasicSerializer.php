@@ -137,24 +137,20 @@ class RESTfulAPI_BasicSerializer implements RESTfulAPI_Serializer
     $formattedDataObjectMap = array();
     $dataObjectMap          = $dataObject->toMap();
 
-    // get DataObject realtions config
-    $has_one           = Config::inst()->get( $dataObject->ClassName, 'has_one',           Config::INHERITED );
-    $has_many          = Config::inst()->get( $dataObject->ClassName, 'has_many',          Config::INHERITED );
-    $many_many         = Config::inst()->get( $dataObject->ClassName, 'many_many',         Config::INHERITED );
-    $belongs_many_many = Config::inst()->get( $dataObject->ClassName, 'belongs_many_many', Config::INHERITED );
+    // get DataObject relations config
+    $has_one           = Config::inst()->get( $dataObject->ClassName, 'has_one' );
+    $has_many          = Config::inst()->get( $dataObject->ClassName, 'has_many' );
+    $many_many         = Config::inst()->get( $dataObject->ClassName, 'many_many' );
+    $belongs_many_many = Config::inst()->get( $dataObject->ClassName, 'belongs_many_many' );
 
     // iterate $db fields and $has_one relations
     foreach ($dataObjectMap as $columnName => $value)
     {
     	$columnName = $this->serializeColumnName( $columnName );
 
-    	// if NOT has_one relation
-    	if ( !array_key_exists( $columnName, $has_one ) )
+    	// has_one relation
+    	if ( is_array($has_one) && array_key_exists( $columnName, $has_one ) )
     	{
-    		// straight copy
-    		$formattedDataObjectMap[$columnName] = $value;
-    	}
-    	else{
     		// convert foreign ID to integer
         $value = intVal( $value );
         // skip empty relations
@@ -174,7 +170,12 @@ class RESTfulAPI_BasicSerializer implements RESTfulAPI_Serializer
         else{
         	// save formatted data
     			$formattedDataObjectMap[$columnName] = $value;
-        }        
+        }     		
+    	}
+    	// NOT a relations
+    	else{
+    		// straight copy
+    		$formattedDataObjectMap[$columnName] = $value;     
     	}    	
     }
 

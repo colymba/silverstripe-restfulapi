@@ -210,21 +210,27 @@ class RESTfulAPI_EmberDataSerializer extends RESTfulAPI_BasicSerializer
 
 		if ( $dataSource instanceof DataObject )
 		{
-			$realtionsMap = $dataSource->stat('has_one');
-			$realtionsMap = array_merge($realtionsMap, $dataSource->stat('has_many'));
-			$realtionsMap = array_merge($realtionsMap, $dataSource->stat('many_many'));
-			$realtionsMap = array_merge($realtionsMap, $dataSource->stat('belongs_many_many'));
+			$has_one           = $dataSource->stat('has_one');
+      $has_many          = $dataSource->stat('has_many');
+      $many_many         = $dataSource->stat('many_many');
+      $belongs_many_many = $dataSource->stat('belongs_many_many');
+
+      $relationsMap = array();
+      if ( is_array($has_one) )           $relationsMap = array_merge($relationsMap, $has_one);
+	    if ( is_array($has_many) )          $relationsMap = array_merge($relationsMap, $has_many);
+	    if ( is_array($many_many) )         $relationsMap = array_merge($relationsMap, $many_many);
+	    if ( is_array($belongs_many_many) ) $relationsMap = array_merge($relationsMap, $belongs_many_many);
 
 			// if a single DataObject get the data for each relation
 			foreach ($this->sideloadedRecords[$dataSource->ClassName] as $relationName)
 			{
 				// check if the relation has api_access enabled, skip if not
-				$relationClass = $realtionsMap[$relationName];
+				$relationClass = $relationsMap[$relationName];
 				if ( !RESTfulAPI::isAPIEnabled($relationClass) ) continue;
 
 				$newData = $this->getEmbedData($dataSource, $relationName);
 				// has_one are only simple array and we want arrays or array
-	  		if ( in_array($relationName, $dataSource->stat('has_one')) )
+	  		if ( is_array($has_one) && in_array($relationName, $has_one) )
 				{
 					$newData = array($newData);
 				}
