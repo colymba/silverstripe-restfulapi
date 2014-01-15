@@ -434,7 +434,6 @@ class RESTfulAPI extends Controller
   public static function isAPIEnabled($model, $httpMethod = 'GET')
   {
     $rules = singleton($model)->stat('api_access');
-
     if ( is_string($rules) )
     {
       $rules = explode(',', strtoupper($rules));
