@@ -228,13 +228,16 @@ class RESTfulAPI extends Controller
           $this->answer($response);
         }
         else{          
-          //$this->error(404, "Action '$action' isn't available on class $className.");
           //let's be shady here instead
-          $this->error(403, "Action '$action' not allowed.");
+          $this->error( new RESTfulAPI_Error(403,
+            "Action '$action' not allowed."
+          ));
         }
       }
       else{
-        $this->error(403, "Action '$action' not allowed.");
+        $this->error( new RESTfulAPI_Error(403,
+          "Action '$action' not allowed."
+        ));
       }
       
     }
