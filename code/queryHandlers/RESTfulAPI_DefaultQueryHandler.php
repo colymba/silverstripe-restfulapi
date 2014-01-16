@@ -364,7 +364,7 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
     }
 
     $payload = $this->deSerializer->deserialize( $request->getBody() );
-    if ( RESTfulAPI_Toolkit::is_error($payload) )
+    if ( $payload instanceof RESTfulAPI_Error )
     {
       return $payload;
     }
