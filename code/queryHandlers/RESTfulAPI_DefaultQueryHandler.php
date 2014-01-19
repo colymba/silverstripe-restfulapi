@@ -85,6 +85,8 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
    */
   public function handleQuery(SS_HTTPRequest $request)
   { 
+    //print_r($request);
+
     //get requested model(s) details
     $model       = $request->param('ClassName');
     $id          = $request->param('ID');

@@ -1,5 +1,7 @@
 # SilverStripe RESTful API
 
+[![Build Status](https://travis-ci.org/colymba/silverstripe-restfulapi.png?branch=tests)](https://travis-ci.org/colymba/silverstripe-restfulapi)
+
 This module implements a RESTful API for read/write access to your SilverStripe Models. It comes bundled with a default Token Authenticator, Query Handler and JSON Serializers, and can be extended to your need and to return XML or other content type via custom components.
 
 
