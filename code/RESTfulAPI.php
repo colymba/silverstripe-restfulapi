@@ -144,7 +144,7 @@ class RESTfulAPI extends Controller
    * 
    * @var array
    */
-  public static $url_handlers = array(
+  private static $url_handlers = array(
     'auth/$Action' => 'auth',
     '$ClassName/$ID' => 'index'
   );
