@@ -15,13 +15,8 @@ interface RESTfulAPI_Authenticator
   /**
    * Checks if a request to the API is authenticated
    * 
-   * @param  SS_HTTPRequest   $request    HTTP API request
-   * @return array 												authentication result:
-   * array(
-   * 	'valid' => boolean  // true if the request is authorize
-   * 	'message' => string // message to return to the client
-   * 	'code' => integer   // response code associated with result if any
-   * )
+   * @param  SS_HTTPRequest          $request    HTTP API request
+   * @return true|RESTfulAPI_Error               True if token is valid OR RESTfulAPI_Error with details
    */
   public function authenticate(SS_HTTPRequest $request);
 }

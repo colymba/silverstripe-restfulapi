@@ -81,12 +81,12 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
     $config = array();
     $configInstance = Config::inst();    
 
-    $config['life']     = $configInstance->get( 'RESTfulAPI_TokenAuthenticator', 'tokenLife', Config::INHERITED );
-    $config['header']   = $configInstance->get( 'RESTfulAPI_TokenAuthenticator', 'tokenHeader', Config::INHERITED );
-    $config['queryVar'] = $configInstance->get( 'RESTfulAPI_TokenAuthenticator', 'tokenQueryVar', Config::INHERITED );
-    $config['owner']    = $configInstance->get( 'RESTfulAPI_TokenAuthenticator', 'tokenOwnerClass', Config::INHERITED );
+    $config['life']     = $configInstance->get('RESTfulAPI_TokenAuthenticator', 'tokenLife');
+    $config['header']   = $configInstance->get('RESTfulAPI_TokenAuthenticator', 'tokenHeader');
+    $config['queryVar'] = $configInstance->get('RESTfulAPI_TokenAuthenticator', 'tokenQueryVar');
+    $config['owner']    = $configInstance->get('RESTfulAPI_TokenAuthenticator', 'tokenOwnerClass');
 
-    $tokenDBColumns = $configInstance->get( 'RESTfulAPI_TokenAuthExtension', 'db', Config::INHERITED );
+    $tokenDBColumns = $configInstance->get('RESTfulAPI_TokenAuthExtension', 'db');
     $tokenDBColumn  = array_search('Varchar(160)', $tokenDBColumns);
     $expireDBColumn = array_search('Int', $tokenDBColumns);
 
@@ -332,13 +332,8 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
    * Checks if a request to the API is authenticated
    * Gets API Token from HTTP Request and return Auth result
    * 
-   * @param  SS_HTTPRequest   $request    HTTP API request
-   * @return array                        authentication result:
-   * array(
-   *  'valid' => boolean  // true if the request is authorize
-   *  'message' => string // message to return to the client
-   *  'code' => integer   // response code associated with result if any
-   * )
+   * @param  SS_HTTPRequest           $request    HTTP API request
+   * @return true|RESTfulAPI_Error                True if token is valid OR RESTfulAPI_Error with details
    */
   public function authenticate(SS_HTTPRequest $request)
   {
@@ -370,8 +365,8 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
   /**
    * Validate the API token
    * 
-   * @param  SS_HTTPRequest   $request    HTTP request with API token header "X-Silverstripe-Apitoken" or 'token' request var
-   * @return array                        Result and eventual error message (valid, message, code)
+   * @param  string                 $token    Authentication token
+   * @return true|RESTfulAPI_Error            True if token is valid OR RESTfulAPI_Error with details
    */
   private function validateAPIToken($token)
   {
@@ -398,14 +393,8 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
         if ( is_a($tokenOwner, 'Member') )
         {
           $tokenOwner->logIn();
-        }        
+        }
 
-        /*
-        return array(
-          'valid'   => true,
-          'message' => 'Token valid.',
-          'code'    => self::AUTH_CODE_LOGGED_IN
-        );*/
         return true;
       }
       else{

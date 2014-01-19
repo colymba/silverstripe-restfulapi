@@ -15,8 +15,8 @@
 class RESTfulAPI_TokenAuthExtension extends DataExtension
 {
 	private static $db = array(
-		'ApiToken' => 'Varchar(160)',
-		'ApiTokenExpire' => 'Int'
+    'ApiToken'       => 'Varchar(160)',
+    'ApiTokenExpire' => 'Int'
 	);
 
 	function updateCMSFields(FieldList $fields)

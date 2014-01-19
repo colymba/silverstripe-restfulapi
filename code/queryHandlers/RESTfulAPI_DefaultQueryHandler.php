@@ -80,13 +80,11 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
   /**
    * All requests pass through here and are redirected depending on HTTP verb and params
    * 
-   * @param  SS_HTTPRequest                 $request    HTTP request
-   * @return DataObjec|DataList|stdClass                DataObject/DataList result or stdClass on error
+   * @param  SS_HTTPRequest        $request    HTTP request
+   * @return DataObjec|DataList                DataObject/DataList result or stdClass on error
    */
   public function handleQuery(SS_HTTPRequest $request)
   { 
-    //print_r($request);
-
     //get requested model(s) details
     $model       = $request->param('ClassName');
     $id          = $request->param('ID');
@@ -189,7 +187,7 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
   function parseQueryParameters(array $params)
   {
     $parsedParams = array();
-    $searchFilterModifiersSeparator = Config::inst()->get( 'RESTfulAPI_DefaultQueryHandler', 'searchFilterModifiersSeparator', Config::INHERITED );
+    $searchFilterModifiersSeparator = Config::inst()->get('RESTfulAPI_DefaultQueryHandler', 'searchFilterModifiersSeparator');
 
     foreach ($params as $key__mod => $value)
     {
@@ -226,8 +224,10 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
  	/**
    * Finds 1 or more objects of class $model
    *
-   * @todo  handle empty results? Return 404?
-   * 
+   * Handles column modifiers: :StartsWith, :EndsWith,
+   * :PartialMatch, :GreaterThan, :LessThan, :Negation
+   * and query modifiers: sort, rand, limit
+   *
    * @param  string                 $model          Model(s) class to find
    * @param  boolean\integr         $id             The ID of the model to find or false
    * @param  array                  $queryParams    Query parameters and modifiers
@@ -248,9 +248,6 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
       }
     }
     else{
-      // ":StartsWith", ":EndsWith", ":PartialMatch", ":GreaterThan", ":LessThan", ":Negation"
-      // sort, rand, limit
-
       $return = DataList::create($model);
 
       if ( count($queryParams) > 0 )
@@ -260,10 +257,7 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
 
           if ( $param['Column'] )
           {
-          	//@delete ?
-            //$param['Column'] = Inflector::camelize( $param['Column'] );
-
-            // handle sorting by column
+          	// handle sorting by column
             if ( $param['Modifier'] === 'sort' )
             {
               $return = $return->sort(array(
@@ -318,7 +312,7 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
 
       //sets default limit if none given
       $limits = $return->dataQuery()->query()->getLimit();
-      $limitConfig = Config::inst()->get('RESTfulAPI_DefaultQueryHandler', 'max_records_limit', Config::INHERITED);
+      $limitConfig = Config::inst()->get('RESTfulAPI_DefaultQueryHandler', 'max_records_limit');
 
       if ( is_array($limits) && !array_key_exists('limit', $limits) && $limitConfig >= 0 )
       {

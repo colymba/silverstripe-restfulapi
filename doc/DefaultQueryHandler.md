@@ -10,7 +10,11 @@ Config | Type | Info | Default
 
 
 ## Search filter modifiers
-This also accept search filter modifiers in HTTP variables (see [Search Filter Modifiers](http://doc.silverstripe.org/framework/en/topics/datamodel#search-filter-modifiers)) as well as 2 special modifiers `rand` and `limit` with these possible formatting:
+This also accept search filter modifiers in HTTP variables (see [Search Filter Modifiers](http://doc.silverstripe.org/framework/en/topics/datamodel#search-filter-modifiers)) like:
+* ?columnNAme__StartsWith=Ba
+
+As well as special modifiers `sort`, `rand` and `limit` with these possible formatting:
+* ?columnName__sort=ASC
 * ?__rand
 * ?__rand=seed
 * ?__limit=count

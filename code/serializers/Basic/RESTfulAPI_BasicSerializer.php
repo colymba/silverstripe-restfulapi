@@ -307,7 +307,7 @@ class RESTfulAPI_BasicSerializer implements RESTfulAPI_Serializer
    * 
    * @param  string  $model    Model's classname
    * @param  string  $relation Relation name
-   * @return boolean           [description]
+   * @return boolean           Trus if the relation should be embedded
    */
   protected function isEmbeddable($model, $relation)
   {

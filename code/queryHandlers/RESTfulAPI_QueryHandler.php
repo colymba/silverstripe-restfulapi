@@ -24,8 +24,8 @@ interface RESTfulAPI_QueryHandler
 	/**
    * All requests pass through here and are redirected depending on HTTP verb and params
    * 
-   * @param  SS_HTTPRequest   $request    HTTP request
-   * @return array                        DataObjec/DataList array map
+   * @param  SS_HTTPRequest        $request    HTTP request
+   * @return DataObjec|DataList                DataObjec/DataList result
    */
   public function handleQuery(SS_HTTPRequest $request);
 }

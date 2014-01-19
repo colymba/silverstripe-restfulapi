@@ -213,7 +213,7 @@ class RESTfulAPI extends Controller
     if ( $this->authenticator )
     {
       $className = get_class($this->authenticator);
-      $allowedActions = Config::inst()->get( $className, 'allowed_actions', Config::INHERITED );
+      $allowedActions = Config::inst()->get($className, 'allowed_actions');
       if ( !$allowedActions )
       {
         $allowedActions = array();
@@ -370,7 +370,7 @@ class RESTfulAPI extends Controller
    */
   private function setAnswerCORS(SS_HTTPResponse $answer)
   {
-    $cors = Config::inst()->get( 'RESTfulAPI', 'cors', Config::INHERITED );
+    $cors = Config::inst()->get('RESTfulAPI', 'cors');
 
     // skip if CORS is not enabled
     if ( !$cors['Enabled'] )

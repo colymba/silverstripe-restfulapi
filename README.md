@@ -1,6 +1,6 @@
 # SilverStripe RESTful API
 
-[![Build Status](https://travis-ci.org/colymba/silverstripe-restfulapi.png?branch=tests)](https://travis-ci.org/colymba/silverstripe-restfulapi)
+[![Build Status](https://travis-ci.org/colymba/silverstripe-restfulapi.png?branch=master)](https://travis-ci.org/colymba/silverstripe-restfulapi)
 
 This module implements a RESTful API for read/write access to your SilverStripe Models. It comes bundled with a default Token Authenticator, Query Handler and JSON Serializers, and can be extended to your need and to return XML or other content type via custom components.
 
@@ -34,13 +34,13 @@ The allowed `/auth/$Action` must be defined on the used `RESTfulAPI_Authenticato
 
 
 ## Quick features highlight
-* Configurable components
-* CORS enabled
-* Embedded records
-* Sideloaded records (EmberDataSerializer)
-* Authentication
-* DataObject level api access config
-* Search filter modifiers
+* [Configurable components](#components)
+* [CORS enabled](doc/RESTfulAPI.md#cors)
+* [Embedded records](doc/RESTfulAPI.md#embedded-records)
+* [Sideloaded records (EmberDataSerializer)](doc/EmberDataSerializer.md#sideloaded-records)
+* [Authentication](doc/TokenAuthenticator.md)
+* [DataObject level api access config](doc/RESTfulAPI.md#authentication-and-api-access-restriction)
+* [Search filter modifiers](doc/DefaultQueryHandler.md#search-filter-modifiers)
 
 
 ## What's all this?
@@ -97,7 +97,7 @@ Category:
 Magazine:
   api_access: true
 Tag:
-  api_access: true
+  api_access: 'GET,POST'
 Visual:
   api_access: true
 Image:
@@ -105,7 +105,7 @@ Image:
 File:
   api_access: true
 Page:
-  api_access: true
+  api_access: false
 # RestfulAPI config
 RESTfulAPI:
   dependencies:
@@ -135,7 +135,6 @@ RESTfulAPI_EmberDataSerializer:
 
 
 ## Todo
-* Tests...
 * API access IP throttling (limit request per minute for each IP or token)
 * Check components interface implementation 
 
