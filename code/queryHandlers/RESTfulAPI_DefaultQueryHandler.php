@@ -367,10 +367,18 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
 
     if ( $model && $payload )
     {
-      $has_one            = Config::inst()->get( $model->ClassName, 'has_one' );
-      $has_many           = Config::inst()->get( $model->ClassName, 'has_many' );
-      $many_many          = Config::inst()->get( $model->ClassName, 'many_many' );
-      $belongs_many_many  = Config::inst()->get( $model->ClassName, 'belongs_many_many' );
+      $has_one           = Config::inst()->get( $model->ClassName, 'has_one' );
+      $has_many          = Config::inst()->get( $model->ClassName, 'has_many' );
+      $many_many         = Config::inst()->get( $model->ClassName, 'many_many' );
+      $belongs_many_many = Config::inst()->get( $model->ClassName, 'belongs_many_many' );
+
+      $many_many_extraFields = array();
+
+      if ( isset($payload['ManyManyExtraFields']) )
+      {
+        $many_many_extraFields = $payload['ManyManyExtraFields'];
+        unset($payload['ManyManyExtraFields']);
+      }
 
       $hasChanges         = false;
       $hasRelationChanges = false;
@@ -402,7 +410,17 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
             $ssList->removeAll(); //reset list
             foreach ($value as $id)
             {
-              $ssList->add( $id );              
+              // check if there is extraFields
+              if ( array_key_exists($attribute, $many_many_extraFields) )
+              {
+                if ( isset($many_many_extraFields[$attribute][$id]) )
+                {
+                  $ssList->add( $id, $many_many_extraFields[$attribute][$id] );
+                  continue;
+                }                
+              }
+
+              $ssList->add( $id );
             }
           }
         }

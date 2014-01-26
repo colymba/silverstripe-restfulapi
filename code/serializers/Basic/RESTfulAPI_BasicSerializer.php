@@ -138,10 +138,13 @@ class RESTfulAPI_BasicSerializer implements RESTfulAPI_Serializer
     $dataObjectMap          = $dataObject->toMap();
 
     // get DataObject relations config
-    $has_one           = Config::inst()->get( $dataObject->ClassName, 'has_one' );
-    $has_many          = Config::inst()->get( $dataObject->ClassName, 'has_many' );
-    $many_many         = Config::inst()->get( $dataObject->ClassName, 'many_many' );
-    $belongs_many_many = Config::inst()->get( $dataObject->ClassName, 'belongs_many_many' );
+    $has_one               = Config::inst()->get( $dataObject->ClassName, 'has_one' );
+    $has_many              = Config::inst()->get( $dataObject->ClassName, 'has_many' );
+    $many_many             = Config::inst()->get( $dataObject->ClassName, 'many_many' );
+    $belongs_many_many     = Config::inst()->get( $dataObject->ClassName, 'belongs_many_many' );
+    
+    //$many_many_extraFields = $dataObject->many_many_extraFields();
+    $many_many_extraFields = $dataObject->stat('many_many_extraFields');
 
     // iterate $db fields and $has_one relations
     foreach ($dataObjectMap as $columnName => $value)
@@ -214,6 +217,62 @@ class RESTfulAPI_BasicSerializer implements RESTfulAPI_Serializer
 	        $formattedDataObjectMap[$columnName] = $idList;
 	      }
       }
+    }
+
+    if ( $many_many_extraFields )
+    {
+    	$extraFieldsData = array();
+
+    	// loop through extra fields config
+    	foreach ($many_many_extraFields as $relation => $fields)
+    	{
+    		$manyManyDataObjects = $dataObject->$relation();
+    		$relationData = array();
+
+    		// get the extra data for each object in the relation
+    		foreach ($manyManyDataObjects as $manyManyDataObject)
+    		{
+    			$data = $manyManyDataObjects->getExtraData($relation, $manyManyDataObject->ID);
+
+    			// format data
+  				foreach ($data as $key => $value)
+  				{
+  					// clear empty data
+  					if (!$value)
+  					{
+  						unset($data[$key]);
+  						continue;
+  					}
+
+  					$newKey = $this->serializeColumnName($key);
+  					if ( $newKey != $key )
+  					{
+  						unset($data[$key]);
+  						$data[$newKey] = $value;
+  					}
+  				}
+
+    			// store if there is any real data
+    			if ( $data )
+    			{
+    				$relationData[$manyManyDataObject->ID] = $data;
+    			}
+    		}
+
+    		// add individual DO extra data to the relation's extra data
+    		if ( $relationData )
+    		{
+    			$key = $this->serializeColumnName($relation);
+    			$extraFieldsData[$key] = $relationData;
+    		}		
+    	}
+
+    	// save the extrafields data
+    	if ( $extraFieldsData )
+    	{
+    		$key = $this->serializeColumnName( 'ManyManyExtraFields' );
+    		$formattedDataObjectMap[$key] = $extraFieldsData;
+    	}
     }
 
     if( method_exists($dataObject, 'onAfterSerialize') )

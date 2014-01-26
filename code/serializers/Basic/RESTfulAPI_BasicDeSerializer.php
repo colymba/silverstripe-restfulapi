@@ -40,15 +40,7 @@ class RESTfulAPI_BasicDeSerializer implements RESTfulAPI_DeSerializer
 
     if ( $data )
     {    	
-      foreach ($data as $column => $value)
-      {
-      	$newColumn = $this->deserializeColumnName( $column );
-      	if ( $newColumn !== $column )
-      	{
-      		unset($data[$column]);
-        	$data[$newColumn] = $value;
-      	}
-      }
+      $data = $this->unformatPayloadData($data);
     }
     else{
       return new RESTfulAPI_Error(400,
@@ -57,6 +49,36 @@ class RESTfulAPI_BasicDeSerializer implements RESTfulAPI_DeSerializer
     }
 
 		return $data;
+	}
+
+
+	/**
+	 * Process payload data from client
+	 * and unformats columns/values recursively
+	 * 
+	 * @param  array  $data Payload data (decoded JSON)
+	 * @return array        Paylaod data with all keys/values unformatted
+	 */
+	protected function unformatPayloadData(array $data)
+	{
+		$unformattedData = array();
+
+		foreach ($data as $key => $value)
+		{
+			$newKey = $this->deserializeColumnName( $key );
+
+    	if ( is_array($value) )
+    	{
+    		$newValue = $this->unformatPayloadData($value);
+    	}
+    	else{
+    		$newValue = $value;
+    	}
+
+    	$unformattedData[$newKey] = $newValue;
+		}
+
+		return $unformattedData;
 	}
 
 
