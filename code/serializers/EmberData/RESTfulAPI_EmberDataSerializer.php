@@ -239,12 +239,32 @@ class RESTfulAPI_EmberDataSerializer extends RESTfulAPI_BasicSerializer
 			}
 		}
 		else if ( $dataSource instanceof DataList )
-		{
+		{			
 			// if a list of DataObject, loop through each and merge all the data together
 			foreach ($dataSource as $dataObjectSource)
 			{
-				$newData = $this->getSideloadData($dataObjectSource);
-				$data = array_merge_recursive($data, $newData);
+				$sideloadData = $this->getSideloadData($dataObjectSource);	
+				
+				//combine sideloaded records
+				foreach ($sideloadData as $class => $extraData)
+				{
+					if ( !isset($data[$class]) )
+					{
+						$data[$class] = array();
+					}
+
+					// merge for list of records, push for individual record
+					$arrayOfArrays = array_filter($extraData,'is_array');
+					if ( count($arrayOfArrays) == count($extraData) )
+					{
+						//print_r('array_merge');
+						$data[$class] = array_merge($data[$class], $extraData);
+					}
+					else{
+						//print_r('array_push');
+						array_push($data[$class], $extraData);
+					}
+				}
 			}
 
 			// remove duplicates
@@ -252,8 +272,8 @@ class RESTfulAPI_EmberDataSerializer extends RESTfulAPI_BasicSerializer
 			{
 				$data[$relationClass] = array_unique($relationData, SORT_REGULAR);
 			}
-		}		
-
+		}
+		
 		return $data;
 	}
 
