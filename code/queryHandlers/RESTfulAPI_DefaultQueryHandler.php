@@ -284,12 +284,12 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
             {
               // rand + seed
               if ( $param['Value'] )
-              {
+              {                
                 $return = $return->sort('RAND('.$param['Value'].')');
               }
-              // rand only
-              else{
-                $return = $return->sort('RAND()');
+              // rand only >> FIX: gen seed to avoid random result on relations
+              else{                
+                $return = $return->sort('RAND('.time().')');
               }
             }
             // limits
