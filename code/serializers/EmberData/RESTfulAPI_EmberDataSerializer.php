@@ -235,7 +235,7 @@ class RESTfulAPI_EmberDataSerializer extends RESTfulAPI_BasicSerializer
 					$newData = array($newData);
 				}
 				
-				$data[$relationName] = $newData;
+				$data[$relationClass] = $newData;
 			}
 		}
 		else if ( $dataSource instanceof DataList )
@@ -248,9 +248,9 @@ class RESTfulAPI_EmberDataSerializer extends RESTfulAPI_BasicSerializer
 			}
 
 			// remove duplicates
-			foreach ($data as $relationName => $relationData)
+			foreach ($data as $relationClass => $relationData)
 			{
-				$data[$relationName] = array_unique($relationData, SORT_REGULAR);
+				$data[$relationClass] = array_unique($relationData, SORT_REGULAR);
 			}
 		}		
 
@@ -274,13 +274,19 @@ class RESTfulAPI_EmberDataSerializer extends RESTfulAPI_BasicSerializer
   	$sideloadData = $this->getSideloadData($dataSource);
 
   	// attached those to the root
-  	foreach ($sideloadData as $relationName => $relationData)
+  	foreach ($sideloadData as $relationClass => $relationData)
   	{
-  		$rootRelationName = $this->formatName( $relationName );
-  		$rootRelationName = Inflector::pluralize( $rootRelationName );
+  		$rootRelationClass = $this->formatName( $relationClass );
+
+  		// pluralize only set of records
+  		$allArrays = array_filter($relationData,'is_array');
+    	if ( count($allArrays) == count($relationData) )
+  		{
+  			$rootRelationClass = Inflector::pluralize( $rootRelationClass );
+  		}  		
 
 			// attach to root
-			$root->{$rootRelationName} = $relationData;
+			$root->{$rootRelationClass} = $relationData;
   	}
 
   	return $root;
