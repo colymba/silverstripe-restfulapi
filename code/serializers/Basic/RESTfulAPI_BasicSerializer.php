@@ -128,10 +128,11 @@ class RESTfulAPI_BasicSerializer implements RESTfulAPI_Serializer
 	 */
 	protected function formatDataObject(DataObject $dataObject)
 	{
-		if( method_exists($dataObject, 'onBeforeSerialize') )
+    if( method_exists($dataObject, 'onBeforeSerialize') )
     {
       $dataObject->onBeforeSerialize();
     }
+    $dataObject->extend('onBeforeSerialize');
 
     // setup
     $formattedDataObjectMap = array();
