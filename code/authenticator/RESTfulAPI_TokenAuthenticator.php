@@ -15,11 +15,11 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
 {
 
 	/**
-   * Authentication token life in ms
+   * Authentication token life in seconds
    * 
    * @var integer
    */
-  private static $tokenLife = 10800000; //3 * 60 * 60 * 1000;
+  private static $tokenLife = 10800; //3 * 60 * 60;
 
 
   /**
