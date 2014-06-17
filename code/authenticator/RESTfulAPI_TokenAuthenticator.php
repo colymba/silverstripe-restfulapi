@@ -159,7 +159,8 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
         $response['message']  = 'Logged in.';
         $response['code']     = self::AUTH_CODE_LOGGED_IN;
         $response['token']    = $tokenData['token'];
-        //$response['member'] = $this->parseObject($member);
+        $response['expire']   = $tokenData['expire'];
+        $response['userID']   = $member->ID;
       }
     }
 
