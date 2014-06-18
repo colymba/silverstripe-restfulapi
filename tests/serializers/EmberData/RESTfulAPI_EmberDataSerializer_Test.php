@@ -106,13 +106,13 @@ class RESTfulAPI_EmberDataSerializer_Test extends RESTfulAPI_Tester
   {
     $serializer = $this->getSerializer();
 
-    $column = 'UpperCamelCaseID';
+    $column = 'UpperCamelCase';
     $class  = 'ApiTest_Library';
 
     $this->assertEquals(
       'upperCamelCase',
       $serializer->formatName($column),
-      "EmberData Serializer should return lowerCamel case columns without trailing id"
+      "EmberData Serializer should return lowerCamel case columns"
     );
 
     $this->assertEquals(
