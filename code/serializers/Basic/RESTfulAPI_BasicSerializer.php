@@ -331,9 +331,6 @@ class RESTfulAPI_BasicSerializer implements RESTfulAPI_Serializer
 	 */
 	protected function serializeColumnName($name)
 	{
-		//remove trailing ID from has_one
-		$name = preg_replace( '/(.+)ID$/', '$1', $name);
-
 		return $name;
 	}
 

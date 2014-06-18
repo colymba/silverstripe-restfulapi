@@ -171,8 +171,6 @@ class RESTfulAPI_EmberDataSerializer extends RESTfulAPI_BasicSerializer
 	 */
 	protected function serializeColumnName($name)
 	{
-		//$name = str_replace('ID', 'Id', $name);
-		$name = preg_replace( '/(.+)ID$/', '$1', $name);
 		if ( $name === 'ID' )
 		{
 			$name = strtolower($name);
