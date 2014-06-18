@@ -152,6 +152,7 @@ class RESTfulAPI_BasicSerializer implements RESTfulAPI_Serializer
     $formattedDataObjectMap[$serializedColumnName] = $dataObject->getField('ID'); 
 
     // iterate over simple DB fields
+    if ( !$db ) $db = array();
     foreach ($db as $columnName => $fieldClassName)
     {
       $serializedColumnName = $this->serializeColumnName( $columnName );
@@ -159,6 +160,7 @@ class RESTfulAPI_BasicSerializer implements RESTfulAPI_Serializer
     }
 
     // iterate over has_one relations
+    if ( !$has_one ) $has_one = array();
     foreach ($has_one as $columnName => $fieldClassName)
     {
       $serializedColumnName = $this->serializeColumnName( $columnName );
