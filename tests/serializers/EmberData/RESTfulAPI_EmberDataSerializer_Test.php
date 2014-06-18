@@ -86,14 +86,17 @@ class RESTfulAPI_EmberDataSerializer_Test extends RESTfulAPI_Tester
 
     $jsonString = $serializer->serialize($dataObject);
     $jsonObject = json_decode($jsonString);
+    
+    $booksRoot  = $serializer->formatName('ApiTest_Book');
+    $booksRoot  = Inflector::pluralize( $booksRoot );
 
     $this->assertFalse(
-      is_null($jsonObject->books),
+      is_null($jsonObject->$booksRoot),
       "EmberData Serialize should sideload records in an object in JSON root"
     );
 
     $this->assertTrue(
-      is_array($jsonObject->books),
+      is_array($jsonObject->$booksRoot),
       "EmberData Serialize should sideload records as array"
     );
   }
