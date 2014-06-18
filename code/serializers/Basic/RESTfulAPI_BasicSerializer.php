@@ -136,9 +136,9 @@ class RESTfulAPI_BasicSerializer implements RESTfulAPI_Serializer
 
     // setup
     $formattedDataObjectMap = array();
-    $dataObjectMap          = $dataObject->toMap();
 
-    // get DataObject relations config
+    // get DataObject config
+    $db                    = Config::inst()->get( $dataObject->ClassName, 'db' );
     $has_one               = Config::inst()->get( $dataObject->ClassName, 'has_one' );
     $has_many              = Config::inst()->get( $dataObject->ClassName, 'has_many' );
     $many_many             = Config::inst()->get( $dataObject->ClassName, 'many_many' );
@@ -147,40 +147,42 @@ class RESTfulAPI_BasicSerializer implements RESTfulAPI_Serializer
     //$many_many_extraFields = $dataObject->many_many_extraFields();
     $many_many_extraFields = $dataObject->stat('many_many_extraFields');
 
-    // iterate $db fields and $has_one relations
-    foreach ($dataObjectMap as $columnName => $value)
+    // setup ID (not included in $db!!)
+    $serializedColumnName = $this->serializeColumnName('ID');
+    $formattedDataObjectMap[$serializedColumnName] = $dataObject->getField('ID'); 
+
+    // iterate over simple DB fields
+    foreach ($db as $columnName => $fieldClassName)
     {
-    	$columnName = $this->serializeColumnName( $columnName );
+      $serializedColumnName = $this->serializeColumnName( $columnName );
+      $formattedDataObjectMap[$serializedColumnName] = $dataObject->getField($columnName);
+    }
 
-    	// has_one relation
-    	if ( is_array($has_one) && array_key_exists( $columnName, $has_one ) )
-    	{
-    		// convert foreign ID to integer
-        $value = intVal( $value );
-        // skip empty relations
-        if ( $value === 0 ) continue;
+    // iterate over has_one relations
+    foreach ($has_one as $columnName => $fieldClassName)
+    {
+      $serializedColumnName = $this->serializeColumnName( $columnName );
 
-        // check if this should be embedded
-        if ( $this->isEmbeddable($dataObject->ClassName, $columnName) && RESTfulAPI::isAPIEnabled($has_one[$columnName]) )
-        {
-        	// get the relation's record ready to embed
-	      	$embedData = $this->getEmbedData($dataObject, $columnName);
-	      	// embed the data if any
-	      	if ( $embedData !== null )
-	      	{	      		
-	      		$formattedDataObjectMap[$columnName] = $embedData;
-	      	}
+      // convert foreign ID to integer
+      $relationID = intVal( $dataObject->{$columnName.'ID'} );
+      // skip empty relations
+      if ( $relationID === 0 ) continue;
+
+      // check if this should be embedded
+      if ( $this->isEmbeddable($dataObject->ClassName, $columnName) && RESTfulAPI::isAPIEnabled($has_one[$columnName]) )
+      {
+        // get the relation's record ready to embed
+        $embedData = $this->getEmbedData($dataObject, $columnName);
+        // embed the data if any
+        if ( $embedData !== null )
+        {           
+          $formattedDataObjectMap[$serializedColumnName] = $embedData;
         }
-        else{
-        	// save formatted data
-    			$formattedDataObjectMap[$columnName] = $value;
-        }     		
-    	}
-    	// NOT a relations
-    	else{
-    		// straight copy
-    		$formattedDataObjectMap[$columnName] = $value;     
-    	}    	
+      }
+      else{
+        // save foreign ID
+        $formattedDataObjectMap[$serializedColumnName] = $relationID;
+      }
     }
 
     // combine defined '_many' relations into 1 array
@@ -206,16 +208,16 @@ class RESTfulAPI_BasicSerializer implements RESTfulAPI_Serializer
 	      	// embed the data if any
 	      	if ( $embedData !== null )
 	      	{
-	      		$columnName = $this->serializeColumnName( $relationName );
-	      		$formattedDataObjectMap[$columnName] = $embedData;
+	      		$serializedColumnName = $this->serializeColumnName( $relationName );
+	      		$formattedDataObjectMap[$serializedColumnName] = $embedData;
 	      	}
 	      }
 	      else{
 	      	// set column value to ID list
 	        $idList = $dataList->map('ID', 'ID')->keys();
 
-	        $columnName = $this->serializeColumnName( $relationName );
-	        $formattedDataObjectMap[$columnName] = $idList;
+	        $serializedColumnName = $this->serializeColumnName( $relationName );
+	        $formattedDataObjectMap[$serializedColumnName] = $idList;
 	      }
       }
     }
