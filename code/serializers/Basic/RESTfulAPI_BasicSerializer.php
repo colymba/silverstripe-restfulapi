@@ -280,8 +280,9 @@ class RESTfulAPI_BasicSerializer implements RESTfulAPI_Serializer
 
     if( method_exists($dataObject, 'onAfterSerialize') )
     {
-      $formattedDataObjectMap = $dataObject->onAfterSerialize( $formattedDataObjectMap );
+      $dataObject->onAfterSerialize( $formattedDataObjectMap );
     }
+    $dataObject->extend('onAfterSerialize', $formattedDataObjectMap);
 
     return $formattedDataObjectMap;
 	}
