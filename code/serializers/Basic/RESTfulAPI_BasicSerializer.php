@@ -68,7 +68,10 @@ class RESTfulAPI_BasicSerializer implements RESTfulAPI_Serializer
 	 */
 	protected function jsonify($data)
 	{
-		$json = json_encode($data, JSON_NUMERIC_CHECK);
+		// JSON_NUMERIC_CHECK removes leading zeros
+		// which is an issue in cases like postcode e.g. 00160
+		// see https://bugs.php.net/bug.php?id=64695		
+		$json = json_encode($data);
 		
 		//catch JSON parsing error
 		$error = RESTfulAPI_Error::get_json_error();
