@@ -173,6 +173,14 @@ class RESTfulAPI extends Controller
   
 
   /**
+   * Current RESTfulAPI instance
+   * 
+   * @var RESTfulAPI
+   */
+  protected static $instance;
+
+
+  /**
    * Constructor....
    */
   public function __construct()
@@ -181,6 +189,9 @@ class RESTfulAPI extends Controller
 
     //get authentication policy config
     $this->authenticationPolicy = $this->config()->authentication_policy;
+
+    //save current instance in static var
+    self::$instance = $this;
   }
 
 
