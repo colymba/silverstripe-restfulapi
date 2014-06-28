@@ -131,6 +131,9 @@ class RESTfulAPI_BasicSerializer implements RESTfulAPI_Serializer
 	 */
 	protected function formatDataObject(DataObject $dataObject)
 	{
+    // api access control
+    if ( !RESTfulAPI::api_access_control($dataObject, 'GET') ) return null;
+
     if( method_exists($dataObject, 'onBeforeSerialize') )
     {
       $dataObject->onBeforeSerialize();
@@ -174,7 +177,7 @@ class RESTfulAPI_BasicSerializer implements RESTfulAPI_Serializer
       if ( $relationID === 0 ) continue;
 
       // check if this should be embedded
-      if ( $this->isEmbeddable($dataObject->ClassName, $columnName) && RESTfulAPI::isAPIEnabled($has_one[$columnName]) )
+      if ( $this->isEmbeddable($dataObject->ClassName, $columnName) )
       {
         // get the relation's record ready to embed
         $embedData = $this->getEmbedData($dataObject, $columnName);
@@ -206,7 +209,7 @@ class RESTfulAPI_BasicSerializer implements RESTfulAPI_Serializer
       if ( $dataList->count() )
       {
       	// check if this relation should be embedded
-      	if ( $this->isEmbeddable($dataObject->ClassName, $relationName) && RESTfulAPI::isAPIEnabled($relationClassname) )
+      	if ( $this->isEmbeddable($dataObject->ClassName, $relationName) )
 	      {
 	      	// get the relation's record(s) ready to embed
 	      	$embedData = $this->getEmbedData($dataObject, $relationName);
@@ -307,7 +310,7 @@ class RESTfulAPI_BasicSerializer implements RESTfulAPI_Serializer
 		foreach ($dataList as $dataObject)
     {
       $formattedDataObjectMap = $this->formatDataObject( $dataObject );
-      array_push($formattedDataListMap, $formattedDataObjectMap);
+      if ($formattedDataObjectMap) array_push($formattedDataListMap, $formattedDataObjectMap);
     }
 
     return $formattedDataListMap;

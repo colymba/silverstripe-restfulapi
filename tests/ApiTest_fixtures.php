@@ -19,6 +19,43 @@ class ApiTest_Library extends DataObject
   private static $many_many = array(
     'Books' => 'ApiTest_Book'
   );
+
+  public function canView($member = null)
+  {
+    var_dump('canView');
+    var_dump('this '.$this->ID);
+    var_dump('member '.$member->ID);
+    $access = Permission::check('RESTfulAPI_VIEW', 'any', $member);
+    var_dump($access);
+    /*var_dump('canView');
+    var_dump($member);
+    var_dump('Permission');
+    
+    $access = Permission::check('RESTfulAPI_VIEW', 'any', $member);
+    var_dump($access);
+
+    var_dump('Group');
+    $adminsGroup = DataObject::get('Group')->filter(array(
+      'Code' => 'restfulapi-administrators'
+    ));
+    var_dump($adminsGroup->toArray());*/
+    return $access;
+  }
+
+  public function canEdit($member = null)
+  {
+    return Permission::check('RESTfulAPI_EDIT', 'any', $member);
+  }
+
+  public function canCreate($member = null)
+  {
+    return Permission::check('RESTfulAPI_CREATE', 'any', $member);
+  }
+
+  public function canDelete($member = null)
+  {
+    return Permission::check('RESTfulAPI_DELETE', 'any', $member);
+  }
 }
 
 class ApiTest_Book extends DataObject

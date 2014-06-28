@@ -137,7 +137,7 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
     }
 
     //check API access rules on model
-    if ( !RESTfulAPI::isAPIEnabled($model, $request->httpMethod()) )
+    if ( !RESTfulAPI::api_access_control($model, $request->httpMethod()) )
     {
       return new RESTfulAPI_Error(403,
         "API access denied."
@@ -229,7 +229,7 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
    * and query modifiers: sort, rand, limit
    *
    * @param  string                 $model          Model(s) class to find
-   * @param  boolean\integr         $id             The ID of the model to find or false
+   * @param  boolean|integr         $id             The ID of the model to find or false
    * @param  array                  $queryParams    Query parameters and modifiers
    * @param  SS_HTTPRequest         $request        The original HTTP request
    * @return DataObject|DataList                    Result of the search (note: DataList can be empty) 
@@ -244,6 +244,12 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
       {
         return new RESTfulAPI_Error(404,
           "Model $id of $model not found."
+        );
+      }
+      else if ( !RESTfulAPI::api_access_control($return, $request->httpMethod()) )
+      {
+        return new RESTfulAPI_Error(403,
+          "API access denied."
         );
       }
     }
@@ -333,6 +339,13 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
    */
   function createModel($model, SS_HTTPRequest $request)
   {
+    if ( !RESTfulAPI::api_access_control($model, $request->httpMethod()) )
+    {
+      return new RESTfulAPI_Error(403,
+        "API access denied."
+      );
+    }
+
     $newModel = Injector::inst()->create($model);
     $newModel->write();
 
@@ -356,6 +369,13 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
     {
       return new RESTfulAPI_Error(404,
         "Record not found."
+      );
+    }
+
+    if ( !RESTfulAPI::api_access_control($model, $request->httpMethod()) )
+    {
+      return new RESTfulAPI_Error(403,
+        "API access denied."
       );
     }
 
@@ -454,6 +474,13 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
 
       if ( $object )
       {
+        if ( !RESTfulAPI::api_access_control($object, $request->httpMethod()) )
+        {
+          return new RESTfulAPI_Error(403,
+            "API access denied."
+          );
+        }
+        
         $object->delete();
       }
       else{

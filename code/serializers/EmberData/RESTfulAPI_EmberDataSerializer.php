@@ -222,18 +222,19 @@ class RESTfulAPI_EmberDataSerializer extends RESTfulAPI_BasicSerializer
 			// if a single DataObject get the data for each relation
 			foreach ($this->sideloadedRecords[$dataSource->ClassName] as $relationName)
 			{
-				// check if the relation has api_access enabled, skip if not
-				$relationClass = $relationsMap[$relationName];
-				if ( !RESTfulAPI::isAPIEnabled($relationClass) ) continue;
-
 				$newData = $this->getEmbedData($dataSource, $relationName);
-				// has_one are only simple array and we want arrays or array
-	  		if ( is_array($has_one) && in_array($relationName, $has_one) )
-				{
-					$newData = array($newData);
-				}
-				
-				$data[$relationClass] = $newData;
+
+        if ( $newData !== null )
+        {
+          // has_one are only simple array and we want arrays or array
+          if ( is_array($has_one) && in_array($relationName, $has_one) )
+          {
+            $newData = array($newData);
+          }
+          
+          $relationClass        = $relationsMap[$relationName];
+          $data[$relationClass] = $newData;
+        }				
 			}
 		}
 		else if ( $dataSource instanceof DataList )

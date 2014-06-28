@@ -29,11 +29,31 @@ class RESTfulAPI extends Controller
 
   /**
    * Stores the current API's authentication settings
-   * as set by the $requiresAuthentication config
+   * as set by the $authentication_policy config
    *  
    * @var boolean|array
    */
   protected $authenticationPolicy;
+
+
+  const ACL_CHECK_CONFIG_ONLY      = 'config';
+  const ACL_CHECK_MODEL_ONLY       = 'model';
+  const ACL_CHECK_CONFIG_AND_MODEL = 'both';
+
+
+  /**
+   * Lets you select if the API will perform access control checks.
+   * false, no ACL required (everything is accessible to anyone)
+   * string, 1 of the 3 ACL policy constants:
+   * - 'ACL_CHECK_CONFIG_ONLY'      : Check against class api_access config only
+   * - 'ACL_CHECK_MODEL_ONLY'       : Check against DataObject permissions (canView... etc.)
+   * - 'ACL_CHECK_CONFIG_AND_MODEL' : Check against both api_access and DataObject permissions
+   *
+   * Default to check config only.
+   * 
+   * @var boolean|string
+   */
+  private static $access_control_policy = 'ACL_CHECK_CONFIG_ONLY';
 
 
   /**
@@ -42,6 +62,14 @@ class RESTfulAPI extends Controller
    * @var RESTfulAPI_Authenticator
    */
   public $authenticator;
+
+
+  /**
+   * Current Permission Manager instance
+   * 
+   * @var RESTfulAPI_PermissionManager
+   */
+  public $authority;
 
 
   /**
@@ -68,6 +96,7 @@ class RESTfulAPI extends Controller
    */
   private static $dependencies = array(
     'authenticator' => '%$RESTfulAPI_TokenAuthenticator',
+    'authority'     => '%$RESTfulAPI_DefaultPermissionManager',
     'queryHandler'  => '%$RESTfulAPI_DefaultQueryHandler',
     'serializer'    => '%$RESTfulAPI_BasicSerializer'
   );
@@ -135,7 +164,8 @@ class RESTfulAPI extends Controller
    */
   private static $allowed_actions = array(
     'index',
-    'auth'
+    'auth',
+    'acl'
   );
 
 
@@ -145,7 +175,8 @@ class RESTfulAPI extends Controller
    * @var array
    */
   private static $url_handlers = array(
-    'auth/$Action' => 'auth',
+    'auth/$Action'   => 'auth',
+    'acl/$Action'    => 'acl',
     '$ClassName/$ID' => 'index'
   );
 
@@ -210,6 +241,7 @@ class RESTfulAPI extends Controller
     parent::init();
   }
 
+
   /**
    * Handles authentications methods
    * get response from API Authenticator
@@ -253,10 +285,54 @@ class RESTfulAPI extends Controller
       
     }
   }
+
+
+  /**
+   * Handles Access Control methods
+   * get response from API PermissionManager
+   * then passes it on to $answer()
+   * 
+   * @param  SS_HTTPRequest $request HTTP request
+   */
+  public function acl(SS_HTTPRequest $request)
+  {
+    $action = $request->param('Action');
+
+    if ( $this->authority )
+    {
+      $className      = get_class($this->authority);
+      $allowedActions = Config::inst()->get($className, 'allowed_actions');
+      if ( !$allowedActions )
+      {
+        $allowedActions = array();
+      }
+
+      if ( in_array($action, $allowedActions) )
+      {
+        if ( method_exists($this->authority, $action) )
+        {
+          $response = $this->authority->$action($request);
+          $response = $this->serializer->serialize( $response );
+          $this->answer($response);
+        }
+        else{          
+          //let's be shady here instead
+          $this->error( new RESTfulAPI_Error(403,
+            "Action '$action' not allowed."
+          ));
+        }
+      }
+      else{
+        $this->error( new RESTfulAPI_Error(403,
+          "Action '$action' not allowed."
+        ));
+      }
+    }
+  }
   
 
   /**
-   * Main API hub swith
+   * Main API hub switch
    * All requests pass through here and are redirected depending on HTTP verb and params
    *
    * @todo move authentication check to another methode
@@ -431,33 +507,121 @@ class RESTfulAPI extends Controller
 
 
   /**
-   * Checks and returns a model api_access config.
-   * api_access config can be:
-   * - unset, default to false
-   * - false, access is always denied
-   * - true, access is always granted
-   * - comma separated list of allowed HTTP methods
+   * Checks a class or model api access
+   * depending on access_control_policy and the provided model.
+   * - 1st config check
+   * - 2nd permission check if config access passes
    * 
-   * @param  string  $model      Model's classname
-   * @param  string  $httpMethod API request HTTP method
-   * @return boolean             true if access is granted, false otherwise
+   * @param  string|DataObject  $model      Model's classname or DataObject
+   * @param  string             $httpMethod API request HTTP method
+   * @return boolean                        true if access is granted, false otherwise
    */
-  public static function isAPIEnabled($model, $httpMethod = 'GET')
+  public static function api_access_control($model, $httpMethod = 'GET')
   {
-    $rules = singleton($model)->stat('api_access');
-    if ( is_string($rules) )
+    $policy = constant('self::'.self::config()->access_control_policy);
+    if ( $policy === false ) return true; // if access control is disabled, skip
+
+    if ( $policy === self::ACL_CHECK_MODEL_ONLY )
     {
-      $rules = explode(',', strtoupper($rules));
-      if ( in_array($httpMethod, $rules) )
+      $access = true;
+    }
+    else{
+      $access = false;
+    }    
+
+    if ( $policy === self::ACL_CHECK_CONFIG_ONLY || $policy === self::ACL_CHECK_CONFIG_AND_MODEL )
+    {
+      if ( !is_string($model) )
       {
-        return true;
+        $className = $model->className;
       }
       else{
-        return false;
+        $className = $model;
+      }
+
+      $access = self::api_access_config_check($className, $httpMethod);
+    }
+
+    
+    if ( $policy === self::ACL_CHECK_MODEL_ONLY || $policy === self::ACL_CHECK_CONFIG_AND_MODEL )
+    {
+      if ( $access )
+      {
+        $access = self::model_permission_check($model, $httpMethod);
       }
     }
 
-    return $rules;
+    return $access;
+  }
+
+  /**
+   * Checks a model's api_access config.
+   * api_access config can be:
+   * - unset|false, access is always denied
+   * - true, access is always granted
+   * - comma separated list of allowed HTTP methods
+   * 
+   * @param  string      $className   Model's classname
+   * @param  string      $httpMethod  API request HTTP method
+   * @return boolean                  true if access is granted, false otherwise
+   */
+  private static function api_access_config_check($className, $httpMethod = 'GET')
+  {
+    $access     = false;
+    $api_access = singleton($className)->stat('api_access');
+
+    if ( is_string($api_access) )
+    {
+      $api_access = explode(',', strtoupper($api_access));
+      if ( in_array($httpMethod, $api_access) )
+      {
+        $access = true;
+      }
+      else{
+        $access = false;
+      }
+    }
+    else if ( $api_access === true )
+    {
+      $access = true;
+    }
+
+    return $access;
+  }
+
+  /**
+   * Checks a Model's permission for the currently
+   * authenticated user via the Permission Manager dependency.
+   *
+   * For permissions to actually be checked, this means the RESTfulAPI
+   * must have both authenticator and authority dependencies defined.
+   * 
+   * If the authenticator component does not return an instance of the Member
+   * null will be passed to the authority component.
+   *
+   * This default to true.
+   * 
+   * @param  string|DataObject   $model      Model's classname or DataObject to check permission for
+   * @param  string              $httpMethod API request HTTP method
+   * @return boolean                         true if access is granted, false otherwise
+   */
+  private static function model_permission_check($model, $httpMethod = 'GET')
+  {
+    $access      = true;
+    $apiInstance = self::$instance;
+
+    if ( $apiInstance->authenticator && $apiInstance->authority )
+    {
+      $request = $apiInstance->request;
+      $member  = $apiInstance->authenticator->getOwner($request);
+
+      if ( !$member instanceof Member ) $member = null;
+
+      $access = $apiInstance->authority->checkPermission($model, $member, $httpMethod);
+      if ( !is_bool($access) ) $access = true;
+    }
+
+    return $access;
   }
 
 }

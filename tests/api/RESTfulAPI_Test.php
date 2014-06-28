@@ -33,24 +33,24 @@ class RESTfulAPI_Test extends RESTfulAPI_Tester
     // Method Calls
     
     // Disabled by default
-    $enabled = RESTfulAPI::isAPIEnabled('ApiTest_Author');
+    $enabled = RESTfulAPI::api_access_control('ApiTest_Author');
     $this->assertFalse( $enabled );
 
     // Enabled
     Config::inst()->update('ApiTest_Author', 'api_access', true);
-    $enabled = RESTfulAPI::isAPIEnabled('ApiTest_Author');
+    $enabled = RESTfulAPI::api_access_control('ApiTest_Author');
     $this->assertTrue( $enabled );
 
     // Method specific
     Config::inst()->update('ApiTest_Author', 'api_access', 'GET,POST');
 
-    $enabled = RESTfulAPI::isAPIEnabled('ApiTest_Author');
+    $enabled = RESTfulAPI::api_access_control('ApiTest_Author');
     $this->assertTrue( $enabled );
 
-    $enabled = RESTfulAPI::isAPIEnabled('ApiTest_Author', 'POST');
+    $enabled = RESTfulAPI::api_access_control('ApiTest_Author', 'POST');
     $this->assertTrue( $enabled );
 
-    $enabled = RESTfulAPI::isAPIEnabled('ApiTest_Author', 'PUT');
+    $enabled = RESTfulAPI::api_access_control('ApiTest_Author', 'PUT');
     $this->assertFalse( $enabled );
 
     // ----------------
@@ -192,6 +192,7 @@ class RESTfulAPI_Test extends RESTfulAPI_Tester
     ));
 
     $response = Director::test('api/ApiTest_Author/1', null, null, 'GET');
+    var_dump($response);
 
     $this->assertEquals(
       $response->getStatusCode(),

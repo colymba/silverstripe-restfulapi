@@ -18,6 +18,8 @@ This module implements a RESTful API for read/write access to your SilverStripe 
 | Login & get token     | n/a       | `api/auth/login?email=***&pwd=***`      |
 | Logout                | n/a       | `api/auth/logout`                       |
 | Password reset email  | n/a       | `api/auth/lostPassword?email=***`       |
+| -                     | -         | -                                       |
+| Custom ACL methods    | n/a       | `api/acl/YOURMETHOD`                    |
 
 `Model` being the class name of the model you are querying (*name formatting may vary depending on DeSerializer used*). For example with a model class named `Book` URLs would look like:
 * `api/Book/33`
@@ -39,7 +41,7 @@ The allowed `/auth/$Action` must be defined on the used `RESTfulAPI_Authenticato
 * [Embedded records](doc/RESTfulAPI.md#embedded-records)
 * [Sideloaded records (EmberDataSerializer)](doc/EmberDataSerializer.md#sideloaded-records)
 * [Authentication](doc/TokenAuthenticator.md)
-* [DataObject level api access config](doc/RESTfulAPI.md#authentication-and-api-access-restriction)
+* [DataObject & Config level api access control](doc/RESTfulAPI.md#authentication-and-api-access-control)
 * [Search filter modifiers](doc/DefaultQueryHandler.md#search-filter-modifiers)
 
 
@@ -51,8 +53,9 @@ If CORS are enabled (true by default), the right headers are taken care of too.
 
 
 ### Components
-The `RESTfulAPI` uses three types of components, each implementing a different interface:
+The `RESTfulAPI` uses 4 types of components, each implementing a different interface:
 * Authetication (`RESTfulAPI_Authenticator`)
+* Permission Management (`RESTfulAPI_PermissionManager`)
 * Query Handler (`RESTfulAPI_QueryHandler`)
 * Serializer (`RESTfulAPI_Serializer`)
 
@@ -60,6 +63,7 @@ The `RESTfulAPI` uses three types of components, each implementing a different i
 ### Default components
 This API comes with defaults for each of those components:
 * `RESTfulAPI_TokenAuthenticator` handles authentication via a token in an HTTP header or variable
+* `RESTfulAPI_DefaultPermissionManager` handles DataObject permission checks depending on the HTTP request
 * `RESTfulAPI_DefaultQueryHandler` handles all find, edit, create or delete for models
 * `RESTfulAPI_BasicSerializer` / `RESTfulAPI_BasicDeSerializer` serialize query results into JSON and deserialize client payloads
 * `RESTfulAPI_EmberDataSerializer` / `RESTfulAPI_EmberDataDeSerializer` same as the `Basic` version but with specific fomatting fo Ember Data.
@@ -70,13 +74,22 @@ You can create you own classes by implementing the right interface or extending 
 ### Token Authentication Extension
 When using `RESTfulAPI_TokenAuthenticator` you must add the `RESTfulAPI_TokenAuthExtension` `DataExtension` to a `DataObject` and setup `RESTfulAPI_TokenAuthenticator` with the right config.
 
-*By default, API authentication is disabled.**
+**By default, API authentication is disabled.**
+
+
+### Permissions management
+DataObject API access control can be managed in 2 ways. Through the `api_access` [YML config](doc/RESTfulAPI.md#authentication-and-api-access-control) allowing for simple configurations, or via [DataObject permissions](http://doc.silverstripe.org/framework/en/reference/dataobject#permissions) through a `RESTfulAPI_PermissionManager` component.
+
+A sample `Group` extension `RESTfulAPI_GroupExtension` is also available with a basic set of dedicated API permissions. This can be enabled via [config](code/_config/config.yml#L11) or you can create your own.
+
+**By default, the API only performs access control against the `api_access` YML config.**
 
 
 ### Config
 See individual component configuration file for mode details
 * [RESTfulAPI](doc/RESTfulAPI.md) the root of the api
 * [TokenAuthenticator](doc/TokenAuthenticator.md) handles query authentication via token
+* [DefaultPermissionManager](doc/DefaultPermissionManager.md) handles DataObject level permissions check
 * [DefaultQueryHandler](doc/DefaultQueryHandler.md) where most of the logic happens
 * [BasicSerializer](doc/BasicSerializer.md) BasicSerializer and DeSerializer for everyday use
 * [EmberDataSerializer](doc/EmberDataSerializer.md) EmberDataSerializer and DeSerializer speicifrcally design for use with Ember Data and application/vnd.api+json
@@ -108,8 +121,11 @@ Page:
   api_access: false
 # RestfulAPI config
 RESTfulAPI:
+  authentication_policy: true
+  access_control_policy: 'ACL_CHECK_CONFIG_AND_MODEL'
   dependencies:
     authenticator: '%$RESTfulAPI_TokenAuthenticator'
+    authority: '%$RESTfulAPI_DefaultPermissionManager'
     queryHandler: '%$RESTfulAPI_DefaultQueryHandler'
     serializer: '%$RESTfulAPI_EmberDataSerializer'
   cors:

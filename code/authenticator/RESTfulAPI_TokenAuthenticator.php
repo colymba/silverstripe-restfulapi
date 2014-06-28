@@ -330,6 +330,44 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
 
 
   /**
+   * Returns the DataObject related to the token
+   * that sent the authenticated request
+   * 
+   * @param  SS_HTTPRequest          $request    HTTP API request
+   * @return null|DataObject                     null if failed or the DataObject token owner related to the request
+   */
+  public function getOwner(SS_HTTPRequest $request)
+  {
+    $owner = null;
+
+    //get the token
+    $token = $request->getHeader( $this->tokenConfig['header'] );
+    if (!$token)
+    {
+      $token = $request->requestVar( $this->tokenConfig['queryVar'] );
+    }
+
+    if ( $token )
+    {
+      $SQL_token = Convert::raw2sql($token);
+      
+      $owner = DataObject::get_one(
+        $this->tokenConfig['owner'],
+        "\"".$this->tokenConfig['DBColumn']."\"='" . $SQL_token . "'",
+        false
+      );
+
+      if ( !$owner )
+      {
+        $owner = null;
+      }
+    }
+
+    return $owner;
+  }
+
+
+  /**
    * Checks if a request to the API is authenticated
    * Gets API Token from HTTP Request and return Auth result
    * 

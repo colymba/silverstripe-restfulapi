@@ -54,12 +54,17 @@ class RESTfulAPI_Tester extends SapphireTest
     $helsinki->Books()->add($bible);
     $helsinki->Books()->add($kamasutra);
     $paris->Books()->add($kamasutra);
+
+    // since it doesn't seem to be called automatically
+    $ext = new RESTfulAPI_GroupExtension();
+    $ext->requireDefaultRecords();
   }
 
   function setDefaultApiConfig()
   {
     Config::inst()->update('RESTfulAPI', 'dependencies', array(
       'authenticator' => '%$RESTfulAPI_TokenAuthenticator',
+      'authority'     => '%$RESTfulAPI_DefaultPermissionManager',
       'queryHandler'  => '%$RESTfulAPI_DefaultQueryHandler',
       'serializer'    => '%$RESTfulAPI_BasicSerializer'
     ));

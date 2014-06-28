@@ -19,4 +19,13 @@ interface RESTfulAPI_Authenticator
    * @return true|RESTfulAPI_Error               True if token is valid OR RESTfulAPI_Error with details
    */
   public function authenticate(SS_HTTPRequest $request);
+
+
+  /**
+   * Returns the DataObject related to the authenticated request
+   * 
+   * @param  SS_HTTPRequest          $request    HTTP API request
+   * @return null|DataObject                     null if failed or the DataObject related to the request
+   */
+  public function getOwner(SS_HTTPRequest $request);
 }
