@@ -28,15 +28,6 @@ class RESTfulAPI extends Controller
   private static $authentication_policy = false;
 
 
-  /**
-   * Stores the current API's authentication settings
-   * as set by the $authentication_policy config
-   *  
-   * @var boolean|array
-   */
-  protected $authenticationPolicy;
-
-
   const ACL_CHECK_CONFIG_ONLY      = 'config';
   const ACL_CHECK_MODEL_ONLY       = 'model';
   const ACL_CHECK_CONFIG_AND_MODEL = 'both';
@@ -223,9 +214,6 @@ class RESTfulAPI extends Controller
   {  
     parent::__construct();
 
-    //get authentication policy config
-    $this->authenticationPolicy = $this->config()->authentication_policy;
-
     //save current instance in static var
     self::$instance = $this;
   }
@@ -350,8 +338,9 @@ class RESTfulAPI extends Controller
     //check authentication if enabled
     if ( $this->authenticator )
     {
-      $authALL    = $this->authenticationPolicy === true;
-      $authMethod = is_array($this->authenticationPolicy) && in_array($request->httpMethod(), $this->authenticationPolicy);
+      $policy     = $this->config()->authentication_policy;
+      $authALL    = $policy === true;
+      $authMethod = is_array($policy) && in_array($request->httpMethod(), $policy);
 
       if ( $authALL || $authMethod )
       {
