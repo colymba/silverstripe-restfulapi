@@ -146,6 +146,35 @@ class RESTfulAPI_TokenAuthenticator_Test extends RESTfulAPI_Tester
 
 
   /**
+   * Checks authenticator return owner
+   */
+  public function testGetOwner()
+  {
+    $member = Member::get()->filter(array(
+      'Email' => 'test@test.com'
+    ))->first();
+
+    $auth = $this->getAuthenticator();
+    $auth->resetToken($member->ID);
+    $token = $auth->getToken($member->ID);
+
+    $request = new SS_HTTPRequest(
+      'GET',
+      'api/ApiTest_Book/1'
+    );
+    $request->addHeader('X-Silverstripe-Apitoken', $token);
+
+    $result = $auth->getOwner($request);
+
+    $this->assertEquals(
+      'test@test.com',
+      $result->Email,
+      "TokenAuth should return owner when passed valid token."
+    );
+  }
+
+
+  /**
    * Checks authentication works with a generated token
    */
   public function testAuthenticate()
