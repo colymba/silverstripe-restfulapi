@@ -127,7 +127,7 @@ class RESTfulAPI_BasicSerializer implements RESTfulAPI_Serializer
 	 * ready to be turned into JSON
 	 * 
 	 * @param  DataObject $dataObject The data object to format
-	 * @return array                  The formatted array map representation of the DataObject
+	 * @return array|null              The formatted array map representation of the DataObject or null is permission denied
 	 */
 	protected function formatDataObject(DataObject $dataObject)
 	{
