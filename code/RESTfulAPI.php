@@ -504,8 +504,9 @@ class RESTfulAPI extends Controller
    */
   public static function api_access_control($model, $httpMethod = 'GET')
   {
-    $policy = constant('self::'.self::config()->access_control_policy);
+    $policy = self::config()->access_control_policy;
     if ( $policy === false ) return true; // if access control is disabled, skip
+    else $policy = constant('self::'.$policy);
 
     if ( $policy === self::ACL_CHECK_MODEL_ONLY )
     {
