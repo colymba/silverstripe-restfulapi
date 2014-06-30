@@ -54,6 +54,7 @@ class RESTfulAPI_BasicSerializer_Test extends RESTfulAPI_Tester
    */
   public function testSerialize()
   {
+    Config::inst()->update('RESTfulAPI', 'access_control_policy', false);
     $serializer = $this->getSerializer();
 
     // test single dataObject serialization
@@ -96,6 +97,8 @@ class RESTfulAPI_BasicSerializer_Test extends RESTfulAPI_Tester
    */
   public function testEmbeddedRecords()
   {
+    Config::inst()->update('RESTfulAPI', 'access_control_policy', 'ACL_CHECK_CONFIG_ONLY');
+    Config::inst()->update('ApiTest_Library', 'api_access', true);
     Config::inst()->update('RESTfulAPI', 'embedded_records', array(
       'ApiTest_Library' => array('Books')
     ));
@@ -103,24 +106,23 @@ class RESTfulAPI_BasicSerializer_Test extends RESTfulAPI_Tester
     $serializer = $this->getSerializer();
     $dataObject = ApiTest_Library::get()->filter(array('Name' => 'Helsinki'))->first();
 
-
     // api access disabled
     Config::inst()->update('ApiTest_Book', 'api_access', false);
-    $jsonString = $serializer->serialize($dataObject);
-    $jsonObject = json_decode($jsonString);
+    $result = $serializer->serialize($dataObject);
+    $result = json_decode($result);
 
-    $this->assertTrue(
-      is_numeric($jsonObject->Books[0]),
-      "Basic Serialize should return ID list for embedded records without api access"
+    $this->assertEmpty(
+      $result->Books,
+      'Basic Serialize should return empty array for DataObject without permission'
     );
 
     // api access enabled
     Config::inst()->update('ApiTest_Book', 'api_access', true);
-    $jsonString = $serializer->serialize($dataObject);
-    $jsonObject = json_decode($jsonString);
+    $result = $serializer->serialize($dataObject);
+    $result = json_decode($result);
 
     $this->assertTrue(
-      is_numeric($jsonObject->Books[0]->ID),
+      is_numeric($result->Books[0]->ID),
       "Basic Serialize should return a full record for embedded records"
     );
   }
