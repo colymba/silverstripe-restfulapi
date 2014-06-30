@@ -62,6 +62,8 @@ class RESTfulAPI_Tester extends SapphireTest
 
   function setDefaultApiConfig()
   {
+    Config::inst()->update('RESTfulAPI', 'access_control_policy', 'ACL_CHECK_CONFIG_ONLY');
+
     Config::inst()->update('RESTfulAPI', 'dependencies', array(
       'authenticator' => '%$RESTfulAPI_TokenAuthenticator',
       'authority'     => '%$RESTfulAPI_DefaultPermissionManager',
