@@ -235,7 +235,7 @@ class RESTfulAPI extends Controller
     //catch preflight request
     if ( $this->request->httpMethod() === 'OPTIONS' )
     {
-      $this->answer(null, true);
+      return $this->answer(null, true);
     }
 
     parent::init();
@@ -267,18 +267,18 @@ class RESTfulAPI extends Controller
         if ( method_exists($this->authenticator, $action) )
         {
           $response = $this->authenticator->$action($request);
-          $response = $this->serializer->serialize( $response );
-          $this->answer($response);
+          $response = $this->serializer->serialize( $response );          
+          return $this->answer($response);
         }
         else{          
           //let's be shady here instead
-          $this->error( new RESTfulAPI_Error(403,
+          return $this->error( new RESTfulAPI_Error(403,
             "Action '$action' not allowed."
           ));
         }
       }
       else{
-        $this->error( new RESTfulAPI_Error(403,
+        return $this->error( new RESTfulAPI_Error(403,
           "Action '$action' not allowed."
         ));
       }
@@ -312,18 +312,18 @@ class RESTfulAPI extends Controller
         if ( method_exists($this->authority, $action) )
         {
           $response = $this->authority->$action($request);
-          $response = $this->serializer->serialize( $response );
-          $this->answer($response);
+          $response = $this->serializer->serialize( $response );          
+          return $this->answer($response);
         }
         else{          
           //let's be shady here instead
-          $this->error( new RESTfulAPI_Error(403,
+          return $this->error( new RESTfulAPI_Error(403,
             "Action '$action' not allowed."
           ));
         }
       }
       else{
-        $this->error( new RESTfulAPI_Error(403,
+        return $this->error( new RESTfulAPI_Error(403,
           "Action '$action' not allowed."
         ));
       }
@@ -355,7 +355,7 @@ class RESTfulAPI extends Controller
         if ( $authResult instanceof RESTfulAPI_Error )
         {
           //Authentication failed return error to client
-          $this->error($authResult);
+          return $this->error($authResult);
         }
       }
     }
@@ -365,7 +365,7 @@ class RESTfulAPI extends Controller
     //catch + return errors
     if ( $data instanceof RESTfulAPI_Error )
     {
-      $this->error($data);
+      return $this->error($data);
     }
 
     //serialize response
@@ -373,11 +373,11 @@ class RESTfulAPI extends Controller
     //catch + return errors
     if ( $json instanceof RESTfulAPI_Error )
     {
-      $this->error($json);
+      return $this->error($json);
     }
 
     //all is good reply normally
-    $this->answer( $json );
+    return $this->answer($json);
   }
 
 
@@ -405,15 +405,8 @@ class RESTfulAPI extends Controller
     
     // save controller's response then return/output
     $this->response = $answer;
-
-    if( Director::is_cli() )
-    {
-      return $answer;
-    }
-    else{
-      $answer->output();
-      exit;
-    }
+    
+    return $answer; 
   }
 
 
@@ -438,14 +431,7 @@ class RESTfulAPI extends Controller
     // save controller's response then return/output
     $this->response = $answer;
 
-    if( Director::is_cli() )
-    {
-      return $answer;
-    }
-    else{
-      $answer->output();
-      exit;
-    }
+    return $answer;
   }
 
 
