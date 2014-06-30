@@ -23,6 +23,7 @@ class RESTfulAPI extends Controller
    * array = authentication required for selected HTTP methods e.g. array('POST', 'PUT', 'DELETE')
    * 
    * @var boolean|array
+   * @config
    */
   private static $authentication_policy = false;
 
@@ -52,6 +53,7 @@ class RESTfulAPI extends Controller
    * Default to check config only.
    * 
    * @var boolean|string
+   * @config
    */
   private static $access_control_policy = 'ACL_CHECK_CONFIG_ONLY';
 
@@ -93,6 +95,7 @@ class RESTfulAPI extends Controller
    * Override in configuration to use your custom classes
    * 
    * @var array
+   * @config
    */
   private static $dependencies = array(
     'authenticator' => '%$RESTfulAPI_TokenAuthenticator',
@@ -132,6 +135,7 @@ class RESTfulAPI extends Controller
    * }
    * 
    * @var array
+   * @config
    */
   private static $embedded_records;
 
@@ -146,7 +150,8 @@ class RESTfulAPI extends Controller
    * Allow-Methods  String          comma separated list of allowed methods
    * Max-Age        Integer         Preflight/OPTIONS request caching time in seconds (NOTE has no effect if Authentification is enabled => custom header = always preflight)
    *
-   * @var array 
+   * @var array
+   * @config
    */
   private static $cors = array(
     'Enabled'       => true,

@@ -27,6 +27,7 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
    * Override in configuration to use your custom classes
    * 
    * @var array
+   * @config
    */
   private static $dependencies = array(
     'deSerializer' => '%$RESTfulAPI_BasicDeSerializer'
@@ -38,6 +39,7 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
    * i.e. ?column__EndsWith=value
    * 
    * @var string
+   * @config
    */
   private static $searchFilterModifiersSeparator = '__';
 

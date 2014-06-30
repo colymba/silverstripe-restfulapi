@@ -18,6 +18,7 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
    * Authentication token life in seconds
    * 
    * @var integer
+   * @config
    */
   private static $tokenLife = 10800; //3 * 60 * 60;
 
@@ -26,6 +27,7 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
    * HTTP Header name storing authentication token
    * 
    * @var string
+   * @config
    */
   private static $tokenHeader = 'X-Silverstripe-Apitoken';
 
@@ -34,6 +36,7 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
    * Fallback GET/POST HTTP query var storing authentication token
    * 
    * @var string
+   * @config
    */
   private static $tokenQueryVar = 'token';
 
@@ -42,6 +45,7 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
    * Class name to query for token validation
    * 
    * @var string
+   * @config
    */
   private static $tokenOwnerClass = 'Member';
 
