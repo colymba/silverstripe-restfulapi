@@ -184,8 +184,9 @@ class RESTfulAPI_Test extends RESTfulAPI_Tester
    * API REQUESTS
    * */
 
-  public function testFullAPIRequest()
+  public function testFullBasicAPIRequest()
   {
+    Config::inst()->update('RESTfulAPI', 'authentication_policy', false);
     Config::inst()->update('RESTfulAPI', 'access_control_policy', 'ACL_CHECK_CONFIG_ONLY');
     Config::inst()->update('ApiTest_Author', 'api_access', true);
 
