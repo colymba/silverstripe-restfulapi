@@ -12,24 +12,9 @@
  */
 class RESTfulAPI_DefaultPermissionManager_Test extends RESTfulAPI_Tester
 {
-  protected $requiredExtensions = array(
-    'Group' => array('RESTfulAPI_GroupExtension')
-  );
-
   protected $extraDataObjects = array(
     'ApiTest_Library'
   );
-
-  protected function getAuthenticator()
-  {
-    $injector = new Injector();
-    $auth     = new RESTfulAPI_TokenAuthenticator();
-
-    $injector->inject($auth);
-
-    return $auth;
-  }
-
 
   public function setUpOnce()
   {
@@ -45,71 +30,158 @@ class RESTfulAPI_DefaultPermissionManager_Test extends RESTfulAPI_Tester
     $member->addToGroupByCode('restfulapi-administrators');
 
     Member::create(array(
-      'Email' => 'editor@api.com',
-      'Password' => 'editor'
-    ))->write();
-    $member = Member::get()->filter(array(
-      'Email' => 'editor@api.com'
-    ))->first();
-    $member->addToGroupByCode('restfulapi-editors');
-
-    Member::create(array(
-      'Email' => 'reader@api.com',
-      'Password' => 'reader'
-    ))->write();
-    $member = Member::get()->filter(array(
-      'Email' => 'reader@api.com'
-    ))->first();
-    $member->addToGroupByCode('restfulapi-readers');
-
-    Member::create(array(
       'Email' => 'stranger@api.com',
       'Password' => 'stranger'
     ))->write();
   }
 
+  protected function getAdminToken()
+  {
+    $response = Director::test('api/auth/login?email=admin@api.com&pwd=admin');
+    $json     = json_decode($response->getBody());
+    return $json->token;
+  }
+
+  protected function getStrangerToken()
+  {
+    $response = Director::test('api/auth/login?email=stranger@api.com&pwd=stranger');
+    $json     = json_decode($response->getBody());
+    return $json->token;
+  }
 
   /* **********************************************************
    * TESTS
    * */
 
   /**
-   * Checks that the API respects the permissions
-   * set on the DataObject can() methods
+   * Test READ permissions are honoured
    */
-  public function testPermissions()
+  public function testReadPermissions()
   {
     Config::inst()->update('RESTfulAPI', 'access_control_policy', 'ACL_CHECK_MODEL_ONLY');
     Config::inst()->update('RESTfulAPI', 'cors', array(
-      'Enabled'       => false
+      'Enabled' => false
     ));    
     
     // GET with permission = OK
-    $response = Director::test('api/auth/login?email=admin@api.com&pwd=admin');
-    $json = json_decode($response->getBody());
     $requestHeaders = $this->getRequestHeaders();
-    $requestHeaders['X-Silverstripe-Apitoken'] = $json->token;
-
+    $requestHeaders['X-Silverstripe-Apitoken'] = $this->getAdminToken();
     $response = Director::test('api/ApiTest_Library/1', null, null, 'GET', null, $requestHeaders);
 
     $this->assertEquals(
       $response->getStatusCode(),
       200,
-      "Member of 'restfulapi-administrators' Group should see result."
+      "Member of 'restfulapi-administrators' Group should be able to READ records."
     );
     
     // GET with NO Permission = BAD
-    $response = Director::test('api/auth/login?email=stranger@api.com&pwd=stranger');
-    $json = json_decode($response->getBody());
     $requestHeaders = $this->getRequestHeaders();
-    $requestHeaders['X-Silverstripe-Apitoken'] = $json->token;
-    
+    $requestHeaders['X-Silverstripe-Apitoken'] = $this->getStrangerToken();    
     $response = Director::test('api/ApiTest_Library/1', null, null, 'GET', null, $requestHeaders);
 
     $this->assertEquals(
       $response->getStatusCode(),
       403,
-      "Member without permission should NOT see result."
+      "Member without permission should NOT be able to READ records."
+    );
+  }
+
+  /**
+   * Test EDIT permissions are honoured
+   */
+  public function testEditPermissions()
+  {
+    Config::inst()->update('RESTfulAPI', 'access_control_policy', 'ACL_CHECK_MODEL_ONLY');
+    Config::inst()->update('RESTfulAPI', 'cors', array(
+      'Enabled' => false
+    ));    
+    
+    // PUT with permission = OK
+    $requestHeaders = $this->getRequestHeaders();
+    $requestHeaders['X-Silverstripe-Apitoken'] = $this->getAdminToken();
+    $response = Director::test('api/ApiTest_Library/1', null, null, 'PUT', '{"Name":"Api"}', $requestHeaders);
+
+    $this->assertEquals(
+      $response->getStatusCode(),
+      200,
+      "Member of 'restfulapi-administrators' Group should be able to EDIT records."
+    );
+    
+    // PUT with NO Permission = BAD
+    $requestHeaders = $this->getRequestHeaders();
+    $requestHeaders['X-Silverstripe-Apitoken'] = $this->getStrangerToken();    
+    $response = Director::test('api/ApiTest_Library/1', null, null, 'PUT', '{"Name":"Api"}', $requestHeaders);
+
+    $this->assertEquals(
+      $response->getStatusCode(),
+      403,
+      "Member without permission should NOT be able to EDIT records."
+    );
+  }
+
+  /**
+   * Test CREATE permissions are honoured
+   */
+  public function testCreatePermissions()
+  {
+    Config::inst()->update('RESTfulAPI', 'access_control_policy', 'ACL_CHECK_MODEL_ONLY');
+    Config::inst()->update('RESTfulAPI', 'cors', array(
+      'Enabled' => false
+    ));    
+    
+    // POST with permission = OK
+    $requestHeaders = $this->getRequestHeaders();
+    $requestHeaders['X-Silverstripe-Apitoken'] = $this->getAdminToken();
+    $response = Director::test('api/ApiTest_Library', null, null, 'POST', '{"Name":"Api"}', $requestHeaders);
+    
+    $this->assertEquals(
+      $response->getStatusCode(),
+      200,
+      "Member of 'restfulapi-administrators' Group should be able to CREATE records."
+    );
+    
+    // POST with NO Permission = BAD
+    $requestHeaders = $this->getRequestHeaders();
+    $requestHeaders['X-Silverstripe-Apitoken'] = $this->getStrangerToken();    
+    $response = Director::test('api/ApiTest_Library', null, null, 'POST', '{"Name":"Api"}', $requestHeaders);
+
+    $this->assertEquals(
+      $response->getStatusCode(),
+      403,
+      "Member without permission should NOT be able to CREATE records."
+    );
+  }
+
+  /**
+   * Test DELETE permissions are honoured
+   */
+  public function testDeletePermissions()
+  {
+    Config::inst()->update('RESTfulAPI', 'access_control_policy', 'ACL_CHECK_MODEL_ONLY');
+    Config::inst()->update('RESTfulAPI', 'cors', array(
+      'Enabled' => false
+    ));    
+    
+    // DELETE with permission = OK
+    $requestHeaders = $this->getRequestHeaders();
+    $requestHeaders['X-Silverstripe-Apitoken'] = $this->getAdminToken();
+    $response = Director::test('api/ApiTest_Library/1', null, null, 'DELETE', null, $requestHeaders);
+    
+    $this->assertEquals(
+      $response->getStatusCode(),
+      200,
+      "Member of 'restfulapi-administrators' Group should be able to DELETE records."
+    );
+    
+    // DELETE with NO Permission = BAD
+    $requestHeaders = $this->getRequestHeaders();
+    $requestHeaders['X-Silverstripe-Apitoken'] = $this->getStrangerToken();    
+    $response = Director::test('api/ApiTest_Library/1', null, null, 'DELETE', null, $requestHeaders);
+
+    $this->assertEquals(
+      $response->getStatusCode(),
+      403,
+      "Member without permission should NOT be able to DELETE records."
     );
   }
 }
