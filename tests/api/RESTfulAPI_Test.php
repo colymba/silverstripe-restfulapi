@@ -29,29 +29,30 @@ class RESTfulAPI_Test extends RESTfulAPI_Tester
    */
   public function testDataObjectAPIEnaled()
   {
+    Config::inst()->update('RESTfulAPI', 'access_control_policy', 'ACL_CHECK_CONFIG_ONLY');
     // ----------------
     // Method Calls
     
     // Disabled by default
     $enabled = RESTfulAPI::api_access_control('ApiTest_Author');
-    $this->assertFalse( $enabled );
+    $this->assertFalse( $enabled, 'Access control should return FALSE by default' );
 
     // Enabled
     Config::inst()->update('ApiTest_Author', 'api_access', true);
     $enabled = RESTfulAPI::api_access_control('ApiTest_Author');
-    $this->assertTrue( $enabled );
+    $this->assertTrue( $enabled, 'Access control should return TRUE when api_access is enbaled' );
 
     // Method specific
     Config::inst()->update('ApiTest_Author', 'api_access', 'GET,POST');
 
     $enabled = RESTfulAPI::api_access_control('ApiTest_Author');
-    $this->assertTrue( $enabled );
+    $this->assertTrue( $enabled, 'Access control should return TRUE when api_access is enbaled with default GET method' );
 
     $enabled = RESTfulAPI::api_access_control('ApiTest_Author', 'POST');
-    $this->assertTrue( $enabled );
+    $this->assertTrue( $enabled, 'Access control should return TRUE when api_access match HTTP method' );
 
     $enabled = RESTfulAPI::api_access_control('ApiTest_Author', 'PUT');
-    $this->assertFalse( $enabled );
+    $this->assertFalse( $enabled, 'Access control should return FALSE when api_access does not match method' );
 
     // ----------------
     // API Calls
@@ -100,10 +101,10 @@ class RESTfulAPI_Test extends RESTfulAPI_Tester
     $response       = Director::test('api/ApiTest_Book/1', null, null, 'OPTIONS', null, $requestHeaders);
     $headers        = $response->getHeaders();
 
-    $this->assertFalse( array_key_exists('Access-Control-Allow-Origin', $headers) );
-    $this->assertFalse( array_key_exists('Access-Control-Allow-Headers', $headers) );
-    $this->assertFalse( array_key_exists('Access-Control-Allow-Methods', $headers) );
-    $this->assertFalse( array_key_exists('Access-Control-Max-Age', $headers) );
+    $this->assertFalse( array_key_exists('Access-Control-Allow-Origin', $headers), 'CORS ORIGIN header should not be present' );
+    $this->assertFalse( array_key_exists('Access-Control-Allow-Headers', $headers), 'CORS HEADER header should not be present' );
+    $this->assertFalse( array_key_exists('Access-Control-Allow-Methods', $headers), 'CORS METHOD header should not be present' );
+    $this->assertFalse( array_key_exists('Access-Control-Max-Age', $headers), 'CORS AGE header should not be present' );
   }
 
 
@@ -118,23 +119,27 @@ class RESTfulAPI_Test extends RESTfulAPI_Tester
     $responseHeaders = $response->getHeaders();
 
     $this->assertEquals(
+      $requestHeaders['Origin'],
       $responseHeaders['Access-Control-Allow-Origin'],
-      $requestHeaders['Origin']
+      'CORS headers should have same ORIGIN'
     );
 
     $this->assertEquals(
+      $corsConfig['Allow-Methods'],
       $responseHeaders['Access-Control-Allow-Methods'],
-      $corsConfig['Allow-Methods']
+      'CORS headers should have same METHOD'
     );
 
     $this->assertEquals(
+      $requestHeaders['Access-Control-Request-Headers'],
       $responseHeaders['Access-Control-Allow-Headers'],
-      $requestHeaders['Access-Control-Request-Headers']
+      'CORS headers should have same ALLOWED HEADERS'
     );
 
     $this->assertEquals(
+      $corsConfig['Max-Age'],
       $responseHeaders['Access-Control-Max-Age'],
-      $corsConfig['Max-Age']
+      'CORS headers should have same MAX AGE'
     );
   }
 
@@ -157,18 +162,20 @@ class RESTfulAPI_Test extends RESTfulAPI_Tester
     $response        = Director::test('api/ApiTest_Book/1', null, null, 'GET', null, $requestHeaders);
     $responseHeaders = $response->getHeaders();
 
-    $this->assertEquals(
+    $this->assertEquals(      
+      'GET',
       $responseHeaders['Access-Control-Allow-Methods'],
-      'GET'
+      'Only HTTP GET method should be allowed in Access-Control-Allow-Methods HEADER'
     );
 
     // Seding POST request, only GET should be allowed
     $response        = Director::test('api/ApiTest_Book/1', null, null, 'POST', null, $requestHeaders);
     $responseHeaders = $response->getHeaders();
 
-    $this->assertEquals(
+    $this->assertEquals(      
+      'GET',
       $responseHeaders['Access-Control-Allow-Methods'],
-      'GET'
+      'Only HTTP GET method should be allowed in Access-Control-Allow-Methods HEADER'
     );
   }
 
@@ -179,11 +186,13 @@ class RESTfulAPI_Test extends RESTfulAPI_Tester
 
   public function testFullAPIRequest()
   {
+    Config::inst()->update('RESTfulAPI', 'access_control_policy', 'ACL_CHECK_CONFIG_ONLY');
     Config::inst()->update('ApiTest_Author', 'api_access', true);
 
     // Basic serializer
     Config::inst()->update('RESTfulAPI', 'dependencies', array(
       'authenticator' => null,
+      'authority'     => null,
       'queryHandler'  => '%$RESTfulAPI_DefaultQueryHandler',
       'serializer'    => '%$RESTfulAPI_BasicSerializer'
     ));
@@ -192,11 +201,10 @@ class RESTfulAPI_Test extends RESTfulAPI_Tester
     ));
 
     $response = Director::test('api/ApiTest_Author/1', null, null, 'GET');
-    var_dump($response);
 
-    $this->assertEquals(
-      $response->getStatusCode(),
+    $this->assertEquals(      
       200,
+      $response->getStatusCode(),
       "API request for existing record should resolve"
     );
 
@@ -207,9 +215,11 @@ class RESTfulAPI_Test extends RESTfulAPI_Tester
       "API request should return valid JSON"
     );
 
+
     // EmberData serializer
     Config::inst()->update('RESTfulAPI', 'dependencies', array(
       'authenticator' => null,
+      'authority'     => null,
       'queryHandler'  => '%$RESTfulAPI_DefaultQueryHandler',
       'serializer'    => '%$RESTfulAPI_EmberDataSerializer'
     ));
@@ -219,9 +229,9 @@ class RESTfulAPI_Test extends RESTfulAPI_Tester
 
     $response = Director::test('api/ApiTest_Author/1', null, null, 'GET');
 
-    $this->assertEquals(
-      $response->getStatusCode(),
+    $this->assertEquals(      
       200,
+      $response->getStatusCode(),
       "API request for existing record should resolve"
     );
 
