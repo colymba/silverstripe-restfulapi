@@ -232,13 +232,13 @@ class RESTfulAPI extends Controller
    */
   public function init()
   {
+    parent::init();
+
     //catch preflight request
     if ( $this->request->httpMethod() === 'OPTIONS' )
     {
       return $this->answer(null, true);
     }
-
-    parent::init();
   }
 
 
