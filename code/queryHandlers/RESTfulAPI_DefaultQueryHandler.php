@@ -348,6 +348,15 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
       );
     }
 
+    // Check for malformed request
+    $payload = $this->deSerializer->deserialize( $request->getBody() );
+    if ( $payload instanceof RESTfulAPI_Error )
+    {
+      return new RESTfulAPI_ERROR(400,
+        "Malformed body."
+      );
+    }
+
     $newModel = Injector::inst()->create($model);
     $newModel->write();
 
