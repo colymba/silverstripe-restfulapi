@@ -230,7 +230,9 @@ class RESTfulAPI extends Controller
     //catch preflight request
     if ( $this->request->httpMethod() === 'OPTIONS' )
     {
-      return $this->answer(null, true);
+      $answer = $this->answer(null, true);
+      $answer->output();
+      exit;
     }
   }
 
