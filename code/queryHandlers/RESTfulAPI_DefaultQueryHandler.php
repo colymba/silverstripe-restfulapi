@@ -348,18 +348,6 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
       );
     }
 
-    // Check for malformed request
-    $payload = $this->deSerializer->deserialize( $request->getBody() );
-    if ( $payload instanceof RESTfulAPI_Error )
-    {
-      return new RESTfulAPI_ERROR(400,
-        "Malformed body."
-      );
-    }
-
-    $newModel = Injector::inst()->create($model);
-    $newModel->write();
-
     return $this->updateModel($model, $newModel->ID, $request);
   }
 
@@ -371,11 +359,11 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
    * @param Integer $id The ID of the model to update
    * @param SS_HTTPRequest the original request
    *
-   * @return DataObject The updated model 
+   * @return DataObject The updated model
    */
   function updateModel($model, $id, $request)
   {
-    $model = DataObject::get_by_id($model, $id);
+    $model = ( $id == 0 ? Injector::inst()->create($model) : DataObject::get_by_id($model, $id) );
     if ( !$model )
     {
       return new RESTfulAPI_Error(404,
