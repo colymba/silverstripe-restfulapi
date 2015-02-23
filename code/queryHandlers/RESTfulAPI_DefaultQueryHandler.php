@@ -260,108 +260,79 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
       );
     }
 
+    // DataObject handled, from here on only DataList can get
 
-
-
-
-
-    if ($id)
+    foreach ($queryParams as $param)
     {
-      /*$return = DataObject::get_by_id($model, $id);
-
-      if ( !$return )
+      if ( $param['Column'] )
       {
-        return new RESTfulAPI_Error(404,
-          "Model $id of $model not found."
-        );
-      }
-      else if ( !RESTfulAPI::api_access_control($return, $request->httpMethod()) )
-      {
-        return new RESTfulAPI_Error(403,
-          "API access denied."
-        );
-      }*/
-    }
-    else{
-      //$return = DataList::create($model);
-
-      if ( count($queryParams) > 0 )
-      {
-        foreach ($queryParams as $param)
+      	// handle sorting by column
+        if ( $param['Modifier'] === 'sort' )
         {
-
-          if ( $param['Column'] )
-          {
-          	// handle sorting by column
-            if ( $param['Modifier'] === 'sort' )
-            {
-              $return = $return->sort(array(
-                $param['Column'] => $param['Value']
-              ));
-            }
-            // normal modifiers / search filters
-            else if ( $param['Modifier'] )
-            {
-              $return = $return->filter(array(
-                $param['Column'].':'.$param['Modifier'] => $param['Value']
-              ));
-            }
-            // no modifier / search filter
-            else{
-              $return = $return->filter(array(
-                $param['Column'] => $param['Value']
-              ));
-            }
-          }
-          else{
-            // random
-            if ( $param['Modifier'] === 'rand' )
-            {
-              // rand + seed
-              if ( $param['Value'] )
-              {                
-                $return = $return->sort('RAND('.$param['Value'].')');
-              }
-              // rand only >> FIX: gen seed to avoid random result on relations
-              else{                
-                $return = $return->sort('RAND('.time().')');
-              }
-            }
-            // limits
-            else if ( $param['Modifier'] === 'limit' )
-            {
-              // range + offset
-              if ( is_array($param['Value']) )
-              {
-                $return = $return->limit($param['Value'][0], $param['Value'][1]);
-              }
-              // range only
-              else{
-                $return = $return->limit($param['Value']);
-              }
-            }
-          }
-
+          $return = $return->sort(array(
+            $param['Column'] => $param['Value']
+          ));
+        }
+        // normal modifiers / search filters
+        else if ( $param['Modifier'] )
+        {
+          $return = $return->filter(array(
+            $param['Column'].':'.$param['Modifier'] => $param['Value']
+          ));
+        }
+        // no modifier / search filter
+        else{
+          $return = $return->filter(array(
+            $param['Column'] => $param['Value']
+          ));
         }
       }
-
-      //sets default limit if none given
-      $limits = $return->dataQuery()->query()->getLimit();
-      $limitConfig = Config::inst()->get('RESTfulAPI_DefaultQueryHandler', 'max_records_limit');
-
-      if ( is_array($limits) && !array_key_exists('limit', $limits) && $limitConfig >= 0 )
-      {
-        $return = $return->limit($limitConfig);
+      else{
+        // random
+        if ( $param['Modifier'] === 'rand' )
+        {
+          // rand + seed
+          if ( $param['Value'] )
+          {
+            $return = $return->sort('RAND('.$param['Value'].')');
+          }
+          // rand only >> FIX: gen seed to avoid random result on relations
+          else{
+            $return = $return->sort('RAND('.time().')');
+          }
+        }
+        // limits
+        else if ( $param['Modifier'] === 'limit' )
+        {
+          // range + offset
+          if ( is_array($param['Value']) )
+          {
+            $return = $return->limit($param['Value'][0], $param['Value'][1]);
+          }
+          // range only
+          else{
+            $return = $return->limit($param['Value']);
+          }
+        }
       }
     }
 
-    //return $return;
+    //sets default limit if none given
+    $limits = $return->dataQuery()->query()->getLimit();
+    $limitConfig = Config::inst()->get('RESTfulAPI_DefaultQueryHandler', 'max_records_limit');
+
+    if ( is_array($limits) && !array_key_exists('limit', $limits) && $limitConfig >= 0 )
+    {
+      $return = $return->limit($limitConfig);
+    }
+
+    return $return;
   }
 
 
   /**
    * Create object of class $model
-   * 
+   *
    * @param  string         $model
    * @param  SS_HTTPRequest $request
    * @return DataObject
