@@ -238,10 +238,11 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
    */
   function findModel($model, $id = false, $queryParams, SS_HTTPRequest $request)
   {
-    if ($id)
+    $return = ( $id ? DataObject::get_by_id($model, $id) : DataList::create($model) );
+
+    // If $return is not a DataList, then it was got by $id, just handle errors and return
+    if ( !is_a($return, DataList) )
     {
-      $return = DataObject::get_by_id($model, $id);
-      
       if ( !$return )
       {
         return new RESTfulAPI_Error(404,
@@ -254,9 +255,36 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
           "API access denied."
         );
       }
+      else
+      {
+        return $return;
+      }
+    }
+
+
+
+
+
+
+    if ($id)
+    {
+      /*$return = DataObject::get_by_id($model, $id);
+
+      if ( !$return )
+      {
+        return new RESTfulAPI_Error(404,
+          "Model $id of $model not found."
+        );
+      }
+      else if ( !RESTfulAPI::api_access_control($return, $request->httpMethod()) )
+      {
+        return new RESTfulAPI_Error(403,
+          "API access denied."
+        );
+      }*/
     }
     else{
-      $return = DataList::create($model);
+      //$return = DataList::create($model);
 
       if ( count($queryParams) > 0 )
       {
@@ -328,7 +356,7 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
       }
     }
 
-    return $return;
+    //return $return;
   }
 
 
