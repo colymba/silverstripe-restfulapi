@@ -242,8 +242,8 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
     if ( !RESTfulAPI::api_access_control($model, $request->httpMethod()) )
     {
       return new RESTfulAPI_Error(403,
-          "API access denied."
-        );
+        "API access denied."
+      );
     }
 
     $return = ( $id ? DataObject::get_by_id($model, $id) : DataList::create($model) );
@@ -262,8 +262,33 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
 
     // DataObject handled, from here on only DataList can get
 
+    var_dump($queryParams);
     foreach ($queryParams as $param)
     {
+      //var_dump($param);
+      // Validate $param['Column'], $param['Modifier'], and $param['Value']
+      var_dump(( singleton($model)->hasField($param['Column']) ));
+
+      // Check if model contains $param['Column']
+      if ( !singleton($model)->hasField($param['Column']) )
+      {
+        return new RESTfulAPI_Error(400,
+          "Requested filter column ".$param['Column']." does not exist in model ".$model."."
+        );
+      }
+
+      // Validate $param['Modifier']
+      // @TODO
+
+      // Validate $param['Value']
+      if ( $param['Value'] === "" )
+      {
+        return new RESTfulAPI_Error(400,
+          "Empty filter value for column ".$param['Column']."."
+        );
+      }
+
+
       if ( $param['Column'] )
       {
       	// handle sorting by column
