@@ -265,7 +265,7 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
       }
 
       // Validate $param['Modifier']
-      switch (strtolower($param['Modifier']))
+      switch ( strtolower($param['Modifier']) )
       {
         case '':
         case 'startswith':
@@ -275,13 +275,33 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
         case 'lessthan':
         case 'negation':
           // Validate $param['Value']
-          if (!$param['Value'])
+          if ( !$param['Value'] )
           {
             return new RESTfulAPI_Error(400,
               "Empty filter value for column ".$param['Column']."."
             );
           }
           break;
+        case 'sort':
+          // Validate $param['Value']
+          if ( !$param['Value'] )
+          {
+            return new RESTfulAPI_Error(400,
+              "Empty filter value for column ".$param['Column']."."
+            );
+          }
+          else{
+            switch ( strtolower($param['Value']) )
+            {
+              case 'asc':
+              case 'desc':
+                break;
+              default:
+                return new RESTfulAPI_Error(400,
+                  "Filter ".$param['Value']." not valid for modifier ".$param['Modifier'].". Try ASC, or DESC."
+                );
+            }
+          }
         case 'limit':
         case 'rand':
           break;
