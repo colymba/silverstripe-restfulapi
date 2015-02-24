@@ -147,29 +147,26 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
     }
 
     //map HTTP word to module method
-    if ( $request->isGET() )
+    switch ($request->httpMethod())
     {
-      $result = $this->findModel($model, $id, $queryParams, $request);
+      case 'GET':
+        return $this->findModel($model, $id, $queryParams, $request);
+        break;
+      case 'POST':
+        return $this->createModel($model, $request);
+        break;
+      case 'PUT':
+        return $this->updateModel($model, $id, $request);
+        break;
+      case 'DELETE':
+        return $this->deleteModel($model, $id, $request);
+        break;
+      default:
+        return new RESTfulAPI_Error(403,
+          "HTTP method mismatch."
+        );
+        break;
     }
-    elseif ( $request->isPOST() )
-    {
-      $result = $this->createModel($model, $request);
-    }
-    elseif ( $request->isPUT() )
-    {
-      $result = $this->updateModel($model, $id, $request);
-    }
-    elseif ( $request->isDELETE() )
-    {
-      $result = $this->deleteModel($model, $id, $request);
-    }
-    else{
-    	return new RESTfulAPI_Error(403,
-        "HTTP method mismatch."
-      );
-    }
-    
-    return $result;
   }
 
 
