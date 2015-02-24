@@ -238,12 +238,13 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
    */
   function findModel($model, $id = false, $queryParams, SS_HTTPRequest $request)
   {
+    // If an ID is specified just fetch that ID
+    // Else initiate a DataList
     $return = ( $id ? DataObject::get_by_id($model, $id) : DataList::create($model) );
 
-    // If $return is not a DataList, then it was got by $id, just handle errors and return
+    // If $return is not a DataList, then it was got by $id, just handle not founds and return
     if ( !is_a($return, DataList) )
     {
-      // Handle ID not found
       return ( $return ?
         $return :
         new RESTfulAPI_Error(404,
