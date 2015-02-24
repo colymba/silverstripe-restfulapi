@@ -254,12 +254,8 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
     }
 
     // DataObject handled, from here on only DataList can get
-
-    var_dump($queryParams);
     foreach ($queryParams as $param)
     {
-      //var_dump($param);
-      // Validate $param['Column'], $param['Modifier'], and $param['Value']
       var_dump(( singleton($model)->hasField($param['Column']) ));
 
       // Check if model contains $param['Column']
@@ -271,7 +267,6 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
       }
 
       // Validate $param['Modifier']
-      // @TODO
       switch (strtolower($param['Modifier']))
       {
         case 'startswith':
