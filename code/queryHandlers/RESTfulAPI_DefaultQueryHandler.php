@@ -204,13 +204,13 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
         $key__mod
       );
 
-      $param['Column'] = $this->deSerializer->unformatName( $key__mod[0] );
+      $param['Column'] = strtolower( $this->deSerializer->unformatName($key__mod[0]) );
 
-      $param['Value'] = $value;
+      $param['Value'] = strtolower( $value );
 
       if ( isset($key__mod[1]) )
     	{
-    		$param['Modifier'] = $key__mod[1];
+    		$param['Modifier'] = strtolower( $key__mod[1] );
     	}
       else{
       	$param['Modifier'] = null;
@@ -265,7 +265,7 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
       }
 
       // Validate $param['Modifier']
-      switch ( strtolower($param['Modifier']) )
+      switch ( $param['Modifier'] )
       {
         case '':
         case 'startswith':
@@ -291,7 +291,7 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
             );
           }
           else{
-            switch ( strtolower($param['Value']) )
+            switch ( $param['Value'] )
             {
               case 'asc':
               case 'desc':
