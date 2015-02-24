@@ -256,8 +256,6 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
     // DataObject handled, from here on only DataList can get
     foreach ($queryParams as $param)
     {
-      var_dump(( singleton($model)->hasField($param['Column']) ));
-
       // Check if model contains $param['Column']
       if ( !singleton($model)->hasField($param['Column']) )
       {
@@ -269,12 +267,21 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
       // Validate $param['Modifier']
       switch (strtolower($param['Modifier']))
       {
+        case '':
         case 'startswith':
         case 'endswith':
         case 'partialmatch':
         case 'greaterthan':
         case 'lessthan':
         case 'negation':
+          // Validate $param['Value']
+          if (!$param['Value'])
+          {
+            return new RESTfulAPI_Error(400,
+              "Empty filter value for column ".$param['Column']."."
+            );
+          }
+          break;
         case 'limit':
         case 'rand':
           break;
@@ -283,15 +290,6 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
             "Filter modifier ".$param['Modifier']." not valid. Try StartsWidth, EndsWidth, PartialMatch, GreaterThan, LessThan, Negation, Limit, or Rand."
           );
       }
-
-      // Validate $param['Value']
-      if ( $param['Value'] === "" )
-      {
-        return new RESTfulAPI_Error(400,
-          "Empty filter value for column ".$param['Column']."."
-        );
-      }
-
 
       if ( $param['Column'] )
       {
