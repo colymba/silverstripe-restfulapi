@@ -272,6 +272,20 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
 
       // Validate $param['Modifier']
       // @TODO
+      switch (strtolower($param['Modifier']))
+      {
+        case 'startswith':
+        case 'endswith':
+        case 'partialmatch':
+        case 'greaterthan':
+        case 'lessthan':
+        case 'negation':
+          break;
+        default:
+          return new RESTfulAPI_Error(400,
+            "Filter modifier ".$param['Modifier']." not valid. Try StartsWidth, EndsWidth, PartialMatch, GreaterThan, LessThan, or Negation."
+          );
+      }
 
       // Validate $param['Value']
       if ( $param['Value'] === "" )
