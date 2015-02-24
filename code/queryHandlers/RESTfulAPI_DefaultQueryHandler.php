@@ -275,10 +275,12 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
         case 'greaterthan':
         case 'lessthan':
         case 'negation':
+        case 'limit':
+        case 'rand':
           break;
         default:
           return new RESTfulAPI_Error(400,
-            "Filter modifier ".$param['Modifier']." not valid. Try StartsWidth, EndsWidth, PartialMatch, GreaterThan, LessThan, or Negation."
+            "Filter modifier ".$param['Modifier']." not valid. Try StartsWidth, EndsWidth, PartialMatch, GreaterThan, LessThan, Negation, Limit, or Rand."
           );
       }
 
