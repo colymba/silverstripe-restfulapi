@@ -6,6 +6,7 @@ Config | Type | Info | Default
 --- | :---: | --- | ---
 `dependencies` | `array` | key => value pair specifying which deserializer to use | 'deSerializer' => '%$RESTfulAPI_BasicDeSerializer'
 `searchFilterModifiersSeparator` | `string` | Separator used in HTTP params between the column name and the search filter modifier (e.g. ?name__StartsWith=Henry will find models with the column name that starts with 'Henry'. ORM equivalent *->filter(array('name::StartsWith' => 'Henry'))* ) | '__'
+`skipedQueryParameters` | `array` | Uppercased query params that would not parsed as column names (uppercased) | 'URL', 'FLUSH', 'FLUSHTOKEN'
 `max_records_limit` | `int` | specify the maximum number of records to return by default (avoid the api returning millions...) | 100
 
 
