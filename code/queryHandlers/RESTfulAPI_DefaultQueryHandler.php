@@ -348,7 +348,7 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
       );
     }
 
-    return $this->updateModel($model, $newModel->ID, $request);
+    return $this->updateModel($model, 0, $request);
   }
 
 
