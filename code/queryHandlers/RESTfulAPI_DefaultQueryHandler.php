@@ -45,6 +45,15 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
 
 
   /**
+   * Query vars to skip (uppercased)
+   * 
+   * @var array
+   * @config
+   */
+  private static $skipedQueryParameters = array('URL', 'FLUSH', 'FLUSHTOKEN');
+
+
+  /**
    * Set a maximum numbers of records returned by the API.
    * Only affectects "GET All". Useful to avoid returning millions of records at once.
    * 
@@ -190,9 +199,8 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
 
     foreach ($params as $key__mod => $value)
     {
-      //if ( strtoupper($key__mod) === 'URL' ) continue;
-      // skip ul, flush, flushtoken
-      if ( in_array(strtoupper($key__mod), array('URL', 'FLUSH', 'FLUSHTOKEN')) ) continue;
+      // skip url, flush, flushtoken
+      if ( in_array(strtoupper($key__mod), Config::inst()->get('RESTfulAPI_DefaultQueryHandler', 'skipedQueryParameters')) ) continue;
 
       $param = array();
 
