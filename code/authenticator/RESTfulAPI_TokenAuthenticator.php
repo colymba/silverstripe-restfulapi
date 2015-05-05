@@ -14,7 +14,7 @@
 class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
 {
 
-	/**
+  /**
    * Authentication token life in seconds
    * 
    * @var integer
@@ -48,6 +48,17 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
    * @config
    */
   private static $tokenOwnerClass = 'Member';
+
+
+  /**
+   * Whether or not the token should auto-update on activity.
+   * When set to true, the token will automatically update its lifetime, similar
+   * to a session-ping.
+   *
+   * @var boolean
+   * @config
+   */
+  private static $autoRefreshLifetime = false;
 
 
   /**
@@ -85,10 +96,11 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
     $config = array();
     $configInstance = Config::inst();    
 
-    $config['life']     = $configInstance->get('RESTfulAPI_TokenAuthenticator', 'tokenLife');
-    $config['header']   = $configInstance->get('RESTfulAPI_TokenAuthenticator', 'tokenHeader');
-    $config['queryVar'] = $configInstance->get('RESTfulAPI_TokenAuthenticator', 'tokenQueryVar');
-    $config['owner']    = $configInstance->get('RESTfulAPI_TokenAuthenticator', 'tokenOwnerClass');
+    $config['life']         = $configInstance->get('RESTfulAPI_TokenAuthenticator', 'tokenLife');
+    $config['header']       = $configInstance->get('RESTfulAPI_TokenAuthenticator', 'tokenHeader');
+    $config['queryVar']     = $configInstance->get('RESTfulAPI_TokenAuthenticator', 'tokenQueryVar');
+    $config['owner']        = $configInstance->get('RESTfulAPI_TokenAuthenticator', 'tokenOwnerClass');
+    $config['autoRefresh']  = $configInstance->get('RESTfulAPI_TokenAuthenticator', 'autoRefreshLifetime');
 
     $tokenDBColumns = $configInstance->get('RESTfulAPI_TokenAuthExtension', 'db');
     $tokenDBColumn  = array_search('Varchar(160)', $tokenDBColumns);
@@ -432,6 +444,11 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
 
       if ( $tokenExpire > ($now - $life) )
       {
+        // check if token should automatically be updated
+        if($this->tokenConfig['autoRefresh']){
+          $tokenOwner->setField($this->tokenConfig['expireDBColumn'], $now + $life);
+          $tokenOwner->write();
+        }
         //all good, log Member in
         if ( is_a($tokenOwner, 'Member') )
         {

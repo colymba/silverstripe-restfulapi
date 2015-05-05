@@ -14,6 +14,7 @@ Config | Type | Info | Default
 `tokenHeader` | `string` | Custom HTTP header storing the token | 'X-Silverstripe-Apitoken'
 `tokenQueryVar` | `string` | Fallback GET/POST HTTP query var storing the token | 'token'
 `tokenOwnerClass` | `string` | DataObject class name for the token's owner | 'Member'
+`autoRefreshLifetime` | `boolean` | Whether or not token lifetime should be updated with every request | false
 
 
 ## Token Authentication Data Extension `RESTfulAPI_TokenAuthExtension`
