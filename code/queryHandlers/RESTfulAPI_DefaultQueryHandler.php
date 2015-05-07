@@ -353,10 +353,7 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
       );
     }
 
-    $newModel = Injector::inst()->create($model);
-    $newModel->write();
-
-    return $this->updateModel($model, $newModel->ID, $request);
+    return $this->updateModel($model, 0, $request);
   }
 
 
@@ -367,11 +364,11 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
    * @param Integer $id The ID of the model to update
    * @param SS_HTTPRequest the original request
    *
-   * @return DataObject The updated model 
+   * @return DataObject The updated model
    */
   function updateModel($model, $id, $request)
   {
-    $model = DataObject::get_by_id($model, $id);
+    $model = ( $id == 0 ? Injector::inst()->create($model) : DataObject::get_by_id($model, $id) );
     if ( !$model )
     {
       return new RESTfulAPI_Error(404,
