@@ -152,14 +152,7 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
         ));
         if ( $member )
         {
-          $tokenData = $this->generateToken();
-
-          $tokenDBColumn  = $this->tokenConfig['DBColumn'];
-          $expireDBColumn = $this->tokenConfig['expireDBColumn'];
-
-          $member->{$tokenDBColumn}  = $tokenData['token'];
-          $member->{$expireDBColumn} = $tokenData['expire'];
-          $member->write();
+          $tokenData = $this->updateToken($member);
           $member->login();
         }
       }
@@ -203,16 +196,7 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
 
       if ( $this->tokenConfig['owner'] === 'Member' )
       {
-        //generate expired token
-        $tokenData = $this->generateToken( true );
-
-        //write
-        $tokenDBColumn  = $this->tokenConfig['DBColumn'];
-        $expireDBColumn = $this->tokenConfig['expireDBColumn'];
-
-        $member->{$tokenDBColumn}  = $tokenData['token'];
-        $member->{$expireDBColumn} = $tokenData['expire'];
-        $member->write();
+        $this->updateToken($member, true);
       }      
     }
   }
@@ -291,16 +275,7 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
 
       if ( $owner )
       {
-        //generate token
-        $tokenData = $this->generateToken( $expired );
-
-        //write
-        $tokenDBColumn  = $this->tokenConfig['DBColumn'];
-        $expireDBColumn = $this->tokenConfig['expireDBColumn'];
-
-        $owner->{$tokenDBColumn}  = $tokenData['token'];
-        $owner->{$expireDBColumn} = $tokenData['expire'];
-        $owner->write();
+        $this->updateToken($owner, $expired);
       }
       else{
         user_error("API Token owner '$ownerClass' not found with ID = $id", E_USER_WARNING);
@@ -342,6 +317,40 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
       'token' => substr($token, 7),
       'expire' => $expire
     ); 
+  }
+
+  /**
+   * Update the token of a token owner
+   * @param $owner          The token owner instance to update
+   * @param bool $expired   Set to true to generate an outdated token
+   * @return array|null     Token data array('token' => HASH, 'expire' => EXPIRY_DATE)
+   */
+  private function updateToken($owner, $expired = false)
+  {
+    $ownerId = null;
+    $tokenData = null;
+
+    // DB field names
+    $tokenDBColumn  = $this->tokenConfig['DBColumn'];
+    $expireDBColumn = $this->tokenConfig['expireDBColumn'];
+
+    do {
+      try {
+        //generate token
+        $tokenData = $this->generateToken( $expired );
+
+        // ensure we never regenerate the same token!
+        if($owner->{$tokenDBColumn} != $tokenData['token']){
+          $owner->{$tokenDBColumn}  = $tokenData['token'];
+          $owner->{$expireDBColumn} = $tokenData['expire'];
+          $ownerId = $owner->write();
+        }
+      } catch(Exception $e){
+        $ownerId = null;
+      }
+    } while(!$ownerId);
+
+    return $tokenData;
   }
 
 

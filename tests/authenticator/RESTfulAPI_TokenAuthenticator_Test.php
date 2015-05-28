@@ -209,4 +209,35 @@ class RESTfulAPI_TokenAuthenticator_Test extends RESTfulAPI_Tester
       "TokenAuth authentication failure should return a RESTfulAPI_Error"
     );
   }
+
+  /**
+   * Test edge case of a member with the same API token
+   */
+  public function testTokenUniqueness()
+  {
+    $writtenCount = 0;
+    // attempt to write two members with the same API token
+    for($i = 0; $i < 2; $i++){
+      try {
+        $memberID = Member::create(array(
+          'Email' => 'TestMember' . $i,
+          'Password' => 'test',
+          'ApiToken' => 'Same token'
+        ))->write();
+
+        if($memberID){
+          $writtenCount++;
+        }
+      } catch(Exception $e){
+        // catch exception to not raise errors
+      }
+    }
+
+
+    $this->assertEquals(
+      1,
+      $writtenCount,
+      'The API token must be unique'
+    );
+  }
 }

@@ -19,6 +19,15 @@ class RESTfulAPI_TokenAuthExtension extends DataExtension
     'ApiTokenExpire' => 'Int'
 	);
 
+  // Add a unique index to the API token.
+  // Should increase lookup performance and prevent duplicate tokens.
+  private static $indexes = array(
+    'ApiToken' => array(
+      'type' => 'unique',
+      'value' => '"ApiToken"'
+    )
+  );
+
 	function updateCMSFields(FieldList $fields)
 	{
 	  $fields->removeByName('ApiToken');
