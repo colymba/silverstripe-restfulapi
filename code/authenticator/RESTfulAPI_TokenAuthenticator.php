@@ -84,7 +84,8 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
   private static $allowed_actions = array(
     'login',
     'logout',
-    'lostPassword'
+    'lostPassword',
+    'refreshToken'
   );
 
 
