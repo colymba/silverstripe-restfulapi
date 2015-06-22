@@ -15,7 +15,8 @@ class RESTfulAPI_DefaultQueryHandler_Test extends RESTfulAPI_Tester
   protected $extraDataObjects = array(
     'ApiTest_Author',
     'ApiTest_Book',
-    'ApiTest_Library'
+    'ApiTest_Library',
+    'ApiTest_Product'
   );
 
   protected $url_pattern = 'api/$ClassName/$ID';
@@ -43,6 +44,17 @@ class RESTfulAPI_DefaultQueryHandler_Test extends RESTfulAPI_Tester
     $injector->inject($qh);
 
     return $qh;
+  }
+
+  function generateDBEntries()
+  {
+    parent::generateDBEntries();
+
+    $product = ApiTest_Product::create(array(
+      'Title' => 'Sold out product',
+      'Soldout' => true
+    ));
+    $product->write();
   }
 
 
@@ -256,5 +268,60 @@ class RESTfulAPI_DefaultQueryHandler_Test extends RESTfulAPI_Tester
       $deletedRecord,
       'Delete model should delete a database record'
     );
+  }
+
+  public function testAfterDeserialize()
+  {
+    $product = ApiTest_Product::get()->first();
+    $qh      = $this->getQueryHandler();
+    $request = $this->getHTTPRequest('PUT','ApiTest_Product', $product->ID);
+    $body    = json_encode(array(
+      'Title' => 'Making product available',
+      'Soldout' => false
+    ));
+    $request->setBody($body);
+
+    $updatedProduct = $qh->handleQuery($request);
+
+    $this->assertContainsOnlyInstancesOf(
+      'DataObject',
+      array($updatedProduct),
+      'Update model should return a DataObject'
+    );
+
+    $this->assertEquals(
+      ApiTest_Product::$rawJSON,
+      $body,
+      "Raw JSON passed into 'onBeforeDeserialize' should match request payload"
+    );
+
+    $this->assertTrue(
+      $updatedProduct->Soldout == 1,
+      "Product should still be sold out, because 'onAfterDeserialize' unset the data bafore writing"
+    );
+  }
+}
+
+/**
+ * Class to test deserialize hooks
+ */
+class ApiTest_Product extends DataObject
+{
+  public static $rawJSON;
+
+  private static $db = array(
+    'Title' => 'Varchar(64)',
+    'Soldout' => 'Boolean'
+  );
+
+  private static $api_access = true;
+
+  public function onAfterDeserialize(&$payload){
+    // don't allow setting `Soldout` via REST API
+    unset($payload['Soldout']);
+  }
+
+  public function onBeforeDeserialize(&$rawJson){
+    self::$rawJSON = $rawJson;
   }
 }

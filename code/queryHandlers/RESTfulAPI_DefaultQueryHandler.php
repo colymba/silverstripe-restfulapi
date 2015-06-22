@@ -386,11 +386,27 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
       );
     }
 
-    $payload = $this->deSerializer->deserialize( $request->getBody() );
+    $rawJson = $request->getBody();
+
+    // Before deserialize hook
+    if( method_exists($model, 'onBeforeDeserialize') )
+    {
+      $model->onBeforeDeserialize($rawJson);
+    }
+    $model->extend('onBeforeDeserialize', $rawJson);
+
+    $payload = $this->deSerializer->deserialize( $rawJson );
     if ( $payload instanceof RESTfulAPI_Error )
     {
       return $payload;
     }
+
+    // After deserialize hook
+    if( method_exists($model, 'onAfterDeserialize') )
+    {
+      $model->onAfterDeserialize($payload);
+    }
+    $model->extend('onAfterDeserialize', $payload);
 
     if ( $model && $payload )
     {
