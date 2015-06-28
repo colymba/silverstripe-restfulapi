@@ -55,6 +55,18 @@ class ApiTest_Book extends DataObject
   private static $belongs_many_many = array(
     'Libraries' => 'ApiTest_Library'
   );
+
+  public function validate() {
+    if ( $this->pages > 100 )
+    {
+      $result = ValidationResult::create(false, 'Too many pages');  
+    }
+    else{
+      $result = ValidationResult::create(true); 
+    }
+
+    return $result;
+  }
 }
 
 class ApiTest_Author extends DataObject

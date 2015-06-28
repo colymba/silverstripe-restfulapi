@@ -218,6 +218,27 @@ class RESTfulAPI_DefaultQueryHandler_Test extends RESTfulAPI_Tester
 
 
   /**
+   * Checks new record creation
+   */
+  public function testModelValidation()
+  {
+    $qh      = $this->getQueryHandler();
+    $request = $this->getHTTPRequest('POST', 'ApiTest_Book');
+
+    $body = json_encode(array('Title' => 'New Test Book', 'Pages' => 101));
+    $request->setBody($body);
+
+    $result = $qh->createModel('ApiTest_Book', $request);
+
+    $this->assertEquals(
+      'Too many pages',
+      $result->message,
+      "Model with validation error should return the validation error"
+    );
+  }
+
+
+  /**
    * Checks record update
    */
   public function testUpdateModel()

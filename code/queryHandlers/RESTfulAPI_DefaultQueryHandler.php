@@ -354,16 +354,15 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
     }
 
     $newModel = Injector::inst()->create($model);
-    $newModel->write();
 
-    return $this->updateModel($model, $newModel->ID, $request);
+    return $this->updateModel($newModel, $newModel->ID, $request);
   }
 
 
   /**
    * Update databse record or $model
    *
-   * @param String $model the model class to update
+   * @param String|DataObject $model the model or class to update
    * @param Integer $id The ID of the model to update
    * @param SS_HTTPRequest the original request
    *
@@ -371,7 +370,11 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
    */
   function updateModel($model, $id, $request)
   {
-    $model = DataObject::get_by_id($model, $id);
+    if ( is_string($model) )
+    {
+      $model = DataObject::get_by_id($model, $id);  
+    }
+
     if ( !$model )
     {
       return new RESTfulAPI_Error(404,
@@ -469,13 +472,38 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
         }
       }
 
-      if ( $hasChanges || $hasRelationChanges )
+      if ( $hasChanges || !$model->ID )
       {
-        $model->write(false, false, false, $hasRelationChanges);
+        try {
+          $id = $model->write(false, false, false, $hasRelationChanges);
+        }
+        catch(ValidationException $exception) {
+          $error = $exception->getResult();
+          return new RESTfulAPI_Error(400,
+            $error->message()
+          );
+        }
+
+        if ( !$id ) {
+          return new RESTfulAPI_Error(500,
+            "Error writting data."
+          );
+        }
+        else {
+          return DataObject::get_by_id($model->ClassName, $id);
+        }
       }
+      else{
+        return $model;
+      }
+
+    }
+    else{
+      return new RESTfulAPI_Error(400,
+        "Missing model or payload."
+      );
     }
 
-    return DataObject::get_by_id($model->ClassName, $model->ID);
   }
 
 
