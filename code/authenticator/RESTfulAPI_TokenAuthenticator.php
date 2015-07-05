@@ -62,6 +62,13 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
 
 
   /**
+   * DB Column to store the refresh token in.
+   * @var string
+   */
+  private static $refreshTokenColumn = 'ApiRefreshToken';
+
+
+  /**
    * Stores current token authentication configurations
    * header, var, class, db columns....
    * 
@@ -70,10 +77,12 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
   protected $tokenConfig;
 
 
-  const AUTH_CODE_LOGGED_IN     = 0;
-  const AUTH_CODE_LOGIN_FAIL    = 1;
-  const AUTH_CODE_TOKEN_INVALID = 2;
-  const AUTH_CODE_TOKEN_EXPIRED = 3;
+  const AUTH_CODE_LOGGED_IN             = 0;
+  const AUTH_CODE_LOGIN_FAIL            = 1;
+  const AUTH_CODE_TOKEN_INVALID         = 2;
+  const AUTH_CODE_TOKEN_EXPIRED         = 3;
+  const AUTH_CODE_REFRESH_TOKEN_MISSING = 4;
+  const AUTH_CODE_REFRESH_TOKEN_INVALID = 5;
 
 
   /**
@@ -84,7 +93,8 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
   private static $allowed_actions = array(
     'login',
     'logout',
-    'lostPassword'
+    'lostPassword',
+    'refreshToken'
   );
 
 
@@ -96,11 +106,12 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
     $config = array();
     $configInstance = Config::inst();    
 
-    $config['life']         = $configInstance->get('RESTfulAPI_TokenAuthenticator', 'tokenLife');
-    $config['header']       = $configInstance->get('RESTfulAPI_TokenAuthenticator', 'tokenHeader');
-    $config['queryVar']     = $configInstance->get('RESTfulAPI_TokenAuthenticator', 'tokenQueryVar');
-    $config['owner']        = $configInstance->get('RESTfulAPI_TokenAuthenticator', 'tokenOwnerClass');
-    $config['autoRefresh']  = $configInstance->get('RESTfulAPI_TokenAuthenticator', 'autoRefreshLifetime');
+    $config['life']             = $configInstance->get('RESTfulAPI_TokenAuthenticator', 'tokenLife');
+    $config['header']           = $configInstance->get('RESTfulAPI_TokenAuthenticator', 'tokenHeader');
+    $config['queryVar']         = $configInstance->get('RESTfulAPI_TokenAuthenticator', 'tokenQueryVar');
+    $config['owner']            = $configInstance->get('RESTfulAPI_TokenAuthenticator', 'tokenOwnerClass');
+    $config['autoRefresh']      = $configInstance->get('RESTfulAPI_TokenAuthenticator', 'autoRefreshLifetime');
+    $config['refreshDBColumn']  = $configInstance->get('RESTfulAPI_TokenAuthenticator', 'refreshTokenColumn');
 
     $tokenDBColumns = $configInstance->get('RESTfulAPI_TokenAuthExtension', 'db');
     $tokenDBColumn  = array_search('Varchar(160)', $tokenDBColumns);
@@ -152,35 +163,77 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
         ));
         if ( $member )
         {
-          $tokenData = $this->generateToken();
-
-          $tokenDBColumn  = $this->tokenConfig['DBColumn'];
-          $expireDBColumn = $this->tokenConfig['expireDBColumn'];
-
-          $member->{$tokenDBColumn}  = $tokenData['token'];
-          $member->{$expireDBColumn} = $tokenData['expire'];
-          $member->write();
+          $tokenData = $this->updateToken($member);
           $member->login();
         }
       }
       
       if ( !$member )
       {
-        $response['result']  = false;
-        $response['message'] = 'Authentication fail.';
-        $response['code']    = self::AUTH_CODE_LOGIN_FAIL;
+        $response['result']       = false;
+        $response['message']      = 'Authentication fail.';
+        $response['code']         = self::AUTH_CODE_LOGIN_FAIL;
       }
       else{
-        $response['result']   = true;
-        $response['message']  = 'Logged in.';
-        $response['code']     = self::AUTH_CODE_LOGGED_IN;
-        $response['token']    = $tokenData['token'];
-        $response['expire']   = $tokenData['expire'];
-        $response['userID']   = $member->ID;
+        $response['result']       = true;
+        $response['message']      = 'Logged in.';
+        $response['code']         = self::AUTH_CODE_LOGGED_IN;
+        $response['token']        = $tokenData['token'];
+        $response['expire']       = $tokenData['expire'];
+        $response['refreshtoken'] = $tokenData['refreshtoken'];
+        $response['userID']       = $member->ID;
       }
     }
 
     return $response;
+  }
+
+  /**
+   * Perform a refresh of the API token.
+   * In order to do so, the user has to supply his current (non-expired) API-token and the refresh-token
+   * that was returned on login.
+   * @param SS_HTTPRequest $request
+   * @return array|RESTfulAPI_Error
+   */
+  public function refreshToken(SS_HTTPRequest $request)
+  {
+    // need to be authenticated to refresh the token
+    $response = $this->authenticate($request);
+    if($response !== true){
+      return $response;
+    }
+
+    if($refreshToken = $request->requestVar('refreshtoken')){
+      $apiToken         = $this->getRequestToken($request);
+      $tokenDBColumn    = $this->tokenConfig['DBColumn'];
+      $refreshDBColumn  = $this->tokenConfig['refreshDBColumn'];
+      $ownerTable       = $this->tokenConfig['owner'];
+
+      // find the owner that belongs to the refresh-token
+      $owner = DataObject::get($ownerTable)->filter(array($refreshDBColumn => $refreshToken))->first();
+
+      // check if the owner exists and if the API token also matches
+      if(!$owner || $owner->{$tokenDBColumn} !== $apiToken){
+        return new RESTfulAPI_Error(403,
+          'Refreshing tokens failed.',
+          array(
+            'message' => 'Refresh token invalid.',
+            'code'    => self::AUTH_CODE_REFRESH_TOKEN_INVALID
+          )
+        );
+      }
+
+      return $this->updateToken($owner);
+    }
+
+    //no refresh-token, bad news
+    return new RESTfulAPI_Error(403,
+      'Refresh token missing.',
+      array(
+        'message' => 'Refresh token missing.',
+        'code'    => self::AUTH_CODE_REFRESH_TOKEN_MISSING
+      )
+    );
   }
 
 
@@ -203,16 +256,7 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
 
       if ( $this->tokenConfig['owner'] === 'Member' )
       {
-        //generate expired token
-        $tokenData = $this->generateToken( true );
-
-        //write
-        $tokenDBColumn  = $this->tokenConfig['DBColumn'];
-        $expireDBColumn = $this->tokenConfig['expireDBColumn'];
-
-        $member->{$tokenDBColumn}  = $tokenData['token'];
-        $member->{$expireDBColumn} = $tokenData['expire'];
-        $member->write();
+        $this->updateToken($member, true);
       }      
     }
   }
@@ -265,7 +309,7 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
         $tokenDBColumn = $this->tokenConfig['DBColumn'];
         return $owner->{$tokenDBColumn};
       }
-      else{
+      else {
         user_error("API Token owner '$ownerClass' not found with ID = $id", E_USER_WARNING);
       }
     }
@@ -291,16 +335,7 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
 
       if ( $owner )
       {
-        //generate token
-        $tokenData = $this->generateToken( $expired );
-
-        //write
-        $tokenDBColumn  = $this->tokenConfig['DBColumn'];
-        $expireDBColumn = $this->tokenConfig['expireDBColumn'];
-
-        $owner->{$tokenDBColumn}  = $tokenData['token'];
-        $owner->{$expireDBColumn} = $tokenData['expire'];
-        $owner->write();
+        $this->updateToken($owner, $expired);
       }
       else{
         user_error("API Token owner '$ownerClass' not found with ID = $id", E_USER_WARNING);
@@ -311,26 +346,80 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
     }
   }
 
-
   /**
-   * Generates an encrypted random token
-   * and an expiry date
-   * 
-   * @param  boolean $expired Set to true to generate an outdated token
-   * @return array            token data array('token' => HASH, 'expire' => EXPIRY_DATE)
+   * Update the token of a token owner by recreating the token and refresh-token values
+   * @param $owner          The token owner instance to update
+   * @param bool $expired   Set to true to generate an outdated token
+   * @return array|null     Token data array('token' => HASH, 'refreshtoken' => REFRESH_TOKEN, 'expire' => EXPIRY_DATE)
    */
-  private function generateToken($expired = false)
+  private function updateToken(DataObject $owner, $expired = false)
   {
-    $life  = $this->tokenConfig['life'];
+    // DB field names
+    $tokenDBColumn    = $this->tokenConfig['DBColumn'];
+    $expireDBColumn   = $this->tokenConfig['expireDBColumn'];
+    $refreshDBColumn  = $this->tokenConfig['refreshDBColumn'];
 
+    // token lifetime
+    $life             = $this->tokenConfig['life'];
+    $expire           = 0;
+
+    // create the API access-token
+    $token = $this->createUniqueToken($owner, $tokenDBColumn);
+
+    $refreshToken = null;
     if ( !$expired )
     {
       $expire = time() + $life;
+      // create a refresh-token
+      $refreshToken = $this->createUniqueToken($owner, $refreshDBColumn);
     }
     else{
       $expire = time() - ($life * 2);
     }
-    
+
+    $owner->{$expireDBColumn} = $expire;
+    $owner->{$tokenDBColumn} = $token;
+    if($refreshToken){
+      $owner->{$refreshDBColumn} = $refreshToken;
+    }
+    $owner->write();
+
+    return array(
+      'expire'        => $expire,
+      'refreshtoken'  => $refreshToken,
+      'token'         => $token
+    );
+  }
+
+  /**
+   * Create a unique token for the given owner on the given column
+   * @param DataObject  $owner      the data-owner
+   * @param string      $DBcolumn   string the DB column that contains the token
+   * @return string
+   */
+  protected function createUniqueToken($owner, $DBcolumn)
+  {
+    // get all the existing tokens from the DB, so we don't recreate the same token again
+    $existingTokens = $owner->get()->column($DBcolumn);
+
+    // don't perform more than 100 attempts.. if that happens something is severely flawed and we should error out
+    for($i = 0; $i < 100; $i++){
+      $token = $this->generateToken();
+      if(!in_array($token, $existingTokens, true)){
+        return $token;
+      }
+    }
+
+    user_error('Unable to create unique token', E_USER_ERROR);
+  }
+
+  /**
+   * Generates an encrypted random token
+   *
+   * @return string the token string
+   */
+  protected function generateToken()
+  {
     $generator = new RandomGenerator();
     $tokenString = $generator->randomToken();
 
@@ -338,10 +427,7 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
     $salt = $e->salt($tokenString);
     $token = $e->encrypt($tokenString, $salt);
 
-    return array(
-      'token' => substr($token, 7),
-      'expire' => $expire
-    ); 
+    return substr($token, 7);
   }
 
 
@@ -356,14 +442,7 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
   {
     $owner = null;
 
-    //get the token
-    $token = $request->getHeader( $this->tokenConfig['header'] );
-    if (!$token)
-    {
-      $token = $request->requestVar( $this->tokenConfig['queryVar'] );
-    }
-
-    if ( $token )
+    if ( $token = $this->getRequestToken($request) )
     {
       $SQL_token = Convert::raw2sql($token);
       
@@ -392,14 +471,7 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
    */
   public function authenticate(SS_HTTPRequest $request)
   {
-    //get the token
-    $token = $request->getHeader( $this->tokenConfig['header'] );
-    if (!$token)
-    {
-      $token = $request->requestVar( $this->tokenConfig['queryVar'] );
-    }
-
-    if ( $token )
+    if ( $token = $this->getRequestToken($request))
     {
       //check token validity
       return $this->validateAPIToken( $token );
@@ -414,6 +486,22 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
         )
       );
     }
+  }
+
+  /**
+   * Get the token that was sent with the given request
+   * @param SS_HTTPRequest $request
+   * @return string|null the token parameter from the request
+   */
+  protected function getRequestToken(SS_HTTPRequest $request)
+  {
+    //get the token
+    $token = $request->getHeader( $this->tokenConfig['header'] );
+    if (!$token)
+    {
+      $token = $request->requestVar( $this->tokenConfig['queryVar'] );
+    }
+    return $token;
   }
   
 

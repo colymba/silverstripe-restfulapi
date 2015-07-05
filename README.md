@@ -16,6 +16,7 @@ This module implements a RESTful API for read/write access to your SilverStripe 
 | Delete a record       | `DELETE`  | `api/Model/ID`                          |
 | -                     | -         | -                                       |
 | Login & get token     | n/a       | `api/auth/login?email=***&pwd=***`      |
+| Refresh token         | n/a       | `api/auth/refreshToken?refreshtoken=***`|
 | Logout                | n/a       | `api/auth/logout`                       |
 | Password reset email  | n/a       | `api/auth/lostPassword?email=***`       |
 | -                     | -         | -                                       |
