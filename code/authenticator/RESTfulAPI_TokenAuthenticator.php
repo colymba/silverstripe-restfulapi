@@ -452,6 +452,10 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
         //all good, log Member in
         if ( is_a($tokenOwner, 'Member') )
         {
+          $loginCheck = $tokenOwner->canLogIn();
+          if(!$loginCheck->valid()){
+            return new RESTfulAPI_Error(403, $loginCheck->message());
+          }
           $tokenOwner->logIn();
         }
 
