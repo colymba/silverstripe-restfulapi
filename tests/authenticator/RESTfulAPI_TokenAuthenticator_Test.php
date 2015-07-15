@@ -13,7 +13,7 @@
 class RESTfulAPI_TokenAuthenticator_Test extends RESTfulAPI_Tester
 {
   protected $requiredExtensions = array(
-    'Member' => array('RESTfulAPI_TokenAuthExtension')
+    'Member' => array('RESTfulAPI_TokenAuthExtension', 'TestCanLoginExtension')
   );
 
   protected function getAuthenticator()
@@ -35,6 +35,11 @@ class RESTfulAPI_TokenAuthenticator_Test extends RESTfulAPI_Tester
       'Email' => 'test@test.com',
       'Password' => 'test'
     ))->write();
+
+    Member::create(array(
+      'Email' => 'balrog@moria.mine',
+      'Password' => 'flame.sword'
+    ));
   }
 
 
@@ -208,5 +213,85 @@ class RESTfulAPI_TokenAuthenticator_Test extends RESTfulAPI_Tester
       array($result),
       "TokenAuth authentication failure should return a RESTfulAPI_Error"
     );
+  }
+
+  public function testCanLogin(){
+    $auth = $this->getAuthenticator();
+
+    // check login when canLogIn check fails
+    $request = new SS_HTTPRequest(
+      'GET',
+      'api/auth/login',
+      array(
+        'email' => 'balrog@moria.mine',
+        'pwd'   => 'flame.sword'
+      )
+    );
+
+    $result = $auth->login($request);
+
+    $this->assertEquals(
+      $result['code'],
+      RESTfulAPI_TokenAuthenticator::AUTH_CODE_LOGIN_FAIL,
+      "Logging in a member whose `canLogIn` check fails should not be allowed."
+    );
+
+    // check authenticate when canLogIn check fails
+
+    $request = new SS_HTTPRequest(
+      'GET',
+      'api/auth/login',
+      array(
+        'email' => 'test@test.com',
+        'pwd'   => 'test'
+      )
+    );
+
+    $result = $auth->login($request);
+
+    $this->assertEquals(
+      $result['code'],
+      RESTfulAPI_TokenAuthenticator::AUTH_CODE_LOGGED_IN,
+      "Logging in a member whose `canLogIn` check doesn't fail should be allowed."
+    );
+
+    $request = new SS_HTTPRequest(
+      'GET',
+      'api/ApiTest_Book/1'
+    );
+    $request->addHeader('X-Silverstripe-Apitoken', $result['token']);
+
+    // deny all users for the authenticate request
+    TestCanLoginExtension::$denyAll = true;
+
+    $result = $auth->authenticate($request);
+
+    TestCanLoginExtension::$denyAll = false;
+
+    $this->assertContainsOnlyInstancesOf(
+      'RESTfulAPI_Error',
+      array($result),
+      "TokenAuth authentication should fail when 'canLogIn' fails"
+    );
+  }
+}
+
+/**
+ * Extension to test "canLogin"
+ */
+class TestCanLoginExtension extends DataExtension
+{
+  public static $denyAll = false;
+
+  public function canLogIn(ValidationResult &$result)
+  {
+    if(self::$denyAll){
+      $result->error('All access denied');
+    }
+
+    if($this->owner->Email === 'balrog@moria.mine'){
+      // deny access to the balrog!
+      $result->error('You shall not pass!');
+    }
   }
 }
