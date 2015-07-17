@@ -205,29 +205,26 @@ class RESTfulAPI_BasicSerializer implements RESTfulAPI_Serializer
     	//get the DataList for this realtion's name
       $dataList = $dataObject->{$relationName}();
 
-      //if there actually are objects in the relation
-      if ( $dataList->count() )
+      // check if this relation should be embedded
+      if ( $this->isEmbeddable($dataObject->ClassName, $relationName) )
       {
-      	// check if this relation should be embedded
-      	if ( $this->isEmbeddable($dataObject->ClassName, $relationName) )
-	      {
-	      	// get the relation's record(s) ready to embed
-	      	$embedData = $this->getEmbedData($dataObject, $relationName);
-	      	// embed the data if any
-	      	if ( $embedData !== null )
-	      	{
-	      		$serializedColumnName = $this->serializeColumnName( $relationName );
-	      		$formattedDataObjectMap[$serializedColumnName] = $embedData;
-	      	}
-	      }
-	      else{
-	      	// set column value to ID list
-	        $idList = $dataList->map('ID', 'ID')->keys();
-
-	        $serializedColumnName = $this->serializeColumnName( $relationName );
-	        $formattedDataObjectMap[$serializedColumnName] = $idList;
-	      }
+        // get the relation's record(s) ready to embed
+        $embedData = $this->getEmbedData($dataObject, $relationName);
+        // embed the data if any
+        if ( $embedData !== null )
+        {
+          $serializedColumnName = $this->serializeColumnName( $relationName );
+          $formattedDataObjectMap[$serializedColumnName] = $embedData;
+        }
       }
+      else{
+        // set column value to ID list
+        $idList = $dataList->map('ID', 'ID')->keys();
+
+        $serializedColumnName = $this->serializeColumnName( $relationName );
+        $formattedDataObjectMap[$serializedColumnName] = $idList;
+      }
+
     }
 
     if ( $many_many_extraFields )
