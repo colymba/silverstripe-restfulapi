@@ -18,6 +18,16 @@ class RESTfulAPI_BasicSerializer_Test extends RESTfulAPI_Tester
     'ApiTest_Library'
   );
 
+  function generateDBEntries()
+  {
+    parent::generateDBEntries();
+    // create an empty library to test empty relations
+    $london = ApiTest_Library::create(array(
+      'Name' => 'London'
+    ));
+    $london->write();
+  }
+
   protected function getSerializer()
   {
     $injector   = new Injector();
@@ -89,6 +99,14 @@ class RESTfulAPI_BasicSerializer_Test extends RESTfulAPI_Tester
       is_array($jsonArray),
       "Basic Serialize dataObject should return an object"
     );
+
+    // test empty relation serialization
+    $dataObject = ApiTest_Library::get()->filter(array('Name' => 'London'))->first();
+    $result = json_decode($serializer->serialize($dataObject));
+    $this->assertTrue(
+      isset($result->Books) && is_array($result->Books),
+      "Basic Serializer should return an empty array if there are no records present"
+    );
   }
 
 
@@ -124,6 +142,13 @@ class RESTfulAPI_BasicSerializer_Test extends RESTfulAPI_Tester
     $this->assertTrue(
       is_numeric($result->Books[0]->ID),
       "Basic Serialize should return a full record for embedded records"
+    );
+
+    $dataObject = ApiTest_Library::get()->filter(array('Name' => 'London'))->first();
+    $result = json_decode($serializer->serialize($dataObject));
+    $this->assertTrue(
+      isset($result->Books) && is_array($result->Books),
+      "Basic Serializer should return an empty array if there are no records present"
     );
   }
 
