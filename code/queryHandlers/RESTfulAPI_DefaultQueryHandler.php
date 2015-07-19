@@ -209,13 +209,13 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
         $key__mod
       );
 
-      $param['Column'] = $this->deSerializer->unformatName( $key__mod[0] );
+      $param['Column'] = strtolower( $this->deSerializer->unformatName($key__mod[0]) );
 
-      $param['Value'] = $value;
+      $param['Value'] = strtolower( $value );
 
       if ( isset($key__mod[1]) )
     	{
-    		$param['Modifier'] = $key__mod[1];
+    		$param['Modifier'] = strtolower( $key__mod[1] );
     	}
       else{
       	$param['Modifier'] = null;
@@ -243,94 +243,139 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
    */
   function findModel($model, $id = false, $queryParams, SS_HTTPRequest $request)
   {
-    if ($id)
+    // If an ID is specified just fetch that ID
+    // Else initiate a DataList
+    $return = ( $id ? DataObject::get_by_id($model, $id) : DataList::create($model) );
+
+    // If $return is not a DataList, then it was got by $id, just handle not founds and return
+    if ( !is_a($return, DataList) )
     {
-      $return = DataObject::get_by_id($model, $id);
-      
-      if ( !$return )
-      {
-        return new RESTfulAPI_Error(404,
+      return ( $return ?
+        $return :
+        new RESTfulAPI_Error(404,
           "Model $id of $model not found."
-        );
-      }
-      else if ( !RESTfulAPI::api_access_control($return, $request->httpMethod()) )
-      {
-        return new RESTfulAPI_Error(403,
-          "API access denied."
-        );
-      }
+        )
+      );
     }
-    else{
-      $return = DataList::create($model);
 
-      if ( count($queryParams) > 0 )
+    // DataObject handled, from here on only DataList can get
+    foreach ($queryParams as $param)
+    {
+      // Check if model contains $param['Column']
+      if ( !singleton($model)->hasField($param['Column']) )
       {
-        foreach ($queryParams as $param)
-        {
+        return new RESTfulAPI_Error(400,
+          "Requested filter column ".$param['Column']." does not exist in model ".$model."."
+        );
+      }
 
-          if ( $param['Column'] )
+      // Validate $param['Modifier']
+      switch ( $param['Modifier'] )
+      {
+        case '':
+        case 'startswith':
+        case 'endswith':
+        case 'partialmatch':
+        case 'greaterthan':
+        case 'lessthan':
+        case 'negation':
+          // Validate $param['Value']
+          if ( !$param['Value'] )
           {
-          	// handle sorting by column
-            if ( $param['Modifier'] === 'sort' )
-            {
-              $return = $return->sort(array(
-                $param['Column'] => $param['Value']
-              ));
-            }
-            // normal modifiers / search filters
-            else if ( $param['Modifier'] )
-            {
-              $return = $return->filter(array(
-                $param['Column'].':'.$param['Modifier'] => $param['Value']
-              ));
-            }
-            // no modifier / search filter
-            else{
-              $return = $return->filter(array(
-                $param['Column'] => $param['Value']
-              ));
-            }
+            return new RESTfulAPI_Error(400,
+              "Empty filter value for column ".$param['Column']."."
+            );
+          }
+          break;
+        case 'sort':
+          // Validate $param['Value']
+          if ( !$param['Value'] )
+          {
+            return new RESTfulAPI_Error(400,
+              "Empty filter value for column ".$param['Column']."."
+            );
           }
           else{
-            // random
-            if ( $param['Modifier'] === 'rand' )
+            switch ( $param['Value'] )
             {
-              // rand + seed
-              if ( $param['Value'] )
-              {                
-                $return = $return->sort('RAND('.$param['Value'].')');
-              }
-              // rand only >> FIX: gen seed to avoid random result on relations
-              else{                
-                $return = $return->sort('RAND('.time().')');
-              }
-            }
-            // limits
-            else if ( $param['Modifier'] === 'limit' )
-            {
-              // range + offset
-              if ( is_array($param['Value']) )
-              {
-                $return = $return->limit($param['Value'][0], $param['Value'][1]);
-              }
-              // range only
-              else{
-                $return = $return->limit($param['Value']);
-              }
+              case 'asc':
+              case 'desc':
+                break;
+              default:
+                return new RESTfulAPI_Error(400,
+                  "Filter ".$param['Value']." not valid for modifier ".$param['Modifier'].". Try ASC, or DESC."
+                );
             }
           }
+        case 'limit':
+        case 'rand':
+          break;
+        default:
+          return new RESTfulAPI_Error(400,
+            "Filter modifier ".$param['Modifier']." not valid. Try StartsWidth, EndsWidth, PartialMatch, GreaterThan, LessThan, Negation, Limit, or Rand."
+          );
+      }
 
+      if ( $param['Column'] )
+      {
+      	// handle sorting by column
+        if ( $param['Modifier'] === 'sort' )
+        {
+          $return = $return->sort(array(
+            $param['Column'] => $param['Value']
+          ));
+        }
+        // normal modifiers / search filters
+        else if ( $param['Modifier'] )
+        {
+          $return = $return->filter(array(
+            $param['Column'].':'.$param['Modifier'] => $param['Value']
+          ));
+        }
+        // no modifier / search filter
+        else{
+          $return = $return->filter(array(
+            $param['Column'] => $param['Value']
+          ));
         }
       }
-
-      //sets default limit if none given
-      $limits = $return->dataQuery()->query()->getLimit();
-      $limitConfig = Config::inst()->get('RESTfulAPI_DefaultQueryHandler', 'max_records_limit');
-
-      if ( is_array($limits) && !array_key_exists('limit', $limits) && $limitConfig >= 0 )
-      {
-        $return = $return->limit($limitConfig);
+      else{
+        // random
+        if ( $param['Modifier'] === 'rand' )
+        {
+          // rand + seed
+          if ( $param['Value'] )
+          {
+            $return = $return->sort('RAND('.$param['Value'].')');
+          }
+          // rand only >> FIX: gen seed to avoid random result on relations
+          else{
+            $return = $return->sort('RAND('.time().')');
+          }
+        }
+        // limits
+        else if ( $param['Modifier'] === 'limit' )
+        {
+          // range + offset
+          if ( is_array($param['Value']) )
+          {
+            $return = $return->limit($param['Value'][0], $param['Value'][1]);
+          }
+          // range only
+          else{
+            $return = $return->limit($param['Value']);
+          }
+        }
       }
+    }
+
+    //sets default limit if none given
+    $limits = $return->dataQuery()->query()->getLimit();
+    $limitConfig = Config::inst()->get('RESTfulAPI_DefaultQueryHandler', 'max_records_limit');
+
+    if ( is_array($limits) && !array_key_exists('limit', $limits) && $limitConfig >= 0 )
+    {
+      $return = $return->limit($limitConfig);
     }
 
     return $return;
@@ -339,7 +384,7 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
 
   /**
    * Create object of class $model
-   * 
+   *
    * @param  string         $model
    * @param  SS_HTTPRequest $request
    * @return DataObject
