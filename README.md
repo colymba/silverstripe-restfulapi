@@ -47,7 +47,7 @@ The allowed `/auth/$Action` must be defined on the used `RESTfulAPI_Authenticato
 
 ## What's all this?
 ### RESTfulAPI
-This is the main API Controller that receives all the requests, checks if authentication is needed and passing control to the authenticator if true, the resquest is then passed on to the QueryHandler, which uses the DeSerializer to figure out model & column names and decode the eventual payload from the client, the query result is then passed to the Serializer to be formatted and then returned to the client.
+This is the main API Controller that receives all the requests, checks if authentication if needed and passing control to the authenticator if true, the resquest is then passed on to the QueryHandler, which uses the DeSerializer to figure out model & column names and decode the eventual payload from the client, the query result is then passed to the Serializer to be formatted and then returned to the client.
 
 If CORS are enabled (true by default), the right headers are taken care of too.
 
