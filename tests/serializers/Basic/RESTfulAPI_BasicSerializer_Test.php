@@ -12,21 +12,21 @@
  */
 class RESTfulAPI_BasicSerializer_Test extends RESTfulAPI_Tester
 {
-  protected $extraDataObjects = array(
+    protected $extraDataObjects = array(
     'ApiTest_Author',
     'ApiTest_Book',
     'ApiTest_Library'
   );
 
-  protected function getSerializer()
-  {
-    $injector   = new Injector();
-    $serializer = new RESTfulAPI_BasicSerializer();
+    protected function getSerializer()
+    {
+        $injector   = new Injector();
+        $serializer = new RESTfulAPI_BasicSerializer();
 
-    $injector->inject($serializer);
+        $injector->inject($serializer);
 
-    return $serializer;
-  }
+        return $serializer;
+    }
 
 
   /* **********************************************************
@@ -39,10 +39,10 @@ class RESTfulAPI_BasicSerializer_Test extends RESTfulAPI_Tester
    */
   public function testContentType()
   {
-    $serializer  = $this->getSerializer();
-    $contentType = $serializer->getcontentType();
+      $serializer  = $this->getSerializer();
+      $contentType = $serializer->getcontentType();
 
-    $this->assertTrue(
+      $this->assertTrue(
       is_string($contentType),
       'Basic Serializer getcontentType() should return string'
     );
@@ -54,21 +54,21 @@ class RESTfulAPI_BasicSerializer_Test extends RESTfulAPI_Tester
    */
   public function testSerialize()
   {
-    Config::inst()->update('RESTfulAPI', 'access_control_policy', false);
-    $serializer = $this->getSerializer();
+      Config::inst()->update('RESTfulAPI', 'access_control_policy', false);
+      $serializer = $this->getSerializer();
 
     // test single dataObject serialization
     $dataObject = ApiTest_Author::get()->filter(array('Name' => 'Peter'))->first();
-    $jsonString = $serializer->serialize($dataObject);
-    $jsonObject = json_decode($jsonString);
+      $jsonString = $serializer->serialize($dataObject);
+      $jsonObject = json_decode($jsonString);
 
-    $this->assertEquals(
+      $this->assertEquals(
       JSON_ERROR_NONE,
       json_last_error(),
       "Basic Serialize dataObject should return valid JSON"
     );
 
-    $this->assertEquals(
+      $this->assertEquals(
       $dataObject->Name,
       $jsonObject->Name,
       "Basic Serialize should return an object and not modify values"
@@ -76,16 +76,16 @@ class RESTfulAPI_BasicSerializer_Test extends RESTfulAPI_Tester
 
     // test datalist serialization
     $dataList   = ApiTest_Author::get();
-    $jsonString = $serializer->serialize($dataList);
-    $jsonArray  = json_decode($jsonString);
+      $jsonString = $serializer->serialize($dataList);
+      $jsonArray  = json_decode($jsonString);
 
-    $this->assertEquals(
+      $this->assertEquals(
       JSON_ERROR_NONE,
       json_last_error(),
       "Basic Serialize dataList should return valid JSON"
     );
 
-    $this->assertTrue(
+      $this->assertTrue(
       is_array($jsonArray),
       "Basic Serialize dataObject should return an object"
     );
@@ -97,31 +97,31 @@ class RESTfulAPI_BasicSerializer_Test extends RESTfulAPI_Tester
    */
   public function testEmbeddedRecords()
   {
-    Config::inst()->update('RESTfulAPI', 'access_control_policy', 'ACL_CHECK_CONFIG_ONLY');
-    Config::inst()->update('ApiTest_Library', 'api_access', true);
-    Config::inst()->update('RESTfulAPI', 'embedded_records', array(
+      Config::inst()->update('RESTfulAPI', 'access_control_policy', 'ACL_CHECK_CONFIG_ONLY');
+      Config::inst()->update('ApiTest_Library', 'api_access', true);
+      Config::inst()->update('RESTfulAPI', 'embedded_records', array(
       'ApiTest_Library' => array('Books')
     ));
 
-    $serializer = $this->getSerializer();
-    $dataObject = ApiTest_Library::get()->filter(array('Name' => 'Helsinki'))->first();
+      $serializer = $this->getSerializer();
+      $dataObject = ApiTest_Library::get()->filter(array('Name' => 'Helsinki'))->first();
 
     // api access disabled
     Config::inst()->update('ApiTest_Book', 'api_access', false);
-    $result = $serializer->serialize($dataObject);
-    $result = json_decode($result);
+      $result = $serializer->serialize($dataObject);
+      $result = json_decode($result);
 
-    $this->assertEmpty(
+      $this->assertEmpty(
       $result->Books,
       'Basic Serialize should return empty array for DataObject without permission'
     );
 
     // api access enabled
     Config::inst()->update('ApiTest_Book', 'api_access', true);
-    $result = $serializer->serialize($dataObject);
-    $result = json_decode($result);
+      $result = $serializer->serialize($dataObject);
+      $result = json_decode($result);
 
-    $this->assertTrue(
+      $this->assertTrue(
       is_numeric($result->Books[0]->ID),
       "Basic Serialize should return a full record for embedded records"
     );
@@ -133,11 +133,11 @@ class RESTfulAPI_BasicSerializer_Test extends RESTfulAPI_Tester
    */
   public function testFormatName()
   {
-    $serializer = $this->getSerializer();
+      $serializer = $this->getSerializer();
 
-    $column = 'Name';
+      $column = 'Name';
 
-    $this->assertEquals(
+      $this->assertEquals(
       $column,
       $serializer->formatName($column),
       "Basic Serialize should not change name formatting"

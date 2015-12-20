@@ -12,21 +12,21 @@
  */
 class RESTfulAPI_EmberDataDeSerializer_Test extends RESTfulAPI_Tester
 {
-  protected $extraDataObjects = array(
+    protected $extraDataObjects = array(
     'ApiTest_Author',
     'ApiTest_Book',
     'ApiTest_Library'
   );
 
-  protected function getDeSerializer()
-  {
-    $injector     = new Injector();
-    $deserializer = new RESTfulAPI_BasicDeSerializer();
+    protected function getDeSerializer()
+    {
+        $injector     = new Injector();
+        $deserializer = new RESTfulAPI_BasicDeSerializer();
 
-    $injector->inject($deserializer);
+        $injector->inject($deserializer);
 
-    return $deserializer;
-  }
+        return $deserializer;
+    }
 
 
   /* **********************************************************
@@ -39,16 +39,16 @@ class RESTfulAPI_EmberDataDeSerializer_Test extends RESTfulAPI_Tester
    */
   public function testDeserialize()
   {
-    $deserializer = $this->getDeSerializer();
-    $json = json_encode(array('Name' => 'Some name'));    
-    $result = $deserializer->deserialize($json);
+      $deserializer = $this->getDeSerializer();
+      $json = json_encode(array('Name' => 'Some name'));
+      $result = $deserializer->deserialize($json);
 
-    $this->assertTrue(
+      $this->assertTrue(
       is_array($result),
       "Basic DeSerialize should return an array"
     );
 
-    $this->assertEquals(
+      $this->assertEquals(
       "Some name",
       $result['Name'],
       "Basic DeSerialize should not change values"
@@ -61,18 +61,18 @@ class RESTfulAPI_EmberDataDeSerializer_Test extends RESTfulAPI_Tester
    */
   public function testUnformatName()
   {
-    $deserializer = $this->getDeSerializer();
+      $deserializer = $this->getDeSerializer();
 
-    $column = 'Name';
-    $class  = 'apiTest_Author';
+      $column = 'Name';
+      $class  = 'apiTest_Author';
 
-    $this->assertEquals(
+      $this->assertEquals(
       $column,
       $deserializer->unformatName($column),
       "Basic DeSerialize should not change name formatting"
     );
 
-    $this->assertEquals(
+      $this->assertEquals(
       'ApiTest_Author',
       $deserializer->unformatName($class),
       "Basic DeSerialize should return ucfirst class name"

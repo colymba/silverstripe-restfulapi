@@ -14,7 +14,7 @@
 class RESTfulAPI_DefaultPermissionManager implements RESTfulAPI_PermissionManager
 {
 
-  /**
+    /**
    * Checks if a given DataObject or Class
    * can be accessed with a given API request by a Member
    * 
@@ -25,17 +25,18 @@ class RESTfulAPI_DefaultPermissionManager implements RESTfulAPI_PermissionManage
    */
   public function checkPermission($model, $member = null, $httpMethod)
   {
-    if ( is_string($model) ) $model = singleton($model);
+      if (is_string($model)) {
+          $model = singleton($model);
+      }
 
     // check permission depending on HTTP verb
     // default to true
-    switch ( strtoupper($httpMethod) )
-    {
+    switch (strtoupper($httpMethod)) {
       case 'GET':
         return $model->canView($member);
         break;
 
-      case 'POST':        
+      case 'POST':
         return $model->canCreate($member);
         break;
 

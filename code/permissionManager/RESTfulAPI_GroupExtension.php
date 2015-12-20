@@ -15,14 +15,14 @@
  */
 class RESTfulAPI_GroupExtension extends DataExtension implements PermissionProvider
 {
-  /**
+    /**
    * Basic RESTfulAPI Permission set
    * 
    * @return Array Default API permission set
    */
   public function providePermissions()
   {
-    return array(
+      return array(
       'RESTfulAPI_VIEW' => array(
         'name'     => 'Access records through the RESTful API',
         'category' => 'RESTful API Access',
@@ -53,54 +53,51 @@ class RESTfulAPI_GroupExtension extends DataExtension implements PermissionProvi
    */
   public function requireDefaultRecords()
   {
-    // Readers
+      // Readers
     $readersGroup = DataObject::get('Group')->filter(array(
       'Code' => 'restfulapi-readers'
     ));
 
-    if ( !$readersGroup->count() )
-    {
-      $readerGroup = new Group();
-      $readerGroup->Code  = 'restfulapi-readers';
-      $readerGroup->Title = 'RESTful API Readers';
-      $readerGroup->Sort  = 0;
-      $readerGroup->write();
-      Permission::grant($readerGroup->ID, 'RESTfulAPI_VIEW');
-    }
+      if (!$readersGroup->count()) {
+          $readerGroup = new Group();
+          $readerGroup->Code  = 'restfulapi-readers';
+          $readerGroup->Title = 'RESTful API Readers';
+          $readerGroup->Sort  = 0;
+          $readerGroup->write();
+          Permission::grant($readerGroup->ID, 'RESTfulAPI_VIEW');
+      }
 
     // Editors
     $editorsGroup = DataObject::get('Group')->filter(array(
       'Code' => 'restfulapi-editors'
     ));
 
-    if ( !$editorsGroup->count() )
-    {
-      $editorGroup = new Group();
-      $editorGroup->Code  = 'restfulapi-editors';
-      $editorGroup->Title = 'RESTful API Editors';
-      $editorGroup->Sort  = 0;
-      $editorGroup->write();
-      Permission::grant($editorGroup->ID, 'RESTfulAPI_VIEW');
-      Permission::grant($editorGroup->ID, 'RESTfulAPI_EDIT');
-      Permission::grant($editorGroup->ID, 'RESTfulAPI_CREATE');
-    }
+      if (!$editorsGroup->count()) {
+          $editorGroup = new Group();
+          $editorGroup->Code  = 'restfulapi-editors';
+          $editorGroup->Title = 'RESTful API Editors';
+          $editorGroup->Sort  = 0;
+          $editorGroup->write();
+          Permission::grant($editorGroup->ID, 'RESTfulAPI_VIEW');
+          Permission::grant($editorGroup->ID, 'RESTfulAPI_EDIT');
+          Permission::grant($editorGroup->ID, 'RESTfulAPI_CREATE');
+      }
 
     // Admins
     $adminsGroup = DataObject::get('Group')->filter(array(
       'Code' => 'restfulapi-administrators'
     ));
 
-    if ( !$adminsGroup->count() )
-    {
-      $adminGroup = new Group();
-      $adminGroup->Code  = 'restfulapi-administrators';
-      $adminGroup->Title = 'RESTful API Administrators';
-      $adminGroup->Sort  = 0;
-      $adminGroup->write();
-      Permission::grant($adminGroup->ID, 'RESTfulAPI_VIEW');
-      Permission::grant($adminGroup->ID, 'RESTfulAPI_EDIT');
-      Permission::grant($adminGroup->ID, 'RESTfulAPI_CREATE');
-      Permission::grant($adminGroup->ID, 'RESTfulAPI_DELETE');
-    }
+      if (!$adminsGroup->count()) {
+          $adminGroup = new Group();
+          $adminGroup->Code  = 'restfulapi-administrators';
+          $adminGroup->Title = 'RESTful API Administrators';
+          $adminGroup->Sort  = 0;
+          $adminGroup->write();
+          Permission::grant($adminGroup->ID, 'RESTfulAPI_VIEW');
+          Permission::grant($adminGroup->ID, 'RESTfulAPI_EDIT');
+          Permission::grant($adminGroup->ID, 'RESTfulAPI_CREATE');
+          Permission::grant($adminGroup->ID, 'RESTfulAPI_DELETE');
+      }
   }
 }
