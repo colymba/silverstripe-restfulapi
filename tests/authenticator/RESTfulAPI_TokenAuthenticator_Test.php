@@ -12,30 +12,30 @@
  */
 class RESTfulAPI_TokenAuthenticator_Test extends RESTfulAPI_Tester
 {
-  protected $requiredExtensions = array(
+    protected $requiredExtensions = array(
     'Member' => array('RESTfulAPI_TokenAuthExtension')
   );
 
-  protected function getAuthenticator()
-  {
-    $injector = new Injector();
-    $auth     = new RESTfulAPI_TokenAuthenticator();
+    protected function getAuthenticator()
+    {
+        $injector = new Injector();
+        $auth     = new RESTfulAPI_TokenAuthenticator();
 
-    $injector->inject($auth);
+        $injector->inject($auth);
 
-    return $auth;
-  }
+        return $auth;
+    }
 
 
-  public function setUpOnce()
-  {
-    parent::setUpOnce();
+    public function setUpOnce()
+    {
+        parent::setUpOnce();
 
-    Member::create(array(
+        Member::create(array(
       'Email' => 'test@test.com',
       'Password' => 'test'
     ))->write();
-  }
+    }
 
 
   /* **********************************************************
@@ -49,12 +49,12 @@ class RESTfulAPI_TokenAuthenticator_Test extends RESTfulAPI_Tester
    */
   public function testLogin()
   {
-    $member = Member::get()->filter(array(
+      $member = Member::get()->filter(array(
       'Email' => 'test@test.com'
     ))->first();
 
-    $auth = $this->getAuthenticator();
-    $request = new SS_HTTPRequest(
+      $auth = $this->getAuthenticator();
+      $request = new SS_HTTPRequest(
       'GET',
       'api/auth/login',
       array(
@@ -63,15 +63,15 @@ class RESTfulAPI_TokenAuthenticator_Test extends RESTfulAPI_Tester
       )
     );
 
-    $result = $auth->login($request);
+      $result = $auth->login($request);
 
-    $this->assertEquals(
+      $this->assertEquals(
       Member::currentUserID(),
       $member->ID,
       "TokenAuth successful login should login the user"
     );
 
-    $this->assertTrue(
+      $this->assertTrue(
       is_string($result['token']),
       "TokenAuth successful login should return token as string"
     );
@@ -83,8 +83,8 @@ class RESTfulAPI_TokenAuthenticator_Test extends RESTfulAPI_Tester
    */
   public function testLogout()
   {
-    $auth = $this->getAuthenticator();
-    $request = new SS_HTTPRequest(
+      $auth = $this->getAuthenticator();
+      $request = new SS_HTTPRequest(
       'GET',
       'api/auth/logout',
       array(
@@ -92,9 +92,9 @@ class RESTfulAPI_TokenAuthenticator_Test extends RESTfulAPI_Tester
       )
     );
 
-    $result = $auth->logout($request);
+      $result = $auth->logout($request);
 
-    $this->assertNull(
+      $this->assertNull(
       Member::currentUser(),
       "TokenAuth successful logout should logout the user"
     );
@@ -106,14 +106,14 @@ class RESTfulAPI_TokenAuthenticator_Test extends RESTfulAPI_Tester
    */
   public function testGetToken()
   {
-    $member = Member::get()->filter(array(
+      $member = Member::get()->filter(array(
       'Email' => 'test@test.com'
     ))->first();
 
-    $auth   = $this->getAuthenticator();
-    $result = $auth->getToken($member->ID);
+      $auth   = $this->getAuthenticator();
+      $result = $auth->getToken($member->ID);
 
-    $this->assertTrue(
+      $this->assertTrue(
       is_string($result),
       "TokenAuth getToken should return token as string"
     );
@@ -125,17 +125,17 @@ class RESTfulAPI_TokenAuthenticator_Test extends RESTfulAPI_Tester
    */
   public function testResetToken()
   {
-    $member = Member::get()->filter(array(
+      $member = Member::get()->filter(array(
       'Email' => 'test@test.com'
     ))->first();
 
-    $auth     = $this->getAuthenticator();
-    $oldToken = $auth->getToken($member->ID);
+      $auth     = $this->getAuthenticator();
+      $oldToken = $auth->getToken($member->ID);
 
-    $auth->resetToken($member->ID);
-    $newToken = $auth->getToken($member->ID);
+      $auth->resetToken($member->ID);
+      $newToken = $auth->getToken($member->ID);
 
-    $this->assertThat(
+      $this->assertThat(
       $oldToken,
       $this->logicalNot(
         $this->equalTo($newToken)
@@ -150,23 +150,23 @@ class RESTfulAPI_TokenAuthenticator_Test extends RESTfulAPI_Tester
    */
   public function testGetOwner()
   {
-    $member = Member::get()->filter(array(
+      $member = Member::get()->filter(array(
       'Email' => 'test@test.com'
     ))->first();
 
-    $auth = $this->getAuthenticator();
-    $auth->resetToken($member->ID);
-    $token = $auth->getToken($member->ID);
+      $auth = $this->getAuthenticator();
+      $auth->resetToken($member->ID);
+      $token = $auth->getToken($member->ID);
 
-    $request = new SS_HTTPRequest(
+      $request = new SS_HTTPRequest(
       'GET',
       'api/ApiTest_Book/1'
     );
-    $request->addHeader('X-Silverstripe-Apitoken', $token);
+      $request->addHeader('X-Silverstripe-Apitoken', $token);
 
-    $result = $auth->getOwner($request);
+      $result = $auth->getOwner($request);
 
-    $this->assertEquals(
+      $this->assertEquals(
       'test@test.com',
       $result->Email,
       "TokenAuth should return owner when passed valid token."
@@ -179,31 +179,31 @@ class RESTfulAPI_TokenAuthenticator_Test extends RESTfulAPI_Tester
    */
   public function testAuthenticate()
   {
-    $member = Member::get()->filter(array(
+      $member = Member::get()->filter(array(
       'Email' => 'test@test.com'
     ))->first();
 
-    $auth = $this->getAuthenticator();
-    $request = new SS_HTTPRequest(
+      $auth = $this->getAuthenticator();
+      $request = new SS_HTTPRequest(
       'GET',
       'api/ApiTest_Book/1'
-    );    
+    );
 
-    $auth->resetToken($member->ID);
-    $token = $auth->getToken($member->ID);
-    $request->addHeader('X-Silverstripe-Apitoken', $token);
+      $auth->resetToken($member->ID);
+      $token = $auth->getToken($member->ID);
+      $request->addHeader('X-Silverstripe-Apitoken', $token);
 
-    $result = $auth->authenticate($request);
+      $result = $auth->authenticate($request);
 
-    $this->assertTrue(
+      $this->assertTrue(
       $result,
       "TokenAuth authentication success should return true"
     );
 
-    $auth->resetToken($member->ID);
-    $result = $auth->authenticate($request);
+      $auth->resetToken($member->ID);
+      $result = $auth->authenticate($request);
 
-    $this->assertContainsOnlyInstancesOf(
+      $this->assertContainsOnlyInstancesOf(
       'RESTfulAPI_Error',
       array($result),
       "TokenAuth authentication failure should return a RESTfulAPI_Error"

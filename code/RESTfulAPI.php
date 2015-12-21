@@ -16,7 +16,7 @@
 class RESTfulAPI extends Controller
 {
 
-  /**
+    /**
    * Lets you select if the API requires authentication for access
    * false = no authentication required
    * true  = authentication required for all HTTP methods
@@ -28,9 +28,9 @@ class RESTfulAPI extends Controller
   private static $authentication_policy = false;
 
 
-  const ACL_CHECK_CONFIG_ONLY      = 'config';
-  const ACL_CHECK_MODEL_ONLY       = 'model';
-  const ACL_CHECK_CONFIG_AND_MODEL = 'both';
+    const ACL_CHECK_CONFIG_ONLY      = 'config';
+    const ACL_CHECK_MODEL_ONLY       = 'model';
+    const ACL_CHECK_CONFIG_AND_MODEL = 'both';
 
 
   /**
@@ -184,7 +184,7 @@ class RESTfulAPI extends Controller
    */
   public function getqueryHandler()
   {
-    return $this->queryHandler;
+      return $this->queryHandler;
   }
 
 
@@ -195,7 +195,7 @@ class RESTfulAPI extends Controller
    */
   public function getserializer()
   {
-    return $this->serializer;
+      return $this->serializer;
   }
   
 
@@ -211,8 +211,8 @@ class RESTfulAPI extends Controller
    * Constructor....
    */
   public function __construct()
-  {  
-    parent::__construct();
+  {
+      parent::__construct();
 
     //save current instance in static var
     self::$instance = $this;
@@ -225,14 +225,13 @@ class RESTfulAPI extends Controller
    */
   public function init()
   {
-    parent::init();
+      parent::init();
 
     //catch preflight request
-    if ( $this->request->httpMethod() === 'OPTIONS' )
-    {
-      $answer = $this->answer(null, true);
-      $answer->output();
-      exit;
+    if ($this->request->httpMethod() === 'OPTIONS') {
+        $answer = $this->answer(null, true);
+        $answer->output();
+        exit;
     }
   }
 
@@ -246,39 +245,32 @@ class RESTfulAPI extends Controller
    */
   public function auth(SS_HTTPRequest $request)
   {
-    $action = $request->param('Action');
+      $action = $request->param('Action');
 
-    if ( $this->authenticator )
-    {
-      $className = get_class($this->authenticator);
-      $allowedActions = Config::inst()->get($className, 'allowed_actions');
-      if ( !$allowedActions )
-      {
-        $allowedActions = array();
-      }
+      if ($this->authenticator) {
+          $className = get_class($this->authenticator);
+          $allowedActions = Config::inst()->get($className, 'allowed_actions');
+          if (!$allowedActions) {
+              $allowedActions = array();
+          }
 
-      if ( in_array($action, $allowedActions) )
-      {
-        if ( method_exists($this->authenticator, $action) )
-        {
-          $response = $this->authenticator->$action($request);
-          $response = $this->serializer->serialize( $response );          
-          return $this->answer($response);
-        }
-        else{          
-          //let's be shady here instead
-          return $this->error( new RESTfulAPI_Error(403,
+          if (in_array($action, $allowedActions)) {
+              if (method_exists($this->authenticator, $action)) {
+                  $response = $this->authenticator->$action($request);
+                  $response = $this->serializer->serialize($response);
+                  return $this->answer($response);
+              } else {
+                  //let's be shady here instead
+          return $this->error(new RESTfulAPI_Error(403,
             "Action '$action' not allowed."
           ));
-        }
-      }
-      else{
-        return $this->error( new RESTfulAPI_Error(403,
+              }
+          } else {
+              return $this->error(new RESTfulAPI_Error(403,
           "Action '$action' not allowed."
         ));
+          }
       }
-      
-    }
   }
 
 
@@ -291,38 +283,32 @@ class RESTfulAPI extends Controller
    */
   public function acl(SS_HTTPRequest $request)
   {
-    $action = $request->param('Action');
+      $action = $request->param('Action');
 
-    if ( $this->authority )
-    {
-      $className      = get_class($this->authority);
-      $allowedActions = Config::inst()->get($className, 'allowed_actions');
-      if ( !$allowedActions )
-      {
-        $allowedActions = array();
-      }
+      if ($this->authority) {
+          $className      = get_class($this->authority);
+          $allowedActions = Config::inst()->get($className, 'allowed_actions');
+          if (!$allowedActions) {
+              $allowedActions = array();
+          }
 
-      if ( in_array($action, $allowedActions) )
-      {
-        if ( method_exists($this->authority, $action) )
-        {
-          $response = $this->authority->$action($request);
-          $response = $this->serializer->serialize( $response );          
-          return $this->answer($response);
-        }
-        else{          
-          //let's be shady here instead
-          return $this->error( new RESTfulAPI_Error(403,
+          if (in_array($action, $allowedActions)) {
+              if (method_exists($this->authority, $action)) {
+                  $response = $this->authority->$action($request);
+                  $response = $this->serializer->serialize($response);
+                  return $this->answer($response);
+              } else {
+                  //let's be shady here instead
+          return $this->error(new RESTfulAPI_Error(403,
             "Action '$action' not allowed."
           ));
-        }
-      }
-      else{
-        return $this->error( new RESTfulAPI_Error(403,
+              }
+          } else {
+              return $this->error(new RESTfulAPI_Error(403,
           "Action '$action' not allowed."
         ));
+          }
       }
-    }
   }
   
 
@@ -335,41 +321,36 @@ class RESTfulAPI extends Controller
    * @param  SS_HTTPRequest   $request    HTTP request
    * @return string                       json object of the models found
    */
-  function index(SS_HTTPRequest $request)
+  public function index(SS_HTTPRequest $request)
   {
-    //check authentication if enabled
-    if ( $this->authenticator )
-    {
-      $policy     = $this->config()->authentication_policy;
-      $authALL    = $policy === true;
-      $authMethod = is_array($policy) && in_array($request->httpMethod(), $policy);
+      //check authentication if enabled
+    if ($this->authenticator) {
+        $policy     = $this->config()->authentication_policy;
+        $authALL    = $policy === true;
+        $authMethod = is_array($policy) && in_array($request->httpMethod(), $policy);
 
-      if ( $authALL || $authMethod )
-      {
-        $authResult = $this->authenticator->authenticate($request);
+        if ($authALL || $authMethod) {
+            $authResult = $this->authenticator->authenticate($request);
 
-        if ( $authResult instanceof RESTfulAPI_Error )
-        {
-          //Authentication failed return error to client
+            if ($authResult instanceof RESTfulAPI_Error) {
+                //Authentication failed return error to client
           return $this->error($authResult);
+            }
         }
-      }
     }
 
     //pass control to query handler
-    $data = $this->queryHandler->handleQuery( $request );
+    $data = $this->queryHandler->handleQuery($request);
     //catch + return errors
-    if ( $data instanceof RESTfulAPI_Error )
-    {
-      return $this->error($data);
+    if ($data instanceof RESTfulAPI_Error) {
+        return $this->error($data);
     }
 
     //serialize response
-    $json = $this->serializer->serialize( $data );
+    $json = $this->serializer->serialize($data);
     //catch + return errors
-    if ( $json instanceof RESTfulAPI_Error )
-    {
-      return $this->error($json);
+    if ($json instanceof RESTfulAPI_Error) {
+        return $this->error($json);
     }
 
     //all is good reply normally
@@ -384,25 +365,24 @@ class RESTfulAPI extends Controller
    * @param  string           $json             Response body
    * @param  boolean          $corsPreflight    Set to true if this is a XHR preflight request answer. CORS shoud be enabled.
    */
-  function answer( $json = null, $corsPreflight = false )
+  public function answer($json = null, $corsPreflight = false)
   {
-    $answer = new SS_HTTPResponse();
+      $answer = new SS_HTTPResponse();
 
     //set response body
-    if ( !$corsPreflight )
-    {
-      $answer->setBody($json);
+    if (!$corsPreflight) {
+        $answer->setBody($json);
     }
 
     //set CORS if needed
-    $answer = $this->setAnswerCORS( $answer );
+    $answer = $this->setAnswerCORS($answer);
 
-    $answer->addHeader('Content-Type', $this->serializer->getcontentType() );
+      $answer->addHeader('Content-Type', $this->serializer->getcontentType());
     
     // save controller's response then return/output
     $this->response = $answer;
     
-    return $answer; 
+      return $answer;
   }
 
 
@@ -412,22 +392,22 @@ class RESTfulAPI extends Controller
    * 
    * @param  RESTfulAPI_Error $error Error object to return
    */
-  function error(RESTfulAPI_Error $error)
+  public function error(RESTfulAPI_Error $error)
   {
-    $answer = new SS_HTTPResponse();
+      $answer = new SS_HTTPResponse();
 
-    $body = $this->serializer->serialize($error->body);
-    $answer->setBody($body);
+      $body = $this->serializer->serialize($error->body);
+      $answer->setBody($body);
 
-    $answer->setStatusCode($error->code, $error->message);
-    $answer->addHeader('Content-Type', $this->serializer->getcontentType() );
+      $answer->setStatusCode($error->code, $error->message);
+      $answer->addHeader('Content-Type', $this->serializer->getcontentType());
 
-    $answer = $this->setAnswerCORS($answer);
+      $answer = $this->setAnswerCORS($answer);
     
     // save controller's response then return/output
     $this->response = $answer;
 
-    return $answer;
+      return $answer;
   }
 
 
@@ -439,44 +419,36 @@ class RESTfulAPI extends Controller
    */
   private function setAnswerCORS(SS_HTTPResponse $answer)
   {
-    $cors = Config::inst()->get('RESTfulAPI', 'cors');
+      $cors = Config::inst()->get('RESTfulAPI', 'cors');
 
     // skip if CORS is not enabled
-    if ( !$cors['Enabled'] )
-    {
-      return $answer;
+    if (!$cors['Enabled']) {
+        return $answer;
     }
 
     //check if Origin is allowed
     $allowedOrigin = $cors['Allow-Origin'];
-    $requestOrigin = $this->request->getHeader('Origin');
-    if ( $requestOrigin )
-    {
-      if ( $cors['Allow-Origin'] === '*' )
-      {
-        $allowedOrigin = $requestOrigin;
+      $requestOrigin = $this->request->getHeader('Origin');
+      if ($requestOrigin) {
+          if ($cors['Allow-Origin'] === '*') {
+              $allowedOrigin = $requestOrigin;
+          } elseif (is_array($cors['Allow-Origin'])) {
+              if (in_array($requestOrigin, $cors['Allow-Origin'])) {
+                  $allowedOrigin = $requestOrigin;
+              }
+          }
       }
-      else if ( is_array($cors['Allow-Origin']) )
-      {
-        if ( in_array($requestOrigin, $cors['Allow-Origin']) )
-        {
-          $allowedOrigin = $requestOrigin;
-        }
-      }
-    }
-    $answer->addHeader('Access-Control-Allow-Origin', $allowedOrigin);
+      $answer->addHeader('Access-Control-Allow-Origin', $allowedOrigin);
     
     //allowed headers
     $allowedHeaders = '';
-    $requestHeaders = $this->request->getHeader('Access-Control-Request-Headers');  
-    if ( $cors['Allow-Headers'] === '*' )
-    {
-      $allowedHeaders = $requestHeaders;
-    }
-    else{
-      $allowedHeaders = $cors['Allow-Headers'];
-    }
-    $answer->addHeader('Access-Control-Allow-Headers', $allowedHeaders);
+      $requestHeaders = $this->request->getHeader('Access-Control-Request-Headers');
+      if ($cors['Allow-Headers'] === '*') {
+          $allowedHeaders = $requestHeaders;
+      } else {
+          $allowedHeaders = $cors['Allow-Headers'];
+      }
+      $answer->addHeader('Access-Control-Allow-Headers', $allowedHeaders);
 
     //allowed method
     $answer->addHeader('Access-Control-Allow-Methods', $cors['Allow-Methods']);
@@ -484,7 +456,7 @@ class RESTfulAPI extends Controller
     //max age
     $answer->addHeader('Access-Control-Max-Age', $cors['Max-Age']);
 
-    return $answer;
+      return $answer;
   }
 
 
@@ -500,41 +472,38 @@ class RESTfulAPI extends Controller
    */
   public static function api_access_control($model, $httpMethod = 'GET')
   {
-    $policy = self::config()->access_control_policy;
-    if ( $policy === false ) return true; // if access control is disabled, skip
-    else $policy = constant('self::'.$policy);
-
-    if ( $policy === self::ACL_CHECK_MODEL_ONLY )
-    {
-      $access = true;
+      $policy = self::config()->access_control_policy;
+      if ($policy === false) {
+          return true;
+      } // if access control is disabled, skip
+    else {
+        $policy = constant('self::'.$policy);
     }
-    else{
-      $access = false;
-    }    
 
-    if ( $policy === self::ACL_CHECK_CONFIG_ONLY || $policy === self::ACL_CHECK_CONFIG_AND_MODEL )
-    {
-      if ( !is_string($model) )
-      {
-        $className = $model->className;
-      }
-      else{
-        $className = $model;
+      if ($policy === self::ACL_CHECK_MODEL_ONLY) {
+          $access = true;
+      } else {
+          $access = false;
       }
 
-      $access = self::api_access_config_check($className, $httpMethod);
-    }
+      if ($policy === self::ACL_CHECK_CONFIG_ONLY || $policy === self::ACL_CHECK_CONFIG_AND_MODEL) {
+          if (!is_string($model)) {
+              $className = $model->className;
+          } else {
+              $className = $model;
+          }
+
+          $access = self::api_access_config_check($className, $httpMethod);
+      }
 
     
-    if ( $policy === self::ACL_CHECK_MODEL_ONLY || $policy === self::ACL_CHECK_CONFIG_AND_MODEL )
-    {
-      if ( $access )
-      {
-        $access = self::model_permission_check($model, $httpMethod);
+      if ($policy === self::ACL_CHECK_MODEL_ONLY || $policy === self::ACL_CHECK_CONFIG_AND_MODEL) {
+          if ($access) {
+              $access = self::model_permission_check($model, $httpMethod);
+          }
       }
-    }
 
-    return $access;
+      return $access;
   }
 
   /**
@@ -550,26 +519,21 @@ class RESTfulAPI extends Controller
    */
   private static function api_access_config_check($className, $httpMethod = 'GET')
   {
-    $access     = false;
-    $api_access = singleton($className)->stat('api_access');
+      $access     = false;
+      $api_access = singleton($className)->stat('api_access');
 
-    if ( is_string($api_access) )
-    {
-      $api_access = explode(',', strtoupper($api_access));
-      if ( in_array($httpMethod, $api_access) )
-      {
-        $access = true;
+      if (is_string($api_access)) {
+          $api_access = explode(',', strtoupper($api_access));
+          if (in_array($httpMethod, $api_access)) {
+              $access = true;
+          } else {
+              $access = false;
+          }
+      } elseif ($api_access === true) {
+          $access = true;
       }
-      else{
-        $access = false;
-      }
-    }
-    else if ( $api_access === true )
-    {
-      $access = true;
-    }
 
-    return $access;
+      return $access;
   }
 
   /**
@@ -590,21 +554,23 @@ class RESTfulAPI extends Controller
    */
   private static function model_permission_check($model, $httpMethod = 'GET')
   {
-    $access      = true;
-    $apiInstance = self::$instance;
+      $access      = true;
+      $apiInstance = self::$instance;
 
-    if ( $apiInstance->authenticator && $apiInstance->authority )
-    {
-      $request = $apiInstance->request;
-      $member  = $apiInstance->authenticator->getOwner($request);
+      if ($apiInstance->authenticator && $apiInstance->authority) {
+          $request = $apiInstance->request;
+          $member  = $apiInstance->authenticator->getOwner($request);
 
-      if ( !$member instanceof Member ) $member = null;
+          if (!$member instanceof Member) {
+              $member = null;
+          }
 
-      $access = $apiInstance->authority->checkPermission($model, $member, $httpMethod);
-      if ( !is_bool($access) ) $access = true;
-    }
+          $access = $apiInstance->authority->checkPermission($model, $member, $httpMethod);
+          if (!is_bool($access)) {
+              $access = true;
+          }
+      }
 
-    return $access;
+      return $access;
   }
-
 }

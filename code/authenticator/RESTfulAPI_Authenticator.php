@@ -12,7 +12,7 @@
  */
 interface RESTfulAPI_Authenticator
 {
-  /**
+    /**
    * Checks if a request to the API is authenticated
    * 
    * @param  SS_HTTPRequest          $request    HTTP API request

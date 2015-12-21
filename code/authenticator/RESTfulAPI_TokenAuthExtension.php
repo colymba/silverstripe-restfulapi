@@ -14,14 +14,14 @@
  */
 class RESTfulAPI_TokenAuthExtension extends DataExtension
 {
-	private static $db = array(
+    private static $db = array(
     'ApiToken'       => 'Varchar(160)',
     'ApiTokenExpire' => 'Int'
-	);
+    );
 
-	function updateCMSFields(FieldList $fields)
-	{
-	  $fields->removeByName('ApiToken');
-	  $fields->removeByName('ApiTokenExpire');
-	}
+    public function updateCMSFields(FieldList $fields)
+    {
+        $fields->removeByName('ApiToken');
+        $fields->removeByName('ApiTokenExpire');
+    }
 }

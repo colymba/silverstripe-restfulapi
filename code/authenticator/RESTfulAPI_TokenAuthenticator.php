@@ -14,7 +14,7 @@
 class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
 {
 
-  /**
+    /**
    * Authentication token life in seconds
    * 
    * @var integer
@@ -70,10 +70,10 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
   protected $tokenConfig;
 
 
-  const AUTH_CODE_LOGGED_IN     = 0;
-  const AUTH_CODE_LOGIN_FAIL    = 1;
-  const AUTH_CODE_TOKEN_INVALID = 2;
-  const AUTH_CODE_TOKEN_EXPIRED = 3;
+    const AUTH_CODE_LOGGED_IN     = 0;
+    const AUTH_CODE_LOGIN_FAIL    = 1;
+    const AUTH_CODE_TOKEN_INVALID = 2;
+    const AUTH_CODE_TOKEN_EXPIRED = 3;
 
 
   /**
@@ -93,36 +93,32 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
    */
   public function __construct()
   {
-    $config = array();
-    $configInstance = Config::inst();    
+      $config = array();
+      $configInstance = Config::inst();
 
-    $config['life']         = $configInstance->get('RESTfulAPI_TokenAuthenticator', 'tokenLife');
-    $config['header']       = $configInstance->get('RESTfulAPI_TokenAuthenticator', 'tokenHeader');
-    $config['queryVar']     = $configInstance->get('RESTfulAPI_TokenAuthenticator', 'tokenQueryVar');
-    $config['owner']        = $configInstance->get('RESTfulAPI_TokenAuthenticator', 'tokenOwnerClass');
-    $config['autoRefresh']  = $configInstance->get('RESTfulAPI_TokenAuthenticator', 'autoRefreshLifetime');
+      $config['life']         = $configInstance->get('RESTfulAPI_TokenAuthenticator', 'tokenLife');
+      $config['header']       = $configInstance->get('RESTfulAPI_TokenAuthenticator', 'tokenHeader');
+      $config['queryVar']     = $configInstance->get('RESTfulAPI_TokenAuthenticator', 'tokenQueryVar');
+      $config['owner']        = $configInstance->get('RESTfulAPI_TokenAuthenticator', 'tokenOwnerClass');
+      $config['autoRefresh']  = $configInstance->get('RESTfulAPI_TokenAuthenticator', 'autoRefreshLifetime');
 
-    $tokenDBColumns = $configInstance->get('RESTfulAPI_TokenAuthExtension', 'db');
-    $tokenDBColumn  = array_search('Varchar(160)', $tokenDBColumns);
-    $expireDBColumn = array_search('Int', $tokenDBColumns);
+      $tokenDBColumns = $configInstance->get('RESTfulAPI_TokenAuthExtension', 'db');
+      $tokenDBColumn  = array_search('Varchar(160)', $tokenDBColumns);
+      $expireDBColumn = array_search('Int', $tokenDBColumns);
 
-    if ( $tokenDBColumn !== false )
-    {
-      $config['DBColumn'] = $tokenDBColumn;
-    }
-    else{
-      $config['DBColumn'] = 'ApiToken';
-    }
+      if ($tokenDBColumn !== false) {
+          $config['DBColumn'] = $tokenDBColumn;
+      } else {
+          $config['DBColumn'] = 'ApiToken';
+      }
 
-    if ( $expireDBColumn !== false )
-    {
-      $config['expireDBColumn'] = $expireDBColumn;
-    }
-    else{
-      $config['expireDBColumn'] = 'ApiTokenExpire';
-    }
+      if ($expireDBColumn !== false) {
+          $config['expireDBColumn'] = $expireDBColumn;
+      } else {
+          $config['expireDBColumn'] = 'ApiTokenExpire';
+      }
 
-    $this->tokenConfig = $config;
+      $this->tokenConfig = $config;
   }
 
 
@@ -135,52 +131,47 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
    */
   public function login(SS_HTTPRequest $request)
   {
-    $response = array();
+      $response = array();
 
-    if ( $this->tokenConfig['owner'] === 'Member' )
-    {
-      $email    = $request->requestVar('email');
-      $pwd      = $request->requestVar('pwd');
-      $member   = false;
+      if ($this->tokenConfig['owner'] === 'Member') {
+          $email    = $request->requestVar('email');
+          $pwd      = $request->requestVar('pwd');
+          $member   = false;
       
 
-      if( $email && $pwd )
-      {
-        $member = MemberAuthenticator::authenticate(array(
+          if ($email && $pwd) {
+              $member = MemberAuthenticator::authenticate(array(
           'Email'    => $email,
           'Password' => $pwd
         ));
-        if ( $member )
-        {
-          $tokenData = $this->generateToken();
+              if ($member) {
+                  $tokenData = $this->generateToken();
 
-          $tokenDBColumn  = $this->tokenConfig['DBColumn'];
-          $expireDBColumn = $this->tokenConfig['expireDBColumn'];
+                  $tokenDBColumn  = $this->tokenConfig['DBColumn'];
+                  $expireDBColumn = $this->tokenConfig['expireDBColumn'];
 
-          $member->{$tokenDBColumn}  = $tokenData['token'];
-          $member->{$expireDBColumn} = $tokenData['expire'];
-          $member->write();
-          $member->login();
-        }
-      }
+                  $member->{$tokenDBColumn}  = $tokenData['token'];
+                  $member->{$expireDBColumn} = $tokenData['expire'];
+                  $member->write();
+                  $member->login();
+              }
+          }
       
-      if ( !$member )
-      {
-        $response['result']  = false;
-        $response['message'] = 'Authentication fail.';
-        $response['code']    = self::AUTH_CODE_LOGIN_FAIL;
+          if (!$member) {
+              $response['result']  = false;
+              $response['message'] = 'Authentication fail.';
+              $response['code']    = self::AUTH_CODE_LOGIN_FAIL;
+          } else {
+              $response['result']   = true;
+              $response['message']  = 'Logged in.';
+              $response['code']     = self::AUTH_CODE_LOGGED_IN;
+              $response['token']    = $tokenData['token'];
+              $response['expire']   = $tokenData['expire'];
+              $response['userID']   = $member->ID;
+          }
       }
-      else{
-        $response['result']   = true;
-        $response['message']  = 'Logged in.';
-        $response['code']     = self::AUTH_CODE_LOGGED_IN;
-        $response['token']    = $tokenData['token'];
-        $response['expire']   = $tokenData['expire'];
-        $response['userID']   = $member->ID;
-      }
-    }
 
-    return $response;
+      return $response;
   }
 
 
@@ -193,28 +184,26 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
    */
   public function logout(SS_HTTPRequest $request)
   {
-    $email = $request->requestVar('email');
-    $member = Member::get()->filter(array('Email' => $email))->first();
+      $email = $request->requestVar('email');
+      $member = Member::get()->filter(array('Email' => $email))->first();
 
-    if ( $member )
-    {
-      //logout
+      if ($member) {
+          //logout
       $member->logout();
 
-      if ( $this->tokenConfig['owner'] === 'Member' )
-      {
-        //generate expired token
-        $tokenData = $this->generateToken( true );
+          if ($this->tokenConfig['owner'] === 'Member') {
+              //generate expired token
+        $tokenData = $this->generateToken(true);
 
         //write
         $tokenDBColumn  = $this->tokenConfig['DBColumn'];
-        $expireDBColumn = $this->tokenConfig['expireDBColumn'];
+              $expireDBColumn = $this->tokenConfig['expireDBColumn'];
 
-        $member->{$tokenDBColumn}  = $tokenData['token'];
-        $member->{$expireDBColumn} = $tokenData['expire'];
-        $member->write();
-      }      
-    }
+              $member->{$tokenDBColumn}  = $tokenData['token'];
+              $member->{$expireDBColumn} = $tokenData['expire'];
+              $member->write();
+          }
+      }
   }
 
 
@@ -226,24 +215,23 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
    */
   public function lostPassword(SS_HTTPRequest $request)
   {
-    $email = Convert::raw2sql( $request->requestVar('email') );
-    $member = DataObject::get_one('Member', "\"Email\" = '{$email}'");
-    $sent = true;
+      $email = Convert::raw2sql($request->requestVar('email'));
+      $member = DataObject::get_one('Member', "\"Email\" = '{$email}'");
+      $sent = true;
 
-    if($member)
-    {
-      $token = $member->generateAutologinTokenAndStoreHash();
+      if ($member) {
+          $token = $member->generateAutologinTokenAndStoreHash();
 
-      $e = Member_ForgotPasswordEmail::create();
-      $e->populateTemplate($member);
-      $e->populateTemplate(array(
+          $e = Member_ForgotPasswordEmail::create();
+          $e->populateTemplate($member);
+          $e->populateTemplate(array(
         'PasswordResetLink' => Security::getPasswordResetLink($member, $token)
       ));
-      $e->setTo($member->Email);
-      $sent = $e->send();
-    }
+          $e->setTo($member->Email);
+          $sent = $e->send();
+      }
 
-    return array( 'email' => $sent );
+      return array( 'email' => $sent );
   }
 
 
@@ -255,23 +243,19 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
    */
   public function getToken($id)
   {
-    if ( $id )
-    {
-      $ownerClass = $this->tokenConfig['owner'];
-      $owner      = DataObject::get_by_id($ownerClass, $id);
+      if ($id) {
+          $ownerClass = $this->tokenConfig['owner'];
+          $owner      = DataObject::get_by_id($ownerClass, $id);
 
-      if ( $owner )
-      {
-        $tokenDBColumn = $this->tokenConfig['DBColumn'];
-        return $owner->{$tokenDBColumn};
+          if ($owner) {
+              $tokenDBColumn = $this->tokenConfig['DBColumn'];
+              return $owner->{$tokenDBColumn};
+          } else {
+              user_error("API Token owner '$ownerClass' not found with ID = $id", E_USER_WARNING);
+          }
+      } else {
+          user_error("RESTfulAPI_TokenAuthenticator::getToken() requires an ID as argument.", E_USER_WARNING);
       }
-      else{
-        user_error("API Token owner '$ownerClass' not found with ID = $id", E_USER_WARNING);
-      }
-    }
-    else{
-      user_error("RESTfulAPI_TokenAuthenticator::getToken() requires an ID as argument.", E_USER_WARNING);
-    }
   }
 
 
@@ -284,31 +268,27 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
    */
   public function resetToken($id, $expired = false)
   {
-    if ( $id )
-    {
-      $ownerClass = $this->tokenConfig['owner'];
-      $owner      = DataObject::get_by_id($ownerClass, $id);
+      if ($id) {
+          $ownerClass = $this->tokenConfig['owner'];
+          $owner      = DataObject::get_by_id($ownerClass, $id);
 
-      if ( $owner )
-      {
-        //generate token
-        $tokenData = $this->generateToken( $expired );
+          if ($owner) {
+              //generate token
+        $tokenData = $this->generateToken($expired);
 
         //write
         $tokenDBColumn  = $this->tokenConfig['DBColumn'];
-        $expireDBColumn = $this->tokenConfig['expireDBColumn'];
+              $expireDBColumn = $this->tokenConfig['expireDBColumn'];
 
-        $owner->{$tokenDBColumn}  = $tokenData['token'];
-        $owner->{$expireDBColumn} = $tokenData['expire'];
-        $owner->write();
+              $owner->{$tokenDBColumn}  = $tokenData['token'];
+              $owner->{$expireDBColumn} = $tokenData['expire'];
+              $owner->write();
+          } else {
+              user_error("API Token owner '$ownerClass' not found with ID = $id", E_USER_WARNING);
+          }
+      } else {
+          user_error("RESTfulAPI_TokenAuthenticator::resetToken() requires an ID as argument.", E_USER_WARNING);
       }
-      else{
-        user_error("API Token owner '$ownerClass' not found with ID = $id", E_USER_WARNING);
-      }
-    }
-    else{
-      user_error("RESTfulAPI_TokenAuthenticator::resetToken() requires an ID as argument.", E_USER_WARNING);
-    }
   }
 
 
@@ -321,27 +301,25 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
    */
   private function generateToken($expired = false)
   {
-    $life  = $this->tokenConfig['life'];
+      $life  = $this->tokenConfig['life'];
 
-    if ( !$expired )
-    {
-      $expire = time() + $life;
-    }
-    else{
-      $expire = time() - ($life * 2);
-    }
+      if (!$expired) {
+          $expire = time() + $life;
+      } else {
+          $expire = time() - ($life * 2);
+      }
     
-    $generator = new RandomGenerator();
-    $tokenString = $generator->randomToken();
+      $generator = new RandomGenerator();
+      $tokenString = $generator->randomToken();
 
-    $e = PasswordEncryptor::create_for_algorithm('blowfish'); //blowfish isn't URL safe and maybe too long?
+      $e = PasswordEncryptor::create_for_algorithm('blowfish'); //blowfish isn't URL safe and maybe too long?
     $salt = $e->salt($tokenString);
-    $token = $e->encrypt($tokenString, $salt);
+      $token = $e->encrypt($tokenString, $salt);
 
-    return array(
+      return array(
       'token' => substr($token, 7),
       'expire' => $expire
-    ); 
+    );
   }
 
 
@@ -354,32 +332,29 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
    */
   public function getOwner(SS_HTTPRequest $request)
   {
-    $owner = null;
+      $owner = null;
 
     //get the token
-    $token = $request->getHeader( $this->tokenConfig['header'] );
-    if (!$token)
-    {
-      $token = $request->requestVar( $this->tokenConfig['queryVar'] );
-    }
+    $token = $request->getHeader($this->tokenConfig['header']);
+      if (!$token) {
+          $token = $request->requestVar($this->tokenConfig['queryVar']);
+      }
 
-    if ( $token )
-    {
-      $SQL_token = Convert::raw2sql($token);
+      if ($token) {
+          $SQL_token = Convert::raw2sql($token);
       
-      $owner = DataObject::get_one(
+          $owner = DataObject::get_one(
         $this->tokenConfig['owner'],
         "\"".$this->tokenConfig['DBColumn']."\"='" . $SQL_token . "'",
         false
       );
 
-      if ( !$owner )
-      {
-        $owner = null;
+          if (!$owner) {
+              $owner = null;
+          }
       }
-    }
 
-    return $owner;
+      return $owner;
   }
 
 
@@ -392,20 +367,17 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
    */
   public function authenticate(SS_HTTPRequest $request)
   {
-    //get the token
-    $token = $request->getHeader( $this->tokenConfig['header'] );
-    if (!$token)
-    {
-      $token = $request->requestVar( $this->tokenConfig['queryVar'] );
-    }
+      //get the token
+    $token = $request->getHeader($this->tokenConfig['header']);
+      if (!$token) {
+          $token = $request->requestVar($this->tokenConfig['queryVar']);
+      }
 
-    if ( $token )
-    {
-      //check token validity
-      return $this->validateAPIToken( $token );
-    }
-    else{
-      //no token, bad news
+      if ($token) {
+          //check token validity
+      return $this->validateAPIToken($token);
+      } else {
+          //no token, bad news
       return new RESTfulAPI_Error(403,
         'Token invalid.',
         array(
@@ -413,7 +385,7 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
           'code'    => self::AUTH_CODE_TOKEN_INVALID
         )
       );
-    }
+      }
   }
   
 
@@ -425,40 +397,36 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
    */
   private function validateAPIToken($token)
   {
-    //get owner with that token
+      //get owner with that token
     $SQL_token = Convert::raw2sql($token);
-    $tokenColumn = $this->tokenConfig['DBColumn'];
+      $tokenColumn = $this->tokenConfig['DBColumn'];
 
-    $tokenOwner = DataObject::get_one(
+      $tokenOwner = DataObject::get_one(
       $this->tokenConfig['owner'],
       "\"".$this->tokenConfig['DBColumn']."\"='" . $SQL_token . "'",
       false
     );
 
-    if ( $tokenOwner )
-    {
-      //check token expiry
+      if ($tokenOwner) {
+          //check token expiry
       $tokenExpire  = $tokenOwner->{$this->tokenConfig['expireDBColumn']};
-      $now          = time();
-      $life         = $this->tokenConfig['life'];
+          $now          = time();
+          $life         = $this->tokenConfig['life'];
 
-      if ( $tokenExpire > ($now - $life) )
-      {
-        // check if token should automatically be updated
-        if($this->tokenConfig['autoRefresh']){
-          $tokenOwner->setField($this->tokenConfig['expireDBColumn'], $now + $life);
-          $tokenOwner->write();
+          if ($tokenExpire > ($now - $life)) {
+              // check if token should automatically be updated
+        if ($this->tokenConfig['autoRefresh']) {
+            $tokenOwner->setField($this->tokenConfig['expireDBColumn'], $now + $life);
+            $tokenOwner->write();
         }
         //all good, log Member in
-        if ( is_a($tokenOwner, 'Member') )
-        {
-          $tokenOwner->logIn();
+        if (is_a($tokenOwner, 'Member')) {
+            $tokenOwner->logIn();
         }
 
-        return true;
-      }
-      else{
-        //too old        
+              return true;
+          } else {
+              //too old        
         return new RESTfulAPI_Error(403,
           'Token expired.',
           array(
@@ -466,10 +434,9 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
             'code'    => self::AUTH_CODE_TOKEN_EXPIRED
           )
         );
-      }        
-    }
-    else{
-      //token not found
+          }
+      } else {
+          //token not found
       //not sure it's wise to say it doesn't exist. Let's be shady here
       return new RESTfulAPI_Error(403,
         'Token invalid.',
@@ -478,7 +445,6 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
           'code'    => self::AUTH_CODE_TOKEN_INVALID
         )
       );
-    }    
+      }
   }
-	
 }

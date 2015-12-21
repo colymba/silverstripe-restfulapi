@@ -13,15 +13,15 @@
 interface RESTfulAPI_QueryHandler
 {
 
-	/**
-	 * Return current RESTfulAPI DeSerializer instance
-	 * 
-	 * @return RESTfulAPI_DeSerializer DeSerializer instance
-	 */
-	public function getdeSerializer();
+    /**
+     * Return current RESTfulAPI DeSerializer instance
+     * 
+     * @return RESTfulAPI_DeSerializer DeSerializer instance
+     */
+    public function getdeSerializer();
 
 
-	/**
+    /**
    * All requests pass through here and are redirected depending on HTTP verb and params
    * 
    * @param  SS_HTTPRequest        $request    HTTP request
