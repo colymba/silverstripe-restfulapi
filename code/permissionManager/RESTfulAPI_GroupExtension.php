@@ -4,12 +4,12 @@
  * - API Admin   => ALL ACCESS
  * - API Editor  => VIEW + EDIT + CREATE
  * - API Reader  => VIEW
- * 
+ *
  * @author  Thierry Francois @colymba thierry@colymba.com
  * @copyright Copyright (c) 2013, Thierry Francois
- * 
+ *
  * @license http://opensource.org/licenses/BSD-3-Clause BSD Simplified
- * 
+ *
  * @package RESTfulAPI
  * @subpackage Permission
  */
@@ -17,7 +17,7 @@ class RESTfulAPI_GroupExtension extends DataExtension implements PermissionProvi
 {
     /**
    * Basic RESTfulAPI Permission set
-   * 
+   *
    * @return Array Default API permission set
    */
   public function providePermissions()
@@ -48,7 +48,7 @@ class RESTfulAPI_GroupExtension extends DataExtension implements PermissionProvi
 
 
   /**
-   * Create the default Groups 
+   * Create the default Groups
    * and add default admin to admin group
    */
   public function requireDefaultRecords()

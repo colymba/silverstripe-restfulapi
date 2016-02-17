@@ -1,12 +1,12 @@
 <?php
 /**
  * Stores an API errors. And a library of static methods.
- * 
+ *
  * @author  Thierry Francois @colymba thierry@colymba.com
  * @copyright Copyright (c) 2013, Thierry Francois
- * 
+ *
  * @license http://opensource.org/licenses/BSD-3-Clause BSD Simplified
- * 
+ *
  * @package RESTfulAPI
  * @subpackage Error
  */
@@ -15,7 +15,7 @@ class RESTfulAPI_Error
 
     /**
      * Error HTTP status code
-     * 
+     *
      * @var integer
      */
     public $code;
@@ -23,7 +23,7 @@ class RESTfulAPI_Error
 
     /**
      * Error message
-     * 
+     *
      * @var string
      */
     public $message;
@@ -32,7 +32,7 @@ class RESTfulAPI_Error
     /**
      * Error response body
      * to be serialized
-     * 
+     *
      * @var mixed
      */
     public $body;
@@ -40,7 +40,7 @@ class RESTfulAPI_Error
 
     /**
      * Creates the error object and sets properties
-     * 
+     *
      * @param integer $code    HTTP status code
      * @param string  $message Error message
      */
@@ -66,7 +66,7 @@ class RESTfulAPI_Error
      *
      * More available for PHP >= 5.3.3
      * http://www.php.net/manual/en/function.json-last-error.php
-     * 
+     *
      * @return false|string Returns false if no error or a string with the error detail.
      */
     public static function get_json_error()

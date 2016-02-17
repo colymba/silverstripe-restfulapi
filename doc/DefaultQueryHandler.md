@@ -29,7 +29,7 @@ Model hooks are available on both serialization and deserialization. These can b
 
 Here are the available callbacks (can be directly implemented on the `DataObject` or in a `DataExtension`)
 
-Signature | Parameter type | Info 
+Signature | Parameter type | Info
 --- | :---: | ---
 `onBeforeSerialize()` | `void` | Called before the model is being serialized. You can set fields to `null` or use `unset` if you don't want them to be serialized.
 `onAfterSerialize(&$data)` | `array` | Called after the model has been serialized. This is the complete dataset that will be converted to JSON and sent to the client. You can use `unset` and/or add fields to the data, just like with a regular array.

@@ -2,12 +2,12 @@
 /**
  * Basic RESTfulAPI Model Serializer
  * handles DataObject, DataList etc.. JSON serialization and de-serialization
- * 
+ *
  * @author  Thierry Francois @colymba thierry@colymba.com
  * @copyright Copyright (c) 2013, Thierry Francois
- * 
+ *
  * @license http://opensource.org/licenses/BSD-3-Clause BSD Simplified
- * 
+ *
  * @package RESTfulAPI
  * @subpackage Serializer
  */
@@ -17,16 +17,16 @@ class RESTfulAPI_BasicSerializer implements RESTfulAPI_Serializer
     /**
      * Content-type header definition for this Serializer
      * Used by RESTfulAPI in the response
-     * 
+     *
      * @var string
      */
     private $contentType = 'application/json; charset=utf-8';
 
-    
+
     /**
      * Return Content-type header definition
      * to be used in the API response
-     * 
+     *
      * @return string Content-type
      */
     public function getcontentType()
@@ -38,7 +38,7 @@ class RESTfulAPI_BasicSerializer implements RESTfulAPI_Serializer
   /**
    * Stores the current $embedded_records @config
    * Config set on {@link RESTfulAPI}
-   * 
+   *
    * @var array
    */
   protected $embeddedRecords;
@@ -60,7 +60,7 @@ class RESTfulAPI_BasicSerializer implements RESTfulAPI_Serializer
 
     /**
      * Convert data into a JSON string
-     * 
+     *
      * @param  mixed  $data Data to convert
      * @return string       JSON data
      */
@@ -68,9 +68,9 @@ class RESTfulAPI_BasicSerializer implements RESTfulAPI_Serializer
     {
         // JSON_NUMERIC_CHECK removes leading zeros
         // which is an issue in cases like postcode e.g. 00160
-        // see https://bugs.php.net/bug.php?id=64695		
+        // see https://bugs.php.net/bug.php?id=64695
         $json = json_encode($data);
-        
+
         //catch JSON parsing error
         $error = RESTfulAPI_Error::get_json_error();
         if ($error !== false) {
@@ -84,7 +84,7 @@ class RESTfulAPI_BasicSerializer implements RESTfulAPI_Serializer
     /**
      * Convert raw data (DataObject or DataList) to JSON
      * ready to be consumed by the client API
-     * 
+     *
      * @param  mixed   $data  Data to serialize
      * @return string         JSON representation of data
      */
@@ -116,7 +116,7 @@ class RESTfulAPI_BasicSerializer implements RESTfulAPI_Serializer
     /**
      * Format a DataObject keys and values
      * ready to be turned into JSON
-     * 
+     *
      * @param  DataObject $dataObject The data object to format
      * @return array|null              The formatted array map representation of the DataObject or null is permission denied
      */
@@ -141,7 +141,7 @@ class RESTfulAPI_BasicSerializer implements RESTfulAPI_Serializer
         $has_many              = Config::inst()->get($dataObject->ClassName, 'has_many');
         $many_many             = Config::inst()->get($dataObject->ClassName, 'many_many');
         $belongs_many_many     = Config::inst()->get($dataObject->ClassName, 'belongs_many_many');
-    
+
     //$many_many_extraFields = $dataObject->many_many_extraFields();
     $many_many_extraFields = $dataObject->stat('many_many_extraFields');
 
@@ -197,7 +197,7 @@ class RESTfulAPI_BasicSerializer implements RESTfulAPI_Serializer
         if (is_array($belongs_many_many)) {
             $many_relations = array_merge($many_relations, $belongs_many_many);
         }
-    
+
     // iterate '_many' relations
     foreach ($many_relations as $relationName => $relationClassname) {
         //get the DataList for this realtion's name
@@ -283,7 +283,7 @@ class RESTfulAPI_BasicSerializer implements RESTfulAPI_Serializer
     /**
      * Format a DataList into a formatted array
      * ready to be turned into JSON
-     * 
+     *
      * @param  DataList  $dataList  The DataList to format
      * @return array                The formatted array representation of the DataList
      */
@@ -305,7 +305,7 @@ class RESTfulAPI_BasicSerializer implements RESTfulAPI_Serializer
     /**
      * Format a SilverStripe ClassName or Field name
      * to be used by the client API
-     * 
+     *
      * @param  string $name ClassName of DBField name
      * @return string       Formatted name
      */
@@ -318,7 +318,7 @@ class RESTfulAPI_BasicSerializer implements RESTfulAPI_Serializer
     /**
      * Format a DB Column name or Field name
      * to be used by the client API
-     * 
+     *
      * @param  string $name Field name
      * @return string       Formatted name
      */
@@ -331,7 +331,7 @@ class RESTfulAPI_BasicSerializer implements RESTfulAPI_Serializer
   /**
    * Returns a DataObject relation's data
    * formatted and ready to embed.
-   * 
+   *
    * @param  DataObject $record       The DataObject to get the data from
    * @param  string     $relationName The name of the relation
    * @return array|null               Formatted DataObject or RelationList ready to embed or null if nothing to embed
@@ -354,7 +354,7 @@ class RESTfulAPI_BasicSerializer implements RESTfulAPI_Serializer
   /**
    * Checks if a speicific model's relation
    * should have its records embedded.
-   * 
+   *
    * @param  string  $model    Model's classname
    * @param  string  $relation Relation name
    * @return boolean           Trus if the relation should be embedded

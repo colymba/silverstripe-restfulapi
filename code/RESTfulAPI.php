@@ -1,16 +1,16 @@
 <?php
 /**
  * SilverStripe 3 RESTful API
- * 
+ *
  * This module implements a RESTful API
  * with flexible configuration for model querying and response serialization
  * through independent components.
- * 
+ *
  * @author  Thierry Francois @colymba thierry@colymba.com
  * @copyright Copyright (c) 2013, Thierry Francois
- * 
+ *
  * @license http://opensource.org/licenses/BSD-3-Clause BSD Simplified
- * 
+ *
  * @package RESTfulAPI
  */
 class RESTfulAPI extends Controller
@@ -21,7 +21,7 @@ class RESTfulAPI extends Controller
    * false = no authentication required
    * true  = authentication required for all HTTP methods
    * array = authentication required for selected HTTP methods e.g. array('POST', 'PUT', 'DELETE')
-   * 
+   *
    * @var boolean|array
    * @config
    */
@@ -42,7 +42,7 @@ class RESTfulAPI extends Controller
    * - 'ACL_CHECK_CONFIG_AND_MODEL' : Check against both api_access and DataObject permissions
    *
    * Default to check config only.
-   * 
+   *
    * @var boolean|string
    * @config
    */
@@ -51,7 +51,7 @@ class RESTfulAPI extends Controller
 
   /**
    * Current Authenticator instance
-   * 
+   *
    * @var RESTfulAPI_Authenticator
    */
   public $authenticator;
@@ -59,7 +59,7 @@ class RESTfulAPI extends Controller
 
   /**
    * Current Permission Manager instance
-   * 
+   *
    * @var RESTfulAPI_PermissionManager
    */
   public $authority;
@@ -67,7 +67,7 @@ class RESTfulAPI extends Controller
 
   /**
    * Current QueryHandler instance
-   * 
+   *
    * @var RESTfulAPI_QueryHandler
    */
   public $queryHandler;
@@ -75,7 +75,7 @@ class RESTfulAPI extends Controller
 
   /**
    * Current serializer instance
-   * 
+   *
    * @var RESTfulAPI_Serializer
    */
   public $serializer;
@@ -84,7 +84,7 @@ class RESTfulAPI extends Controller
   /**
    * Injector dependencies
    * Override in configuration to use your custom classes
-   * 
+   *
    * @var array
    * @config
    */
@@ -124,7 +124,7 @@ class RESTfulAPI extends Controller
    *      }]
    *    }
    * }
-   * 
+   *
    * @var array
    * @config
    */
@@ -155,7 +155,7 @@ class RESTfulAPI extends Controller
 
   /**
    * URL handler allowed actions
-   * 
+   *
    * @var array
    */
   private static $allowed_actions = array(
@@ -167,7 +167,7 @@ class RESTfulAPI extends Controller
 
   /**
    * URL handler definition
-   * 
+   *
    * @var array
    */
   private static $url_handlers = array(
@@ -179,7 +179,7 @@ class RESTfulAPI extends Controller
 
   /**
    * Returns current query handler instance
-   * 
+   *
    * @return RESTfulAPI_QueryHandler QueryHandler instance
    */
   public function getqueryHandler()
@@ -190,18 +190,18 @@ class RESTfulAPI extends Controller
 
   /**
    * Returns current serializer instance
-   * 
+   *
    * @return RESTfulAPI_Serializer Serializer instance
    */
   public function getserializer()
   {
       return $this->serializer;
   }
-  
+
 
   /**
    * Current RESTfulAPI instance
-   * 
+   *
    * @var RESTfulAPI
    */
   protected static $instance;
@@ -240,7 +240,7 @@ class RESTfulAPI extends Controller
    * Handles authentications methods
    * get response from API Authenticator
    * then passes it on to $answer()
-   * 
+   *
    * @param  SS_HTTPRequest $request HTTP request
    */
   public function auth(SS_HTTPRequest $request)
@@ -278,7 +278,7 @@ class RESTfulAPI extends Controller
    * Handles Access Control methods
    * get response from API PermissionManager
    * then passes it on to $answer()
-   * 
+   *
    * @param  SS_HTTPRequest $request HTTP request
    */
   public function acl(SS_HTTPRequest $request)
@@ -310,14 +310,14 @@ class RESTfulAPI extends Controller
           }
       }
   }
-  
+
 
   /**
    * Main API hub switch
    * All requests pass through here and are redirected depending on HTTP verb and params
    *
    * @todo move authentication check to another methode
-   * 
+   *
    * @param  SS_HTTPRequest   $request    HTTP request
    * @return string                       json object of the models found
    */
@@ -361,7 +361,7 @@ class RESTfulAPI extends Controller
   /**
    * Output the API response to client
    * then exit.
-   * 
+   *
    * @param  string           $json             Response body
    * @param  boolean          $corsPreflight    Set to true if this is a XHR preflight request answer. CORS shoud be enabled.
    */
@@ -378,10 +378,10 @@ class RESTfulAPI extends Controller
     $answer = $this->setAnswerCORS($answer);
 
       $answer->addHeader('Content-Type', $this->serializer->getcontentType());
-    
+
     // save controller's response then return/output
     $this->response = $answer;
-    
+
       return $answer;
   }
 
@@ -389,7 +389,7 @@ class RESTfulAPI extends Controller
   /**
    * Handles formatting and output error message
    * then exit.
-   * 
+   *
    * @param  RESTfulAPI_Error $error Error object to return
    */
   public function error(RESTfulAPI_Error $error)
@@ -403,7 +403,7 @@ class RESTfulAPI extends Controller
       $answer->addHeader('Content-Type', $this->serializer->getcontentType());
 
       $answer = $this->setAnswerCORS($answer);
-    
+
     // save controller's response then return/output
     $this->response = $answer;
 
@@ -414,7 +414,7 @@ class RESTfulAPI extends Controller
   /**
    * Apply the proper CORS response heardes
    * to an SS_HTTPResponse
-   * 
+   *
    * @param SS_HTTPResponse $answer The updated response if CORS are neabled
    */
   private function setAnswerCORS(SS_HTTPResponse $answer)
@@ -439,7 +439,7 @@ class RESTfulAPI extends Controller
           }
       }
       $answer->addHeader('Access-Control-Allow-Origin', $allowedOrigin);
-    
+
     //allowed headers
     $allowedHeaders = '';
       $requestHeaders = $this->request->getHeader('Access-Control-Request-Headers');
@@ -465,7 +465,7 @@ class RESTfulAPI extends Controller
    * depending on access_control_policy and the provided model.
    * - 1st config check
    * - 2nd permission check if config access passes
-   * 
+   *
    * @param  string|DataObject  $model      Model's classname or DataObject
    * @param  string             $httpMethod API request HTTP method
    * @return boolean                        true if access is granted, false otherwise
@@ -496,7 +496,7 @@ class RESTfulAPI extends Controller
           $access = self::api_access_config_check($className, $httpMethod);
       }
 
-    
+
       if ($policy === self::ACL_CHECK_MODEL_ONLY || $policy === self::ACL_CHECK_CONFIG_AND_MODEL) {
           if ($access) {
               $access = self::model_permission_check($model, $httpMethod);
@@ -512,7 +512,7 @@ class RESTfulAPI extends Controller
    * - unset|false, access is always denied
    * - true, access is always granted
    * - comma separated list of allowed HTTP methods
-   * 
+   *
    * @param  string      $className   Model's classname
    * @param  string      $httpMethod  API request HTTP method
    * @return boolean                  true if access is granted, false otherwise
@@ -542,12 +542,12 @@ class RESTfulAPI extends Controller
    *
    * For permissions to actually be checked, this means the RESTfulAPI
    * must have both authenticator and authority dependencies defined.
-   * 
+   *
    * If the authenticator component does not return an instance of the Member
    * null will be passed to the authority component.
    *
    * This default to true.
-   * 
+   *
    * @param  string|DataObject   $model      Model's classname or DataObject to check permission for
    * @param  string              $httpMethod API request HTTP method
    * @return boolean                         true if access is granted, false otherwise

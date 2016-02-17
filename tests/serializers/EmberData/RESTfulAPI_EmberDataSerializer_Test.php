@@ -1,12 +1,12 @@
 <?php
 /**
  * EmberData Serializer Test suite
- * 
+ *
  * @author  Thierry Francois @colymba thierry@colymba.com
  * @copyright Copyright (c) 2013, Thierry Francois
- * 
+ *
  * @license http://opensource.org/licenses/BSD-3-Clause BSD Simplified
- * 
+ *
  * @package RESTfulAPI
  * @subpackage Tests
  */
@@ -86,7 +86,7 @@ class RESTfulAPI_EmberDataSerializer_Test extends RESTfulAPI_Tester
 
       $jsonString = $serializer->serialize($dataObject);
       $jsonObject = json_decode($jsonString);
-    
+
       $booksRoot  = $serializer->formatName('ApiTest_Book');
       $booksRoot  = Inflector::pluralize($booksRoot);
 

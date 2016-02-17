@@ -2,12 +2,12 @@
 /**
  * EmberData RESTfulAPI Model Serializer
  * handles DataObject, DataList etc.. JSON serialization and de-serialization
- * 
+ *
  * @author  Thierry Francois @colymba thierry@colymba.com
  * @copyright Copyright (c) 2013, Thierry Francois
- * 
+ *
  * @license http://opensource.org/licenses/BSD-3-Clause BSD Simplified
- * 
+ *
  * @package RESTfulAPI
  * @subpackage Serializer
  */
@@ -17,7 +17,7 @@ class RESTfulAPI_EmberDataSerializer extends RESTfulAPI_BasicSerializer
     /**
      * Content-type header definition for this Serializer
      * Used by RESTfulAPI in the response
-     * 
+     *
      * @var string
      */
     private $contentType = 'application/vnd.api+json; charset=utf-8';
@@ -27,7 +27,7 @@ class RESTfulAPI_EmberDataSerializer extends RESTfulAPI_BasicSerializer
    * Sideloaded records settings
    * Specify which relation's records will be added to the JSON root:
    * 'RequestedClass' => array('RelationNameToSideLoad', 'Another')
-   * 
+   *
    * Non sideloaded response:
    * {
    *   'member': {
@@ -54,7 +54,7 @@ class RESTfulAPI_EmberDataSerializer extends RESTfulAPI_BasicSerializer
    *
    * Try not to use in conjunction with {@link RESTfulAPI} $embedded_records
    * with the same settings.
-   * 
+   *
    * @var array
    * @config
    */
@@ -63,7 +63,7 @@ class RESTfulAPI_EmberDataSerializer extends RESTfulAPI_BasicSerializer
 
   /**
    * Stores the current $sideloaded_records config
-   * 
+   *
    * @var array
    */
   protected $sideloadedRecords;
@@ -88,7 +88,7 @@ class RESTfulAPI_EmberDataSerializer extends RESTfulAPI_BasicSerializer
     /**
      * Convert raw data (DataObject or DataList) to JSON
      * ready to be consumed by the client API
-     * 
+     *
      * @param  DataObject|DataList  $data  Data to serialize
      * @return string                      JSON representation of data
      */
@@ -133,7 +133,7 @@ class RESTfulAPI_EmberDataSerializer extends RESTfulAPI_BasicSerializer
     /**
      * Format a SilverStripe ClassName or Field name
      * to be used by the client API
-     * 
+     *
      * @param  string $name ClassName of DBField name
      * @return string       Formatted name
      */
@@ -154,7 +154,7 @@ class RESTfulAPI_EmberDataSerializer extends RESTfulAPI_BasicSerializer
     /**
      * Format a DB Column name or Field name
      * to be used by the client API
-     * 
+     *
      * @param  string $name Field name
      * @return string       Formatted name
      */
@@ -172,7 +172,7 @@ class RESTfulAPI_EmberDataSerializer extends RESTfulAPI_BasicSerializer
 
     /**
      * Check if a specific class requires data to be sideloaded.
-     * 
+     *
      * @param  string  $classname Requested data classname
      * @return boolean            True if some relations should be sideloaded
      */
@@ -185,7 +185,7 @@ class RESTfulAPI_EmberDataSerializer extends RESTfulAPI_BasicSerializer
     /**
      * Fetches and return all the data that need to be sideloaded
      * for a specific source DataObject or DataList.
-     * 
+     *
      * @param  DataObject|DataList  $dataSource The source data to fetch sideloaded records for
      * @return array                            A map of relation names with their data
      */
@@ -222,7 +222,7 @@ class RESTfulAPI_EmberDataSerializer extends RESTfulAPI_BasicSerializer
           if (is_array($has_one) && in_array($relationName, $has_one)) {
               $newData = array($newData);
           }
-          
+
                     $relationClass        = $relationsMap[$relationName];
                     $data[$relationClass] = $newData;
                 }
@@ -231,7 +231,7 @@ class RESTfulAPI_EmberDataSerializer extends RESTfulAPI_BasicSerializer
             // if a list of DataObject, loop through each and merge all the data together
             foreach ($dataSource as $dataObjectSource) {
                 $sideloadData = $this->getSideloadData($dataObjectSource);
-                
+
                 //combine sideloaded records
                 foreach ($sideloadData as $class => $extraData) {
                     if (!isset($data[$class])) {
@@ -255,7 +255,7 @@ class RESTfulAPI_EmberDataSerializer extends RESTfulAPI_BasicSerializer
                 $data[$relationClass] = array_unique($relationData, SORT_REGULAR);
             }
         }
-        
+
         return $data;
     }
 
@@ -265,7 +265,7 @@ class RESTfulAPI_EmberDataSerializer extends RESTfulAPI_BasicSerializer
      * and an original data source (DataObject OR DataList)
      * and insorts into the root object all relation records
      * that should be sideloaded.
-     * 
+     *
      * @param  stdClass              $root       Root object ready to become JSON
      * @param  DataObject|DataList   $dataSource The original data set from the root object
      * @return stdClass                          The updated root object sith the sideloaded data attached

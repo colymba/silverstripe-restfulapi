@@ -1,12 +1,12 @@
 <?php
 /**
  * Default Permission Manager Test suite
- * 
+ *
  * @author  Thierry Francois @colymba thierry@colymba.com
  * @copyright Copyright (c) 2013, Thierry Francois
- * 
+ *
  * @license http://opensource.org/licenses/BSD-3-Clause BSD Simplified
- * 
+ *
  * @package RESTfulAPI
  * @subpackage Tests
  */
@@ -62,7 +62,7 @@ class RESTfulAPI_DefaultPermissionManager_Test extends RESTfulAPI_Tester
       Config::inst()->update('RESTfulAPI', 'cors', array(
       'Enabled' => false
     ));
-    
+
     // GET with permission = OK
     $requestHeaders = $this->getRequestHeaders();
       $requestHeaders['X-Silverstripe-Apitoken'] = $this->getAdminToken();
@@ -73,7 +73,7 @@ class RESTfulAPI_DefaultPermissionManager_Test extends RESTfulAPI_Tester
       200,
       "Member of 'restfulapi-administrators' Group should be able to READ records."
     );
-    
+
     // GET with NO Permission = BAD
     $requestHeaders = $this->getRequestHeaders();
       $requestHeaders['X-Silverstripe-Apitoken'] = $this->getStrangerToken();
@@ -95,7 +95,7 @@ class RESTfulAPI_DefaultPermissionManager_Test extends RESTfulAPI_Tester
       Config::inst()->update('RESTfulAPI', 'cors', array(
       'Enabled' => false
     ));
-    
+
     // PUT with permission = OK
     $requestHeaders = $this->getRequestHeaders();
       $requestHeaders['X-Silverstripe-Apitoken'] = $this->getAdminToken();
@@ -106,7 +106,7 @@ class RESTfulAPI_DefaultPermissionManager_Test extends RESTfulAPI_Tester
       200,
       "Member of 'restfulapi-administrators' Group should be able to EDIT records."
     );
-    
+
     // PUT with NO Permission = BAD
     $requestHeaders = $this->getRequestHeaders();
       $requestHeaders['X-Silverstripe-Apitoken'] = $this->getStrangerToken();
@@ -128,18 +128,18 @@ class RESTfulAPI_DefaultPermissionManager_Test extends RESTfulAPI_Tester
       Config::inst()->update('RESTfulAPI', 'cors', array(
       'Enabled' => false
     ));
-    
+
     // POST with permission = OK
     $requestHeaders = $this->getRequestHeaders();
       $requestHeaders['X-Silverstripe-Apitoken'] = $this->getAdminToken();
       $response = Director::test('api/ApiTest_Library', null, null, 'POST', '{"Name":"Api"}', $requestHeaders);
-    
+
       $this->assertEquals(
       $response->getStatusCode(),
       200,
       "Member of 'restfulapi-administrators' Group should be able to CREATE records."
     );
-    
+
     // POST with NO Permission = BAD
     $requestHeaders = $this->getRequestHeaders();
       $requestHeaders['X-Silverstripe-Apitoken'] = $this->getStrangerToken();
@@ -161,18 +161,18 @@ class RESTfulAPI_DefaultPermissionManager_Test extends RESTfulAPI_Tester
       Config::inst()->update('RESTfulAPI', 'cors', array(
       'Enabled' => false
     ));
-    
+
     // DELETE with permission = OK
     $requestHeaders = $this->getRequestHeaders();
       $requestHeaders['X-Silverstripe-Apitoken'] = $this->getAdminToken();
       $response = Director::test('api/ApiTest_Library/1', null, null, 'DELETE', null, $requestHeaders);
-    
+
       $this->assertEquals(
       $response->getStatusCode(),
       200,
       "Member of 'restfulapi-administrators' Group should be able to DELETE records."
     );
-    
+
     // DELETE with NO Permission = BAD
     $requestHeaders = $this->getRequestHeaders();
       $requestHeaders['X-Silverstripe-Apitoken'] = $this->getStrangerToken();
