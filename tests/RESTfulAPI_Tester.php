@@ -1,12 +1,12 @@
 <?php
 /**
  * RESTfulAPI Test suite common methods and tools
- * 
+ *
  * @author  Thierry Francois @colymba thierry@colymba.com
  * @copyright Copyright (c) 2013, Thierry Francois
- * 
+ *
  * @license http://opensource.org/licenses/BSD-3-Clause BSD Simplified
- * 
+ *
  * @package RESTfulAPI
  * @subpackage Tests
  */
@@ -143,7 +143,7 @@ class RESTfulAPI_Tester extends SapphireTest
     public function setUp()
     {
         parent::setUp();
-    
+
         $this->setDefaultApiConfig();
     }
 }

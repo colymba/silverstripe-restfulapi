@@ -2,12 +2,12 @@
 /**
  * EmberData RESTfulAPI Model DeSerializer
  * handles DataObject, DataList etc.. JSON serialization and de-serialization
- * 
+ *
  * @author  Thierry Francois @colymba thierry@colymba.com
  * @copyright Copyright (c) 2013, Thierry Francois
- * 
+ *
  * @license http://opensource.org/licenses/BSD-3-Clause BSD Simplified
- * 
+ *
  * @package RESTfulAPI
  * @subpackage Serializer
  */
@@ -25,14 +25,14 @@ class RESTfulAPI_EmberDataDeSerializer implements RESTfulAPI_DeSerializer
      *     "relations": [1]
      *   }
      * }
-     * 
+     *
      * @param  string        $data   JSON to be converted to data ready to be consumed by SilverStripe
      * @return array|false           Formatted array representation of the JSON data or false if failed
      */
     public function deserialize($json)
     {
         $data = json_decode($json, true);
-        
+
         //catch JSON parsing error
         $error = RESTfulAPI_Error::get_json_error();
         if ($error !== false) {
@@ -55,7 +55,7 @@ class RESTfulAPI_EmberDataDeSerializer implements RESTfulAPI_DeSerializer
     /**
      * Process payload data from client
      * and unformats columns/values recursively
-     * 
+     *
      * @param  array  $data Payload data (decoded JSON)
      * @return array        Paylaod data with all keys/values unformatted
      */
@@ -82,7 +82,7 @@ class RESTfulAPI_EmberDataDeSerializer implements RESTfulAPI_DeSerializer
     /**
      * Format a ClassName or Field name sent by client API
      * to be used by SilverStripe
-     * 
+     *
      * @param  string $name ClassName of Field name
      * @return string       Formatted name
      */
@@ -104,7 +104,7 @@ class RESTfulAPI_EmberDataDeSerializer implements RESTfulAPI_DeSerializer
     /**
      * Format a DB Column name or Field name
      * sent from client API to be used by SilverStripe
-     * 
+     *
      * @param  string $name Field name
      * @return string       Formatted name
      */

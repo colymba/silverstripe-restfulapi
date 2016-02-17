@@ -16,7 +16,7 @@ Config | Type | Info | Default
 `dependencies` | `array` | key => value pairs sepcifying the components classes used for the `'authenticator'`, `'queryHandler'` and `'serializer'`  | 'authenticator' => '%$RESTfulAPI_TokenAuthenticator', 'queryHandler' => '%$RESTfulAPI_DefaultQueryHandler', 'serializer' => '%$RESTfulAPI_BasicSerializer'
 `embedded_records` | `array` | key => value pairs sepcifying which relation names to embed in the response and for which model this applies (i.e. 'RequestedClass' => array('RelationNameToEmbed')) | n/a
 - | - | - | -
-`cors` | `array` | Cross-Origin Resource Sharing (CORS) API settings | 
+`cors` | `array` | Cross-Origin Resource Sharing (CORS) API settings |
 `cors.Enabled` | `boolean` | If true the API will add CORS HTTP headers to the response | true
 `cors.Allow-Origin` | `string` or `array` | '\*' allows all, 'http://domain.com' allows a specific domain, array('http://domain.com', 'http://site.com') allows a list of domains | '\*'
 `cors.Allow-Headers` | `string` | '\*' allows all, 'header1, header2' coman separated list allows a list of headers | '\*'

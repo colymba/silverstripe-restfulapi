@@ -1,12 +1,12 @@
 <?php
 /**
  * RESTfulAPI Test suite
- * 
+ *
  * @author  Thierry Francois @colymba thierry@colymba.com
  * @copyright Copyright (c) 2013, Thierry Francois
- * 
+ *
  * @license http://opensource.org/licenses/BSD-3-Clause BSD Simplified
- * 
+ *
  * @package RESTfulAPI
  * @subpackage Tests
  */
@@ -58,7 +58,7 @@ class RESTfulAPI_Test extends RESTfulAPI_Tester
     // API Calls
     /*
     // Access authorised
-    $response = Director::test('api/ApiTest_Author/1', null, null, 'GET'); 
+    $response = Director::test('api/ApiTest_Author/1', null, null, 'GET');
     $this->assertEquals(
       $response->getStatusCode(),
       200
@@ -156,7 +156,7 @@ class RESTfulAPI_Test extends RESTfulAPI_Tester
       'Allow-Methods' => 'GET',
       'Max-Age'       => 86400
     ));
-    
+
     // Seding GET request, GET should be allowed
     $requestHeaders  = $this->getRequestHeaders();
       $response        = Director::test('api/ApiTest_Book/1', null, null, 'GET', null, $requestHeaders);

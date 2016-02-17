@@ -2,12 +2,12 @@
 /**
  * Default RESTfulAPI Query handler
  * handles models request etc...
- * 
+ *
  * @author  Thierry Francois @colymba thierry@colymba.com
  * @copyright Copyright (c) 2013, Thierry Francois
- * 
+ *
  * @license http://opensource.org/licenses/BSD-3-Clause BSD Simplified
- * 
+ *
  * @package RESTfulAPI
  * @subpackage QueryHandler
  */
@@ -16,7 +16,7 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
 
     /**
    * Current deSerializer instance
-   * 
+   *
    * @var RESTfulAPI_DeSerializer
    */
   public $deSerializer;
@@ -25,7 +25,7 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
   /**
    * Injector dependencies
    * Override in configuration to use your custom classes
-   * 
+   *
    * @var array
    * @config
    */
@@ -37,7 +37,7 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
   /**
    * Search Filter Modifiers Separator used in the query var
    * i.e. ?column__EndsWith=value
-   * 
+   *
    * @var string
    * @config
    */
@@ -46,7 +46,7 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
 
   /**
    * Query vars to skip (uppercased)
-   * 
+   *
    * @var array
    * @config
    */
@@ -56,9 +56,9 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
   /**
    * Set a maximum numbers of records returned by the API.
    * Only affectects "GET All". Useful to avoid returning millions of records at once.
-   * 
+   *
    * Set to -1 to disable.
-   * 
+   *
    * @var integer
    * @config
    */
@@ -67,7 +67,7 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
 
   /**
    * Stores the currently requested data
-   * 
+   *
    * @var array
    */
   public $requestedData = array(
@@ -79,7 +79,7 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
 
     /**
      * Return current RESTfulAPI DeSerializer instance
-   * 
+   *
      * @return RESTfulAPI_DeSerializer DeSerializer instance
      */
     public function getdeSerializer()
@@ -87,10 +87,10 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
         return $this->deSerializer;
     }
 
-    
+
   /**
    * All requests pass through here and are redirected depending on HTTP verb and params
-   * 
+   *
    * @param  SS_HTTPRequest        $request    HTTP request
    * @return DataObjec|DataList                DataObject/DataList result or stdClass on error
    */
@@ -177,7 +177,7 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
    *     'Modifier' => ModifierType
    *   )
    * )
-   * 
+   *
    * @param  array  $params raw GET vars array
    * @return array          formatted query parameters
    */
@@ -227,13 +227,13 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
    * @param  boolean|integr         $id             The ID of the model to find or false
    * @param  array                  $queryParams    Query parameters and modifiers
    * @param  SS_HTTPRequest         $request        The original HTTP request
-   * @return DataObject|DataList                    Result of the search (note: DataList can be empty) 
+   * @return DataObject|DataList                    Result of the search (note: DataList can be empty)
    */
   public function findModel($model, $id = false, $queryParams, SS_HTTPRequest $request)
   {
       if ($id) {
           $return = DataObject::get_by_id($model, $id);
-      
+
           if (!$return) {
               return new RESTfulAPI_Error(404,
           "Model $id of $model not found."
@@ -309,7 +309,7 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
 
   /**
    * Create object of class $model
-   * 
+   *
    * @param  string         $model
    * @param  SS_HTTPRequest $request
    * @return DataObject
@@ -335,7 +335,7 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
    * @param Integer $id The ID of the model to update
    * @param SS_HTTPRequest the original request
    *
-   * @return DataObject The updated model 
+   * @return DataObject The updated model
    */
   public function updateModel($model, $id, $request)
   {
@@ -456,11 +456,11 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
    * Delete object of Class $model and ID $id
    *
    * @todo  Respond with a 204 status message on success?
-   * 
+   *
    * @param  string          $model     Model class
    * @param  integer 				 $id        Model ID
    * @param  SS_HTTPRequest  $request   Model ID
-   * @return NULL|array                 NULL if successful or array with error detail              
+   * @return NULL|array                 NULL if successful or array with error detail
    */
   public function deleteModel($model, $id, SS_HTTPRequest $request)
   {
@@ -473,7 +473,7 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
             "API access denied."
           );
               }
-        
+
               $object->delete();
           } else {
               return new RESTfulAPI_Error(404,
@@ -486,7 +486,7 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
         "Invalid or missing ID. Received '$id'."
       );
       }
-    
+
       return null;
   }
 }
