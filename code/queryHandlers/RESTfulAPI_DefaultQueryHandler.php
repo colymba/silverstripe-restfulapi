@@ -245,10 +245,11 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
           }
       } else {
           $return = DataList::create($model);
+          $singletonModel = singleton($model);
 
           if (count($queryParams) > 0) {
               foreach ($queryParams as $param) {
-                  if ($param['Column']) {
+                  if ($param['Column'] && $singletonModel->hasDatabaseField($param['Column'])) {
                       // handle sorting by column
             if ($param['Modifier'] === 'sort') {
                 $return = $return->sort(array(
