@@ -18,14 +18,14 @@ class RESTfulAPI extends Controller
 
     /**
    * Lets you select if the API requires authentication for access
-   * false = no authentication required
+   * null|false = no authentication required
    * true  = authentication required for all HTTP methods
    * array = authentication required for selected HTTP methods e.g. array('POST', 'PUT', 'DELETE')
    * 
    * @var boolean|array
    * @config
    */
-  private static $authentication_policy = false;
+  private static $authentication_policy;
 
 
     const ACL_CHECK_CONFIG_ONLY      = 'config';
