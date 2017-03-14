@@ -50,7 +50,7 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
    * @var array
    * @config
    */
-  private static $skipedQueryParameters = array('URL', 'FLUSH', 'FLUSHTOKEN');
+  private static $skipedQueryParameters = array('URL', 'FLUSH', 'FLUSHTOKEN', 'TOKEN');
 
 
   /**
