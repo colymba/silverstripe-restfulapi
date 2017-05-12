@@ -171,7 +171,7 @@ class RESTfulAPI_BasicSerializer implements RESTfulAPI_Serializer
         }
         foreach ($has_one as $columnName => $fieldClassName) {
             // Skip if api_fields is set for the parent, and this column is not in it
-            if (!empty($apiFields) && !in_array($fieldClassName, $apiFields)) {
+            if (!empty($apiFields) && !in_array($columnName, $apiFields)) {
                 continue;
             }
 
