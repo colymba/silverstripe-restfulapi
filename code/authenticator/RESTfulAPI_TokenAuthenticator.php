@@ -168,6 +168,9 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
               $response['token']    = $tokenData['token'];
               $response['expire']   = $tokenData['expire'];
               $response['userID']   = $member->ID;
+              try{
+                    $response = $member->alterLoginSuccessResponse($response);
+			    } catch (Exception $ex) {}
           }
       }
 
