@@ -421,7 +421,10 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
         }
         //all good, log Member in
         if (is_a($tokenOwner, 'Member')) {
-            $tokenOwner->logIn();
+            # $tokenOwner->logIn();
+            # this is a login without the logging
+            $tokenOwner::session_regenerate_id();
+            Session::set("loggedInAs", $tokenOwner->ID);
         }
 
               return true;
