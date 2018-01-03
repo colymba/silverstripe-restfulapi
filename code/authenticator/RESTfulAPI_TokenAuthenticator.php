@@ -230,7 +230,7 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
           $e->send();
       }
 
-      return array( 'email' => true );
+      return array( 'done' => true );
   }
 
 
