@@ -217,7 +217,6 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
   {
       $email = Convert::raw2sql($request->requestVar('email'));
       $member = DataObject::get_one('Member', "\"Email\" = '{$email}'");
-      $sent = true;
 
       if ($member) {
           $token = $member->generateAutologinTokenAndStoreHash();
@@ -228,10 +227,10 @@ class RESTfulAPI_TokenAuthenticator implements RESTfulAPI_Authenticator
         'PasswordResetLink' => Security::getPasswordResetLink($member, $token)
       ));
           $e->setTo($member->Email);
-          $sent = $e->send();
+          $e->send();
       }
 
-      return array( 'email' => $sent );
+      return array( 'done' => true );
   }
 
 
