@@ -427,7 +427,13 @@ class RESTfulAPI_DefaultQueryHandler implements RESTfulAPI_QueryHandler
 
           if ($hasChanges || !$model->ID) {
               try {
-                  $id = $model->write(false, false, false, $hasRelationChanges);
+                  if (is_a($model,'SiteTree')){
+                      $id = $model->writeToStage('Stage');
+                      $model->publish('Stage', 'Live');
+                  }
+                  else {
+                      $id = $model->write(false, false, false, $hasRelationChanges);
+                  }
               } catch (ValidationException $exception) {
                   $error = $exception->getResult();
                   return new RESTfulAPI_Error(400,
