@@ -1,6 +1,7 @@
 ---
 Name: restfulapi
-After: 'framework/*','cms/*'
+After:
+  - rootroutes
 ---
 # ---------------------------------
 # Routing
