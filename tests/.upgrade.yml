@@ -1,0 +1,14 @@
+mappings:
+  RESTfulAPIDefaultPermissionManagerTest: colymba\RESTfulAPI\Tests\PermissionManagers\RESTfulAPIDefaultPermissionManagerTest
+  RESTfulAPIDefaultQueryHandlerTest: colymba\RESTfulAPI\Tests\QueryHandlers\RESTfulAPIDefaultQueryHandlerTest
+  RESTfulAPIEmberDataSerializerTest: colymba\RESTfulAPI\Tests\Serializers\EmberData\RESTfulAPIEmberDataSerializerTest
+  RESTfulAPIEmberDataDeSerializerTest: colymba\RESTfulAPI\Tests\Serializers\EmberData\RESTfulAPIEmberDataDeSerializerTest
+  RESTfulAPIBasicDeSerializerTest: colymba\RESTfulAPI\Tests\Serializers\Basic\RESTfulAPIBasicDeSerializerTest
+  RESTfulAPIBasicSerializerTest: colymba\RESTfulAPI\Tests\Serializers\Basic\RESTfulAPIBasicSerializerTest
+  RESTfulAPITest: colymba\RESTfulAPI\Tests\API\RESTfulAPITest
+  ApiTestBook: colymba\RESTfulAPI\Tests\Fixtures\ApiTestBook
+  ApiTestLibrary: colymba\RESTfulAPI\Tests\Fixtures\ApiTestLibrary
+  ApiTestProduct: colymba\RESTfulAPI\Tests\Fixtures\ApiTestProduct
+  ApiTestAuthor: colymba\RESTfulAPI\Tests\Fixtures\ApiTestAuthor
+  RESTfulAPITester: colymba\RESTfulAPI\Tests\RESTfulAPITester
+  RESTfulAPITokenAuthenticatorTest: colymba\RESTfulAPI\Tests\Authenticators\RESTfulAPITokenAuthenticatorTest

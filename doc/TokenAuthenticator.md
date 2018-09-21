@@ -1,12 +1,12 @@
-# RESTfulAPI_TokenAuthenticator
+# RESTfulAPITokenAuthenticator
 
 This component takes care of authenticating all API requests against a token stored in a HTTP header or a query var as fallback.
 
 The authentication token is returned by the `login` function. Also available, a `logout` function and `lostpassword` function that will email a password reset link to the user.
 
-The token can also be retrieved with an `RESTfulAPI_TokenAuthenticator` instance calling the method `getToken()` and it can be reset via `resetToken()`.
+The token can also be retrieved with an `RESTfulAPITokenAuthenticator` instance calling the method `getToken()` and it can be reset via `resetToken()`.
 
-The `RESTfulAPI_TokenAuthExtension` `DataExtension` must be applied to a `DataObject` and the `tokenOwnerClass` config updated with the correct classname.
+The `RESTfulAPITokenAuthExtension` `DataExtension` must be applied to a `DataObject` and the `tokenOwnerClass` config updated with the correct classname.
 
 Config | Type | Info | Default
 --- | :---: | --- | ---
@@ -17,18 +17,18 @@ Config | Type | Info | Default
 `autoRefreshLifetime` | `boolean` | Whether or not token lifetime should be updated with every request | false
 
 
-## Token Authentication Data Extension `RESTfulAPI_TokenAuthExtension`
-This extension **MUST** be applied to a `DataObject` to use `RESTfulAPI_TokenAuthenticator` and update the `tokenOwnerClass` config accordingly. e.g.
+## Token Authentication Data Extension `RESTfulAPITokenAuthExtension`
+This extension **MUST** be applied to a `DataObject` to use `RESTfulAPITokenAuthenticator` and update the `tokenOwnerClass` config accordingly. e.g.
 ```yaml
 Member:
   extensions:
-    - RESTfulAPI_TokenAuthExtension
+    - RESTfulAPITokenAuthExtension
 ```
 ```yaml
 ApiUser:
   extensions:
-    - RESTfulAPI_TokenAuthExtension
-RESTfulAPI_TokenAuthenticator:
+    - RESTfulAPITokenAuthExtension
+RESTfulAPITokenAuthenticator:
   tokenOwnerClass: 'ApiUser'
 ```
 

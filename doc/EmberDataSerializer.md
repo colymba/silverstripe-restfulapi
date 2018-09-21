@@ -1,4 +1,4 @@
-# RESTfulAPI_EmberDataSerializer & RESTfulAPI_EmberDataDeSerializer
+# RESTfulAPIEmberDataSerializer & RESTfulAPIEmberDataDeSerializer
 
 **This component was specificly create to work with Ember.js EmberData out of the box.**
 
@@ -20,7 +20,7 @@ This serializer will use the `RESTfulAPI` `embedded_records` config.
 
 This as the same advantage as embedded records and is configured in the same way and uses some of its logic. The different is that the requested model JSON object will still have IDs in its relations value, and the relation records will be added to the JSON root under their own key.
 
-[See source comment](https://github.com/colymba/silverstripe-restfulapi/blob/master/code/serializers/EmberData/RESTfulAPI_EmberDataSerializer.php#L61) for more details.
+[See source comment](https://github.com/colymba/silverstripe-restfulapi/blob/master/code/serializers/EmberData/RESTfulAPIEmberDataSerializer.php#L61) for more details.
 
 
 ## Hooks

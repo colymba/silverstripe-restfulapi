@@ -28,7 +28,7 @@ This module implements a RESTful API for read/write access to your SilverStripe 
 * `api/Book?title__StartsWith=Henry&__rand=123456&__limit=1`
 * `api/Book?title__StartsWith=Henry&__rand=123456&__limit[]=10&__limit[]=5`
 
-The allowed `/auth/$Action` must be defined on the used `RESTfulAPI_Authenticator` class via the `$allowed_actions` config.
+The allowed `/auth/$Action` must be defined on the used `RESTfulAPIAuthenticator` class via the `$allowed_actions` config.
 
 
 ## Requirements
@@ -54,33 +54,33 @@ If CORS are enabled (true by default), the right headers are taken care of too.
 
 ### Components
 The `RESTfulAPI` uses 4 types of components, each implementing a different interface:
-* Authetication (`RESTfulAPI_Authenticator`)
-* Permission Management (`RESTfulAPI_PermissionManager`)
-* Query Handler (`RESTfulAPI_QueryHandler`)
-* Serializer (`RESTfulAPI_Serializer`)
+* Authetication (`RESTfulAPIAuthenticator`)
+* Permission Management (`RESTfulAPIPermissionManager`)
+* Query Handler (`RESTfulAPIQueryHandler`)
+* Serializer (`RESTfulAPISerializer`)
 
 
 ### Default components
 This API comes with defaults for each of those components:
-* `RESTfulAPI_TokenAuthenticator` handles authentication via a token in an HTTP header or variable
-* `RESTfulAPI_DefaultPermissionManager` handles DataObject permission checks depending on the HTTP request
-* `RESTfulAPI_DefaultQueryHandler` handles all find, edit, create or delete for models
-* `RESTfulAPI_BasicSerializer` / `RESTfulAPI_BasicDeSerializer` serialize query results into JSON and deserialize client payloads
-* `RESTfulAPI_EmberDataSerializer` / `RESTfulAPI_EmberDataDeSerializer` same as the `Basic` version but with specific fomatting fo Ember Data.
+* `RESTfulAPITokenAuthenticator` handles authentication via a token in an HTTP header or variable
+* `RESTfulAPIDefaultPermissionManager` handles DataObject permission checks depending on the HTTP request
+* `RESTfulAPIDefaultQueryHandler` handles all find, edit, create or delete for models
+* `RESTfulAPIBasicSerializer` / `RESTfulAPIBasicDeSerializer` serialize query results into JSON and deserialize client payloads
+* `RESTfulAPIEmberDataSerializer` / `RESTfulAPIEmberDataDeSerializer` same as the `Basic` version but with specific fomatting fo Ember Data.
 
-You can create you own classes by implementing the right interface or extending the existing components. When creating you own components, any error should be return as a `RESTfulAPI_Error` object to the `RESTfulAPI`.
+You can create you own classes by implementing the right interface or extending the existing components. When creating you own components, any error should be return as a `RESTfulAPIError` object to the `RESTfulAPI`.
 
 
 ### Token Authentication Extension
-When using `RESTfulAPI_TokenAuthenticator` you must add the `RESTfulAPI_TokenAuthExtension` `DataExtension` to a `DataObject` and setup `RESTfulAPI_TokenAuthenticator` with the right config.
+When using `RESTfulAPITokenAuthenticator` you must add the `RESTfulAPITokenAuthExtension` `DataExtension` to a `DataObject` and setup `RESTfulAPITokenAuthenticator` with the right config.
 
 **By default, API authentication is disabled.**
 
 
 ### Permissions management
-DataObject API access control can be managed in 2 ways. Through the `api_access` [YML config](doc/RESTfulAPI.md#authentication-and-api-access-control) allowing for simple configurations, or via [DataObject permissions](http://doc.silverstripe.org/framework/en/reference/dataobject#permissions) through a `RESTfulAPI_PermissionManager` component.
+DataObject API access control can be managed in 2 ways. Through the `api_access` [YML config](doc/RESTfulAPI.md#authentication-and-api-access-control) allowing for simple configurations, or via [DataObject permissions](http://doc.silverstripe.org/framework/en/reference/dataobject#permissions) through a `RESTfulAPIPermissionManager` component.
 
-A sample `Group` extension `RESTfulAPI_GroupExtension` is also available with a basic set of dedicated API permissions. This can be enabled via [config](code/_config/config.yml#L11) or you can create your own.
+A sample `Group` extension `RESTfulAPIGroupExtension` is also available with a basic set of dedicated API permissions. This can be enabled via [config](code/_config/config.yml#L11) or you can create your own.
 
 **By default, the API only performs access control against the `api_access` YML config.**
 
@@ -98,7 +98,9 @@ Here is what a site's `config.yml` file could look like:
 ```yaml
 ---
 Name: mysite
-After: 'framework/*','cms/*'
+After: 
+    - 'framework/*'
+    - 'cms/*'
 ---
 # API access
 Artwork:
@@ -124,10 +126,10 @@ RESTfulAPI:
   authentication_policy: true
   access_control_policy: 'ACL_CHECK_CONFIG_AND_MODEL'
   dependencies:
-    authenticator: '%$RESTfulAPI_TokenAuthenticator'
-    authority: '%$RESTfulAPI_DefaultPermissionManager'
-    queryHandler: '%$RESTfulAPI_DefaultQueryHandler'
-    serializer: '%$RESTfulAPI_EmberDataSerializer'
+    authenticator: '%$RESTfulAPITokenAuthenticator'
+    authority: '%$RESTfulAPIDefaultPermissionManager'
+    queryHandler: '%$RESTfulAPIDefaultQueryHandler'
+    serializer: '%$RESTfulAPIEmberDataSerializer'
   cors:
     Enabled: true
     Allow-Origin: 'http://mydomain.com'
@@ -135,10 +137,10 @@ RESTfulAPI:
     Allow-Methods: 'OPTIONS, GET'
     Max-Age: 86400
 # Components config
-RESTfulAPI_DefaultQueryHandler:
+RESTfulAPIDefaultQueryHandler:
   dependencies:
-    deSerializer: '%$RESTfulAPI_EmberDataDeSerializer'
-RESTfulAPI_EmberDataSerializer:
+    deSerializer: '%$RESTfulAPIEmberDataDeSerializer'
+RESTfulAPIEmberDataSerializer:
   sideloaded_records:
     Artwork:
       - 'Visuals'

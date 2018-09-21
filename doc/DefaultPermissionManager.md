@@ -1,4 +1,4 @@
-# RESTfulAPI_DefaultPermissionManager
+# RESTfulAPIDefaultPermissionManager
 
 This component will check access permission against a DataObject for a given Member. The request HTTP method, will be match against a DataObject's `can()` method. 
 

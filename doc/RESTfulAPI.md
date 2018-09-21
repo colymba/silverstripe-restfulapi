@@ -13,7 +13,7 @@ Config | Type | Info | Default
 --- | :---: | --- | ---
 `authentication_policy` | `boolean`/`array` | If true, the API will use authentication, if false|null no authentication required. Or an array of HTTP methods that require authentication | false
 `access_control_policy` | `boolean`/`string` | Lets you select which access control checks the API will perform or none at all. | 'ACL_CHECK_CONFIG_ONLY'
-`dependencies` | `array` | key => value pairs sepcifying the components classes used for the `'authenticator'`, `'queryHandler'` and `'serializer'`  | 'authenticator' => '%$RESTfulAPI_TokenAuthenticator', 'queryHandler' => '%$RESTfulAPI_DefaultQueryHandler', 'serializer' => '%$RESTfulAPI_BasicSerializer'
+`dependencies` | `array` | key => value pairs sepcifying the components classes used for the `'authenticator'`, `'queryHandler'` and `'serializer'`  | 'authenticator' => '%$RESTfulAPITokenAuthenticator', 'queryHandler' => '%$RESTfulAPIDefaultQueryHandler', 'serializer' => '%$RESTfulAPIBasicSerializer'
 `embedded_records` | `array` | key => value pairs sepcifying which relation names to embed in the response and for which model this applies (i.e. 'RequestedClass' => array('RelationNameToEmbed')) | n/a
 - | - | - | -
 `cors` | `array` | Cross-Origin Resource Sharing (CORS) API settings | 
@@ -43,11 +43,11 @@ See the [api_access_control()](../code/RESTfulAPI.php#L519) function for more de
 
 
 ### Access control considerations
-The API (with default components) will call the `api_access_control` method (making any configured checks) for each `find`, `create`, `update`, `delete` operations as well as during serialization of the data. Using a `RESTfulAPI_PermissionManager` may impact performace and you should concider carefully your permission sets to avoid unexpected results.
+The API (with default components) will call the `api_access_control` method (making any configured checks) for each `find`, `create`, `update`, `delete` operations as well as during serialization of the data. Using a `RESTfulAPIPermissionManager` may impact performace and you should concider carefully your permission sets to avoid unexpected results.
 
-Note that when coonfiguring `api_access_control` to do checks on the DataObject level via a `RESTfulAPI_PermissionManager`, the Member model passed to the Permission Manager is the one returned by the `RESTfulAPI_Authenticator` `getOwner()` method. If the returned owner isn't an instance of Member, `null` will be passed instead.
+Note that when coonfiguring `api_access_control` to do checks on the DataObject level via a `RESTfulAPIPermissionManager`, the Member model passed to the Permission Manager is the one returned by the `RESTfulAPIAuthenticator` `getOwner()` method. If the returned owner isn't an instance of Member, `null` will be passed instead.
 
-A sample `Group` extension `RESTfulAPI_GroupExtension` is also available with a basic set of dedicated API permissions and User Groups. This can be enabled via [config](../code/_config/config.yml#L11) or you can create your own.
+A sample `Group` extension `RESTfulAPIGroupExtension` is also available with a basic set of dedicated API permissions and User Groups. This can be enabled via [config](../code/_config/config.yml#L11) or you can create your own.
 
 
 ## Embedded records

@@ -1,4 +1,4 @@
-# RESTfulAPI_BasicSerializer & RESTfulAPI_BasicDeSerializer
+# RESTfulAPIBasicSerializer & RESTfulAPIBasicDeSerializer
 
 This component will serialize the data returned by the QueryHandler into JSON. No special formatting is performed on the JSON output (column names are returned as is), DataObject are returns as objects {} and DataLists as array or objects [{},{}].
 
@@ -55,7 +55,7 @@ class BookAuthorApiExtension extends DataExtension
      */
     public function onBeforeSerialize()
     {
-        Config::inst()->update('Author', 'api_fields', array('Name'));
+        Config::inst()->update(Author::class, 'api_fields', array('Name'));
     }
 }
 ```
