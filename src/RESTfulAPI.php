@@ -170,7 +170,7 @@ class RESTfulAPI extends Controller
     private static $url_handlers = array(
         'auth/$Action' => 'auth',
         'acl/$Action' => 'acl',
-        '$ClassName/$ID' => 'index',
+        '$ModelReference/$ID' => 'index',
     );
 
     /**

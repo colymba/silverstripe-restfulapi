@@ -37,7 +37,7 @@ class RESTfulAPIDefaultQueryHandlerTest extends RESTfulAPITester
         ApiTestProduct::class,
     );
 
-    protected $url_pattern = 'api/$ClassName/$ID';
+    protected $url_pattern = 'api/$ModelReference/$ID';
 
     protected function getHTTPRequest($method = 'GET', $class = ApiTestBook::class, $id = '', $params = array())
     {

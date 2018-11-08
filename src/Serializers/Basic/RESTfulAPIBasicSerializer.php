@@ -6,6 +6,8 @@ use colymba\RESTfulAPI\RESTfulAPI;
 use colymba\RESTfulAPI\RESTfulAPIError;
 use colymba\RESTfulAPI\Serializers\RESTfulAPISerializer;
 use SilverStripe\ORM\RelationList;
+use SilverStripe\ORM\DataObject;
+use SilverStripe\ORM\DataList;
 use SilverStripe\Core\Config\Config;
 
 /**

@@ -9,6 +9,7 @@ use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\ORM\DataObject;
+use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\ValidationException;
 
 /**
@@ -73,6 +74,14 @@ class RESTfulAPIDefaultQueryHandler implements RESTfulAPIQueryHandler
     private static $max_records_limit = 100;
 
     /**
+     * Map of model references from URL to class names for exposed models
+     *
+     * @var array
+     * @config
+     */
+    private static $models = [];
+
+    /**
      * Stores the currently requested data
      *
      * @var array
@@ -102,7 +111,14 @@ class RESTfulAPIDefaultQueryHandler implements RESTfulAPIQueryHandler
     public function handleQuery(HTTPRequest $request)
     {
         //get requested model(s) details
-        $model = $request->param('ClassName');
+        $model = $request->param('ModelReference');
+
+        $modelMap = Config::inst()->get(self::class, 'models');
+
+        if (array_key_exists($model, $modelMap)) {
+            $model = $modelMap[$model];
+        }
+
         $id = $request->param('ID');
         $response = false;
         $queryParams = $this->parseQueryParameters($request->getVars());
