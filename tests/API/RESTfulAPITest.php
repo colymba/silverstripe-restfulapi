@@ -206,7 +206,7 @@ class RESTfulAPITest extends RESTfulAPITester
             'serializer' => '%$RESTfulAPIBasicSerializer',
         ));
         Config::inst()->update(RESTfulAPI::class, 'dependencies', array(
-            'deSerializer' => '%$RESTfulAPIBasicDeSerializer',
+            'deSerializer' => '%$colymba\RESTfulAPI\Serializers\Basic\RESTfulAPIBasicDeSerializer',
         ));
 
         $response = Director::test('api/ApiTestAuthor/1', null, null, 'GET');

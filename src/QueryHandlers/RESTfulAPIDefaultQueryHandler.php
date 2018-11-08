@@ -41,7 +41,7 @@ class RESTfulAPIDefaultQueryHandler implements RESTfulAPIQueryHandler
      * @config
      */
     private static $dependencies = array(
-        'deSerializer' => '%$RESTfulAPIBasicDeSerializer',
+        'deSerializer' => '%$colymba\RESTfulAPI\Serializers\Basic\RESTfulAPIBasicDeSerializer',
     );
 
     /**

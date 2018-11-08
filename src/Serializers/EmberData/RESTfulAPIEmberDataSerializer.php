@@ -115,7 +115,7 @@ class RESTfulAPIEmberDataSerializer extends RESTfulAPIBasicSerializer
         }
 
         if ($formattedData !== null) {
-            $root = new stdClass();
+            $root = new \stdClass();
             $root->{$rootClassName} = $formattedData;
 
             // if it's not an empty response >> check if we should be sideloading some data

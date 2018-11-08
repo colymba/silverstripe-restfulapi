@@ -90,10 +90,10 @@ class RESTfulAPI extends Controller
      * @config
      */
     private static $dependencies = array(
-        'authenticator' => '%$RESTfulAPITokenAuthenticator',
-        'authority' => '%$RESTfulAPIDefaultPermissionManager',
-        'queryHandler' => '%$RESTfulAPIDefaultQueryHandler',
-        'serializer' => '%$RESTfulAPIBasicSerializer',
+        'authenticator' => '%$colymba\RESTfulAPI\Authenticators\RESTfulAPITokenAuthenticator',
+        'authority' => '%$colymba\RESTfulAPI\PermissionManagers\RESTfulAPIDefaultPermissionManager',
+        'queryHandler' => '%$colymba\RESTfulAPI\QueryHandlers\RESTfulAPIDefaultQueryHandler',
+        'serializer' => '%$colymba\RESTfulAPI\Serializers\Basic\RESTfulAPIBasicSerializer',
     );
 
     /**
@@ -399,11 +399,11 @@ class RESTfulAPI extends Controller
 
     /**
      * Apply the proper CORS response heardes
-     * to an SS_HTTPResponse
+     * to an HTTPResponse
      *
-     * @param SS_HTTPResponse $answer The updated response if CORS are neabled
+     * @param HTTPResponse $answer The updated response if CORS are neabled
      */
-    private function setAnswerCORS(SS_HTTPResponse $answer)
+    private function setAnswerCORS(HTTPResponse $answer)
     {
         $cors = Config::inst()->get(self::class, 'cors');
 

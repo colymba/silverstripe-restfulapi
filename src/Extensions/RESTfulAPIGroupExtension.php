@@ -6,6 +6,7 @@ use SilverStripe\ORM\DataExtension;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Security\Permission;
 use SilverStripe\Security\PermissionProvider;
+use SilverStripe\Security\Group;
 
 /**
  * Group extension used to create the defaults API Groups
@@ -61,7 +62,7 @@ class RESTfulAPIGroupExtension extends DataExtension implements PermissionProvid
     public function requireDefaultRecords()
     {
         // Readers
-        $readersGroup = DataObject::get('Group')->filter(array(
+        $readersGroup = DataObject::get(Group::class)->filter(array(
             'Code' => 'restfulapi-readers',
         ));
 
@@ -75,7 +76,7 @@ class RESTfulAPIGroupExtension extends DataExtension implements PermissionProvid
         }
 
         // Editors
-        $editorsGroup = DataObject::get('Group')->filter(array(
+        $editorsGroup = DataObject::get(Group::class)->filter(array(
             'Code' => 'restfulapi-editors',
         ));
 
@@ -91,7 +92,7 @@ class RESTfulAPIGroupExtension extends DataExtension implements PermissionProvid
         }
 
         // Admins
-        $adminsGroup = DataObject::get('Group')->filter(array(
+        $adminsGroup = DataObject::get(Group::class)->filter(array(
             'Code' => 'restfulapi-administrators',
         ));
 

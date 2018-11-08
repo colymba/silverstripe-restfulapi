@@ -3,6 +3,7 @@
 namespace colymba\RESTfulAPI\Authenticators;
 
 use colymba\RESTfulAPI\Authenticators\RESTfulAPIAuthenticator;
+use colymba\RESTfulAPI\Extensions\RESTfulAPITokenAuthExtension;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Control\Session;
 use SilverStripe\Core\Config\Config;
