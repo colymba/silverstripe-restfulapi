@@ -219,7 +219,7 @@ class RESTfulAPITest extends RESTfulAPITester
             'deSerializer' => '%$colymba\RESTfulAPI\Serializers\Basic\RESTfulAPIBasicDeSerializer',
         ));
 
-        $response = Director::test('api/ApiTestAuthor/1', null, null, 'GET');
+        $response = Director::test('api/apitestauthor/1', null, null, 'GET');
 
         $this->assertEquals(
             200,
@@ -245,7 +245,7 @@ class RESTfulAPITest extends RESTfulAPITester
             'deSerializer' => '%$colymba\RESTfulAPI\Serializers\EmberData\RESTfulAPIEmberDataDeSerializer',
         ));
 
-        $response = Director::test('api/ApiTestAuthor/1', null, null, 'GET');
+        $response = Director::test('api/apitestauthor/1', null, null, 'GET');
 
         $this->assertEquals(
             200,

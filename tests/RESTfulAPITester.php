@@ -97,6 +97,11 @@ class RESTfulAPITester extends SapphireTest
         Config::inst()->update(RESTfulAPIDefaultQueryHandler::class, 'dependencies', array(
             'deSerializer' => '%$colymba\RESTfulAPI\Serializers\Basic\RESTfulAPIBasicDeSerializer'
         ));
+
+        Config::inst()->update(RESTfulAPIDefaultQueryHandler::class, 'models', array(
+                'apitestauthor' => 'colymba\RESTfulAPI\Tests\Fixtures\ApiTestAuthor',
+            )
+        );
     }
 
     public function getOPTIONSHeaders($method = 'GET', $site = null)
