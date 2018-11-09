@@ -24,6 +24,8 @@ use colymba\RESTfulAPI\Tests\Fixtures\ApiTestLibrary;
 
 class ApiTestBook extends DataObject
 {
+    private static $table_name = 'ApiTestBook';
+
     private static $db = array(
         'Title' => 'Varchar(255)',
         'Pages' => 'Int',

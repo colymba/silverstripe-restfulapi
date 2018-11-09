@@ -19,6 +19,8 @@ use SilverStripe\ORM\DataObject;
  */
 class ApiTestProduct extends DataObject
 {
+    private static $table_name = 'ApiTestProduct';
+
     public static $rawJSON;
 
     private static $db = array(

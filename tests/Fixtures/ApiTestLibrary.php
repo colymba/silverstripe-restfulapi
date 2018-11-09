@@ -22,6 +22,8 @@ use colymba\RESTfulAPI\Tests\Fixtures\ApiTestBook;
  */
 class ApiTestLibrary extends DataObject
 {
+    private static $table_name = 'ApiTestLibrary';
+
     private static $db = array(
         'Name' => 'Varchar(255)',
     );
