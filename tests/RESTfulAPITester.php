@@ -99,7 +99,8 @@ class RESTfulAPITester extends SapphireTest
         ));
 
         Config::inst()->update(RESTfulAPIDefaultQueryHandler::class, 'models', array(
-                'apitestauthor' => 'colymba\RESTfulAPI\Tests\Fixtures\ApiTestAuthor',
+                'apitestauthor'  => 'colymba\RESTfulAPI\Tests\Fixtures\ApiTestAuthor',
+                'apitestlibrary' => 'colymba\RESTfulAPI\Tests\Fixtures\ApiTestLibrary',
             )
         );
     }
