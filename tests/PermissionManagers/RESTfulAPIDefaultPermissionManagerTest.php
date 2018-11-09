@@ -29,9 +29,9 @@ class RESTfulAPIDefaultPermissionManagerTest extends RESTfulAPITester
         ApiTestLibrary::class,
     );
 
-    public function setUpOnce()
+    public static function setUpBeforeClass()
     {
-        parent::setUpOnce();
+        parent::setUpBeforeClass();
 
         Member::create(array(
             'Email' => 'admin@api.com',

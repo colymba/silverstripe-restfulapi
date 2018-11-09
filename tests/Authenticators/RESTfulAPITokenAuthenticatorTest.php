@@ -37,9 +37,9 @@ class RESTfulAPITokenAuthenticatorTest extends RESTfulAPITester
         return $auth;
     }
 
-    public function setUpOnce()
+    public static function setUpBeforeClass()
     {
-        parent::setUpOnce();
+        parent::setUpBeforeClass();
 
         Member::create(array(
             'Email' => 'test@test.com',

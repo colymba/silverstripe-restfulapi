@@ -27,7 +27,7 @@ use SilverStripe\Dev\SapphireTest;
  */
 class RESTfulAPITester extends SapphireTest
 {
-    public function generateDBEntries()
+    public static function generateDBEntries()
     {
         $peter = ApiTestAuthor::create(array(
             'Name' => 'Peter',
@@ -149,15 +149,13 @@ class RESTfulAPITester extends SapphireTest
         );
     }
 
-    public function setUpOnce()
+    public static function setUpBeforeClass()
     {
-        parent::setUpOnce();
+        parent::setUpBeforeClass();
 
-        if ($this->extra_dataobjects) {
-            $this->generateDBEntries();
+        if (self::getExtraDataobjects()) {
+            self::generateDBEntries();
         }
-
-        Config::inst()->update(Director::class, 'alternate_base_url', 'http://mysite.com/');
     }
 
     public function setUp()
@@ -165,5 +163,7 @@ class RESTfulAPITester extends SapphireTest
         parent::setUp();
 
         $this->setDefaultApiConfig();
+
+        Config::inst()->update(Director::class, 'alternate_base_url', 'http://mysite.com/');
     }
 }

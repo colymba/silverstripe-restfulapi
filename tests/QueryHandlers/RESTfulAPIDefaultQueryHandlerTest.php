@@ -64,7 +64,7 @@ class RESTfulAPIDefaultQueryHandlerTest extends RESTfulAPITester
         return $qh;
     }
 
-    public function generateDBEntries()
+    public static function generateDBEntries()
     {
         parent::generateDBEntries();
 
