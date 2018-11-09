@@ -2,9 +2,12 @@
 
 namespace colymba\RESTfulAPI\Tests\Authenticators;
 
+use colymba\RESTfulAPI\RESTfulAPIError;
 use colymba\RESTfulAPI\Authenticators\RESTfulAPITokenAuthenticator;
+use colymba\RESTfulAPI\Extensions\RESTfulAPITokenAuthExtension;
 use colymba\RESTfulAPI\Tests\RESTfulAPITester;
 use SilverStripe\Control\HTTPRequest;
+use SilverStripe\Control\Session;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Security\Member;
 
@@ -24,7 +27,7 @@ use SilverStripe\Security\Member;
 class RESTfulAPITokenAuthenticatorTest extends RESTfulAPITester
 {
     protected static $required_extensions = array(
-        'Member' => array('RESTfulAPITokenAuthExtension'),
+        Member::class => array(RESTfulAPITokenAuthExtension::class),
     );
 
     protected function getAuthenticator()
@@ -70,6 +73,7 @@ class RESTfulAPITokenAuthenticatorTest extends RESTfulAPITester
                 'pwd' => 'test',
             )
         );
+        $request->setSession(new Session([]));
 
         $result = $auth->login($request);
 
@@ -98,6 +102,7 @@ class RESTfulAPITokenAuthenticatorTest extends RESTfulAPITester
                 'email' => 'test@test.com',
             )
         );
+        $request->setSession(new Session([]));
 
         $result = $auth->logout($request);
 
@@ -167,6 +172,7 @@ class RESTfulAPITokenAuthenticatorTest extends RESTfulAPITester
             'api/ApiTestBook/1'
         );
         $request->addHeader('X-Silverstripe-Apitoken', $token);
+        $request->setSession(new Session([]));
 
         $result = $auth->getOwner($request);
 
@@ -191,6 +197,7 @@ class RESTfulAPITokenAuthenticatorTest extends RESTfulAPITester
             'GET',
             'api/ApiTestBook/1'
         );
+        $request->setSession(new Session([]));
 
         $auth->resetToken($member->ID);
         $token = $auth->getToken($member->ID);
@@ -207,7 +214,7 @@ class RESTfulAPITokenAuthenticatorTest extends RESTfulAPITester
         $result = $auth->authenticate($request);
 
         $this->assertContainsOnlyInstancesOf(
-            'RESTfulAPIError',
+            RESTfulAPIError::class,
             array($result),
             "TokenAuth authentication failure should return a RESTfulAPIError"
         );

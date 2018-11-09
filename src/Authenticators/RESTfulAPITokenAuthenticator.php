@@ -2,10 +2,12 @@
 
 namespace colymba\RESTfulAPI\Authenticators;
 
+use colymba\RESTfulAPI\RESTfulAPIError;
 use colymba\RESTfulAPI\Authenticators\RESTfulAPIAuthenticator;
 use colymba\RESTfulAPI\Extensions\RESTfulAPITokenAuthExtension;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Control\Session;
+use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Convert;
 use SilverStripe\ORM\DataObject;
@@ -61,7 +63,7 @@ class RESTfulAPITokenAuthenticator implements RESTfulAPIAuthenticator
      * @var string
      * @config
      */
-    private static $tokenOwnerClass = 'Member';
+    private static $tokenOwnerClass = Member::class;
 
     /**
      * Whether or not the token should auto-update on activity.
@@ -141,16 +143,19 @@ class RESTfulAPITokenAuthenticator implements RESTfulAPIAuthenticator
     {
         $response = array();
 
-        if ($this->tokenConfig['owner'] === 'Member') {
+        if ($this->tokenConfig['owner'] === Member::class) {
             $email = $request->requestVar('email');
             $pwd = $request->requestVar('pwd');
             $member = false;
 
             if ($email && $pwd) {
-                $member = MemberAuthenticator::authenticate(array(
-                    'Email' => $email,
-                    'Password' => $pwd,
-                ));
+                $member = Injector::inst()->get(MemberAuthenticator::class)->authenticate(
+                    array(
+                        'Email' => $email,
+                        'Password' => $pwd,
+                    ),
+                    $request
+                );
                 if ($member) {
                     $tokenData = $this->generateToken();
 
@@ -197,7 +202,7 @@ class RESTfulAPITokenAuthenticator implements RESTfulAPIAuthenticator
             //logout
             $member->logout();
 
-            if ($this->tokenConfig['owner'] === 'Member') {
+            if ($this->tokenConfig['owner'] === Member::class) {
                 //generate expired token
                 $tokenData = $this->generateToken(true);
 
@@ -371,7 +376,7 @@ class RESTfulAPITokenAuthenticator implements RESTfulAPIAuthenticator
 
         if ($token) {
             //check token validity
-            return $this->validateAPIToken($token);
+            return $this->validateAPIToken($token, $request);
         } else {
             //no token, bad news
             return new RESTfulAPIError(403,
@@ -388,9 +393,10 @@ class RESTfulAPITokenAuthenticator implements RESTfulAPIAuthenticator
      * Validate the API token
      *
      * @param  string                 $token    Authentication token
+     * @param  HTTPRequest            $request  HTTP API request
      * @return true|RESTfulAPIError            True if token is valid OR RESTfulAPIError with details
      */
-    private function validateAPIToken($token)
+    private function validateAPIToken($token, $request)
     {
         //get owner with that token
         $SQL_token = Convert::raw2sql($token);
@@ -418,8 +424,8 @@ class RESTfulAPITokenAuthenticator implements RESTfulAPIAuthenticator
                 if (is_a($tokenOwner, Member::class)) {
                     # $tokenOwner->logIn();
                     # this is a login without the logging
-                    $tokenOwner::session_regenerate_id();
-                    Session::set("loggedInAs", $tokenOwner->ID);
+                    Config::inst()->set(Member::class, 'session_regenerate_id', true);
+                    $request->getSession()->set("loggedInAs", $tokenOwner->ID);
                 }
 
                 return true;
