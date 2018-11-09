@@ -32,6 +32,12 @@ class RESTfulAPITest extends RESTfulAPITester
         ApiTestLibrary::class,
     );
 
+    public function setUp()
+    {
+        parent::setUp();
+        parent::generateDBEntries();
+    }
+
     /* **********************************************************
      * TESTS
      * */
