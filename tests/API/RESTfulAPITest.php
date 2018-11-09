@@ -101,6 +101,8 @@ class RESTfulAPITest extends RESTfulAPITester
     /**
      * Check that CORS headers aren't set
      * when disabled via config
+     *
+     * @group CORSPreflight
      */
     public function testCORSDisabled()
     {
@@ -120,6 +122,8 @@ class RESTfulAPITest extends RESTfulAPITester
 
     /**
      * Checks default allow all CORS settings
+     *
+     * @group CORSPreflight
      */
     public function testCORSAllowAll()
     {
