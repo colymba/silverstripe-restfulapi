@@ -183,8 +183,8 @@ class RESTfulAPITest extends RESTfulAPITester
 
         $this->assertEquals(
             'GET',
-            $responseHeaders['Access-Control-Allow-Methods'],
-            'Only HTTP GET method should be allowed in Access-Control-Allow-Methods HEADER'
+            $responseHeaders['access-control-allow-methods'],
+            'Only HTTP GET method should be allowed in access-control-allow-methods HEADER'
         );
 
         // Seding POST request, only GET should be allowed
@@ -193,8 +193,8 @@ class RESTfulAPITest extends RESTfulAPITester
 
         $this->assertEquals(
             'GET',
-            $responseHeaders['Access-Control-Allow-Methods'],
-            'Only HTTP GET method should be allowed in Access-Control-Allow-Methods HEADER'
+            $responseHeaders['access-control-allow-methods'],
+            'Only HTTP GET method should be allowed in access-control-allow-methods HEADER'
         );
     }
 
