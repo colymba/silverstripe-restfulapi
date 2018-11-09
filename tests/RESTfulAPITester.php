@@ -80,10 +80,10 @@ class RESTfulAPITester extends SapphireTest
         Config::inst()->update(RESTfulAPI::class, 'access_control_policy', 'ACL_CHECK_CONFIG_ONLY');
 
         Config::inst()->update(RESTfulAPI::class, 'dependencies', array(
-            'authenticator' => '%$RESTfulAPITokenAuthenticator',
-            'authority' => '%$RESTfulAPIDefaultPermissionManager',
-            'queryHandler' => '%$RESTfulAPIDefaultQueryHandler',
-            'serializer' => '%$RESTfulAPIBasicSerializer',
+            'authenticator' => '%$colymba\RESTfulAPI\Authenticators\RESTfulAPITokenAuthenticator',
+            'authority' => '%$colymba\RESTfulAPI\PermissionManagers\RESTfulAPIDefaultPermissionManager',
+            'queryHandler' => '%$colymba\RESTfulAPI\QueryHandlers\RESTfulAPIDefaultQueryHandler',
+            'serializer' => '%$colymba\RESTfulAPI\Serializers\Basic\RESTfulAPIBasicSerializer',
         ));
 
         Config::inst()->update(RESTfulAPI::class, 'cors', array(
@@ -95,7 +95,7 @@ class RESTfulAPITester extends SapphireTest
         ));
 
         Config::inst()->update(RESTfulAPIDefaultQueryHandler::class, 'dependencies', array(
-            'deSerializer' => '%$RESTfulAPIBasicDeSerializer',
+            'deSerializer' => '%$colymba\RESTfulAPI\Serializers\Basic\RESTfulAPIBasicDeSerializer'
         ));
     }
 
