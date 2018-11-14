@@ -14,7 +14,7 @@
         "url": "git@github.com:colymba/silverstripe-restfulapi.git"
     }],
     "require": {
-        "silverstripe/framework": "~4.2"
+        "silverstripe/framework": "~4.1"
     },
     "require-dev": {
         "phpunit/phpunit": "~5.7@stable"
