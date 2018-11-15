@@ -111,7 +111,7 @@ class RESTfulAPIBasicSerializerTest extends RESTfulAPITester
         Config::inst()->update(RESTfulAPI::class, 'access_control_policy', 'ACL_CHECK_CONFIG_ONLY');
         Config::inst()->update(ApiTestLibrary::class, 'api_access', true);
         Config::inst()->update(RESTfulAPI::class, 'embedded_records', array(
-            'ApiTestLibrary' => array('Books'),
+            'Colymba\RESTfulAPI\Tests\Fixtures\ApiTestLibrary' => array('Books'),
         ));
 
         $serializer = $this->getSerializer();

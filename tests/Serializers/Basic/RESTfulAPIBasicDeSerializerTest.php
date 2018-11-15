@@ -73,7 +73,7 @@ class RESTfulAPIBasicDeSerializerTest extends RESTfulAPITester
         $deserializer = $this->getDeSerializer();
 
         $column = 'Name';
-        $class = 'apiTest_Author';
+        $class = 'Colymba\RESTfulAPI\Tests\Fixtures\ApiTestAuthor';
 
         $this->assertEquals(
             $column,
