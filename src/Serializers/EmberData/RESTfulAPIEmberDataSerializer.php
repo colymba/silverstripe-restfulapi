@@ -271,7 +271,7 @@ class RESTfulAPIEmberDataSerializer extends RESTfulAPIBasicSerializer
      * @param  DataObject|DataList   $dataSource The original data set from the root object
      * @return stdClass                          The updated root object sith the sideloaded data attached
      */
-    protected function insertSideloadData(stdClass $root, $dataSource)
+    protected function insertSideloadData(\stdClass $root, $dataSource)
     {
         // get the extra data
         $sideloadData = $this->getSideloadData($dataSource);

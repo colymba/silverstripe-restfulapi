@@ -2,6 +2,7 @@
 
 namespace Colymba\RESTfulAPI\Tests\Serializers\EmberData;
 
+use Colymba\RESTfulAPI\RESTfulAPI;
 use Colymba\RESTfulAPI\Inflector;
 use Colymba\RESTfulAPI\Serializers\EmberData\RESTfulAPIEmberDataSerializer;
 use Colymba\RESTfulAPI\Tests\RESTfulAPITester;
@@ -65,16 +66,18 @@ class RESTfulAPIEmberDataSerializerTest extends RESTfulAPITester
      */
     public function testSerialize()
     {
+        Config::inst()->update(RESTfulAPI::class, 'access_control_policy', false);
         $serializer = $this->getSerializer();
 
         // test single dataObject serialization
         $dataObject = ApiTestAuthor::get()->filter(array('Name' => 'Peter'))->first();
         $jsonString = $serializer->serialize($dataObject);
-        $jsonObject = json_decode($jsonString);
+        $jsonObject = json_decode($jsonString, true);
+        $class = lcfirst(ApiTestAuthor::class);
 
         $this->assertEquals(
             1,
-            $jsonObject->apiTest_Author->id,
+            $jsonObject[$class]['id'],
             "EmberData Serialize should wrap result in an object in JSON root"
         );
     }
@@ -84,8 +87,9 @@ class RESTfulAPIEmberDataSerializerTest extends RESTfulAPITester
      */
     public function testSideloadedRecords()
     {
+        Config::inst()->update(RESTfulAPI::class, 'access_control_policy', false);
         Config::inst()->update(RESTfulAPIEmberDataSerializer::class, 'sideloaded_records', array(
-            'ApiTestLibrary' => array('Books'),
+            'Colymba\RESTfulAPI\Tests\Fixtures\ApiTestLibrary' => array('Books'),
         ));
 
         Config::inst()->update(ApiTestBook::class, 'api_access', true);
@@ -94,18 +98,18 @@ class RESTfulAPIEmberDataSerializerTest extends RESTfulAPITester
         $dataObject = ApiTestLibrary::get()->filter(array('Name' => 'Helsinki'))->first();
 
         $jsonString = $serializer->serialize($dataObject);
-        $jsonObject = json_decode($jsonString);
+        $jsonObject = json_decode($jsonString, true);
 
         $booksRoot = $serializer->formatName(ApiTestBook::class);
         $booksRoot = Inflector::pluralize($booksRoot);
 
         $this->assertFalse(
-            is_null($jsonObject->$booksRoot),
+            is_null($jsonObject[$booksRoot]),
             "EmberData Serialize should sideload records in an object in JSON root"
         );
 
         $this->assertTrue(
-            is_array($jsonObject->$booksRoot),
+            is_array($jsonObject[$booksRoot]),
             "EmberData Serialize should sideload records as array"
         );
     }
@@ -127,7 +131,7 @@ class RESTfulAPIEmberDataSerializerTest extends RESTfulAPITester
         );
 
         $this->assertEquals(
-            'apiTest_Library',
+            'colymba\RESTfulAPI\Tests\Fixtures\ApiTestLibrary',
             $serializer->formatName($class),
             "EmberData Serializer should return lowerCamel case class"
         );
