@@ -1,8 +1,8 @@
 <?php
 
-namespace colymba\RESTfulAPI\PermissionManagers;
+namespace Colymba\RESTfulAPI\PermissionManagers;
 
-use colymba\RESTfulAPI\PermissionManagers\RESTfulAPIPermissionManager;
+use Colymba\RESTfulAPI\PermissionManagers\RESTfulAPIPermissionManager;
 
 /**
  * Default RESTfulAPI Permission Manager

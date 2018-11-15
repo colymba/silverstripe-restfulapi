@@ -1,14 +1,14 @@
 <?php
 
-namespace colymba\RESTfulAPI\Tests\API;
+namespace Colymba\RESTfulAPI\Tests\API;
 
-use colymba\RESTfulAPI\RESTfulAPI;
-use colymba\RESTfulAPI\Tests\RESTfulAPITester;
+use Colymba\RESTfulAPI\RESTfulAPI;
+use Colymba\RESTfulAPI\Tests\RESTfulAPITester;
 use SilverStripe\Control\Director;
 use SilverStripe\Core\Config\Config;
-use colymba\RESTfulAPI\Tests\Fixtures\ApiTestAuthor;
-use colymba\RESTfulAPI\Tests\Fixtures\ApiTestBook;
-use colymba\RESTfulAPI\Tests\Fixtures\ApiTestLibrary;
+use Colymba\RESTfulAPI\Tests\Fixtures\ApiTestAuthor;
+use Colymba\RESTfulAPI\Tests\Fixtures\ApiTestBook;
+use Colymba\RESTfulAPI\Tests\Fixtures\ApiTestLibrary;
 
 
 
@@ -206,11 +206,11 @@ class RESTfulAPITest extends RESTfulAPITester
         Config::inst()->update(RESTfulAPI::class, 'dependencies', array(
             'authenticator' => null,
             'authority' => null,
-            'queryHandler' => '%$colymba\RESTfulAPI\QueryHandlers\RESTfulAPIDefaultQueryHandler',
-            'serializer' => '%$colymba\RESTfulAPI\Serializers\Basic\RESTfulAPIBasicSerializer',
+            'queryHandler' => '%$Colymba\RESTfulAPI\QueryHandlers\RESTfulAPIDefaultQueryHandler',
+            'serializer' => '%$Colymba\RESTfulAPI\Serializers\Basic\RESTfulAPIBasicSerializer',
         ));
         Config::inst()->update(RESTfulAPI::class, 'dependencies', array(
-            'deSerializer' => '%$colymba\RESTfulAPI\Serializers\Basic\RESTfulAPIBasicDeSerializer',
+            'deSerializer' => '%$Colymba\RESTfulAPI\Serializers\Basic\RESTfulAPIBasicDeSerializer',
         ));
 
         $response = Director::test('api/apitestauthor/1', null, null, 'GET');
@@ -232,11 +232,11 @@ class RESTfulAPITest extends RESTfulAPITester
         Config::inst()->update(RESTfulAPI::class, 'dependencies', array(
             'authenticator' => null,
             'authority' => null,
-            'queryHandler' => '%$colymba\RESTfulAPI\QueryHandlers\RESTfulAPIDefaultQueryHandler',
-            'serializer' => '%$colymba\RESTfulAPI\Serializers\EmberData\RESTfulAPIEmberDataSerializer',
+            'queryHandler' => '%$Colymba\RESTfulAPI\QueryHandlers\RESTfulAPIDefaultQueryHandler',
+            'serializer' => '%$Colymba\RESTfulAPI\Serializers\EmberData\RESTfulAPIEmberDataSerializer',
         ));
         Config::inst()->update(RESTfulAPI::class, 'dependencies', array(
-            'deSerializer' => '%$colymba\RESTfulAPI\Serializers\EmberData\RESTfulAPIEmberDataDeSerializer',
+            'deSerializer' => '%$Colymba\RESTfulAPI\Serializers\EmberData\RESTfulAPIEmberDataDeSerializer',
         ));
 
         $response = Director::test('api/apitestauthor/1', null, null, 'GET');

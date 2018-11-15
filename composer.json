@@ -21,8 +21,8 @@
     },
     "autoload": {
         "psr-4": {
-            "colymba\\RESTfulAPI\\": "src/",
-            "colymba\\RESTfulAPI\\Tests\\": "tests/"
+            "Colymba\\RESTfulAPI\\": "src/",
+            "Colymba\\RESTfulAPI\\Tests\\": "tests/"
         }
     }
 }

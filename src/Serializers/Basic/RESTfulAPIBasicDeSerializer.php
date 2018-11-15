@@ -1,9 +1,9 @@
 <?php
 
-namespace colymba\RESTfulAPI\Serializers\Basic;
+namespace Colymba\RESTfulAPI\Serializers\Basic;
 
-use colymba\RESTfulAPI\RESTfulAPIError;
-use colymba\RESTfulAPI\Serializers\RESTfulAPIDeSerializer;
+use Colymba\RESTfulAPI\RESTfulAPIError;
+use Colymba\RESTfulAPI\Serializers\RESTfulAPIDeSerializer;
 use SilverStripe\Core\ClassInfo;
 
 /**

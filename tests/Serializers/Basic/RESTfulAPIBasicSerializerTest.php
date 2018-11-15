@@ -1,15 +1,15 @@
 <?php
 
-namespace colymba\RESTfulAPI\Tests\Serializers\Basic;
+namespace Colymba\RESTfulAPI\Tests\Serializers\Basic;
 
-use colymba\RESTfulAPI\RESTfulAPI;
-use colymba\RESTfulAPI\Serializers\Basic\RESTfulAPIBasicSerializer;
-use colymba\RESTfulAPI\Tests\RESTfulAPITester;
+use Colymba\RESTfulAPI\RESTfulAPI;
+use Colymba\RESTfulAPI\Serializers\Basic\RESTfulAPIBasicSerializer;
+use Colymba\RESTfulAPI\Tests\RESTfulAPITester;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Core\Config\Config;
-use colymba\RESTfulAPI\Tests\Fixtures\ApiTestAuthor;
-use colymba\RESTfulAPI\Tests\Fixtures\ApiTestBook;
-use colymba\RESTfulAPI\Tests\Fixtures\ApiTestLibrary;
+use Colymba\RESTfulAPI\Tests\Fixtures\ApiTestAuthor;
+use Colymba\RESTfulAPI\Tests\Fixtures\ApiTestBook;
+use Colymba\RESTfulAPI\Tests\Fixtures\ApiTestLibrary;
 
 
 

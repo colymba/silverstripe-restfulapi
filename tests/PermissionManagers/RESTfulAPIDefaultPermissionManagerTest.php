@@ -1,14 +1,14 @@
 <?php
 
-namespace colymba\RESTfulAPI\Tests\PermissionManagers;
+namespace Colymba\RESTfulAPI\Tests\PermissionManagers;
 
-use colymba\RESTfulAPI\RESTfulAPI;
-use colymba\RESTfulAPI\Extensions\RESTfulAPITokenAuthExtension;
-use colymba\RESTfulAPI\Tests\RESTfulAPITester;
+use Colymba\RESTfulAPI\RESTfulAPI;
+use Colymba\RESTfulAPI\Extensions\RESTfulAPITokenAuthExtension;
+use Colymba\RESTfulAPI\Tests\RESTfulAPITester;
 use SilverStripe\Control\Director;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Security\Member;
-use colymba\RESTfulAPI\Tests\Fixtures\ApiTestLibrary;
+use Colymba\RESTfulAPI\Tests\Fixtures\ApiTestLibrary;
 
 
 

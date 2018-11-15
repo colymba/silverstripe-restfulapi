@@ -1,11 +1,11 @@
 <?php
 
-namespace colymba\RESTfulAPI\Tests\Fixtures;
+namespace Colymba\RESTfulAPI\Tests\Fixtures;
 
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\ValidationResult;
-use colymba\RESTfulAPI\Tests\Fixtures\ApiTestAuthor;
-use colymba\RESTfulAPI\Tests\Fixtures\ApiTestLibrary;
+use Colymba\RESTfulAPI\Tests\Fixtures\ApiTestAuthor;
+use Colymba\RESTfulAPI\Tests\Fixtures\ApiTestLibrary;
 
 
 

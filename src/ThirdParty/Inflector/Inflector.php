@@ -1,6 +1,6 @@
 <?php
 
-namespace colymba\RESTfulAPI;
+namespace Colymba\RESTfulAPI;
 
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)

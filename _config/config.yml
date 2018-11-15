@@ -7,9 +7,9 @@ After:
 # Routing
 SilverStripe\Control\Director:
   rules:
-    'api': 'colymba\RESTfulAPI\RESTfulAPI'
+    'api': 'Colymba\RESTfulAPI\RESTfulAPI'
 # ---------------------------------
 # Permissions / Uncomment or create your own
 #SilverStripe\Security\Group:
 #  extensions:
-#    - colymba\RESTfulAPI\Extensions\RESTfulAPIGroupExtension
+#    - Colymba\RESTfulAPI\Extensions\RESTfulAPIGroupExtension

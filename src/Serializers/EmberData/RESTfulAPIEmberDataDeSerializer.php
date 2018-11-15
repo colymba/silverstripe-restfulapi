@@ -1,10 +1,10 @@
 <?php
 
-namespace colymba\RESTfulAPI\Serializers\EmberData;
+namespace Colymba\RESTfulAPI\Serializers\EmberData;
 
-use colymba\RESTfulAPI\Inflector;
-use colymba\RESTfulAPI\RESTfulAPIError;
-use colymba\RESTfulAPI\Serializers\RESTfulAPIDeSerializer;
+use Colymba\RESTfulAPI\Inflector;
+use Colymba\RESTfulAPI\RESTfulAPIError;
+use Colymba\RESTfulAPI\Serializers\RESTfulAPIDeSerializer;
 use SilverStripe\Core\ClassInfo;
 
 /**

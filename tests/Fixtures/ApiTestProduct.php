@@ -1,6 +1,6 @@
 <?php
 
-namespace colymba\RESTfulAPI\Tests\Fixtures;
+namespace Colymba\RESTfulAPI\Tests\Fixtures;
 
 use SilverStripe\ORM\DataObject;
 

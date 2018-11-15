@@ -1,19 +1,19 @@
 <?php
 
-namespace colymba\RESTfulAPI\Tests\QueryHandlers;
+namespace Colymba\RESTfulAPI\Tests\QueryHandlers;
 
-use colymba\RESTfulAPI\QueryHandlers\RESTfulAPIDefaultQueryHandler;
+use Colymba\RESTfulAPI\QueryHandlers\RESTfulAPIDefaultQueryHandler;
 use SilverStripe\Core\Injector\Injector;
-use colymba\RESTfulAPI\RESTfulAPIError;
+use Colymba\RESTfulAPI\RESTfulAPIError;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\DataObject;
-use colymba\RESTfulAPI\Tests\Fixtures\ApiTestAuthor;
-use colymba\RESTfulAPI\Tests\Fixtures\ApiTestBook;
-use colymba\RESTfulAPI\Tests\Fixtures\ApiTestLibrary;
-use colymba\RESTfulAPI\Tests\Fixtures\ApiTestProduct;
-use colymba\RESTfulAPI\Tests\RESTfulAPITester;
+use Colymba\RESTfulAPI\Tests\Fixtures\ApiTestAuthor;
+use Colymba\RESTfulAPI\Tests\Fixtures\ApiTestBook;
+use Colymba\RESTfulAPI\Tests\Fixtures\ApiTestLibrary;
+use Colymba\RESTfulAPI\Tests\Fixtures\ApiTestProduct;
+use Colymba\RESTfulAPI\Tests\RESTfulAPITester;
 
 
 

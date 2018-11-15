@@ -1,11 +1,11 @@
 <?php
 
-namespace colymba\RESTfulAPI\Tests\Authenticators;
+namespace Colymba\RESTfulAPI\Tests\Authenticators;
 
-use colymba\RESTfulAPI\RESTfulAPIError;
-use colymba\RESTfulAPI\Authenticators\RESTfulAPITokenAuthenticator;
-use colymba\RESTfulAPI\Extensions\RESTfulAPITokenAuthExtension;
-use colymba\RESTfulAPI\Tests\RESTfulAPITester;
+use Colymba\RESTfulAPI\RESTfulAPIError;
+use Colymba\RESTfulAPI\Authenticators\RESTfulAPITokenAuthenticator;
+use Colymba\RESTfulAPI\Extensions\RESTfulAPITokenAuthExtension;
+use Colymba\RESTfulAPI\Tests\RESTfulAPITester;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Control\Session;
 use SilverStripe\Core\Injector\Injector;

@@ -1,9 +1,9 @@
 <?php
 
-namespace colymba\RESTfulAPI\Tests\Fixtures;
+namespace Colymba\RESTfulAPI\Tests\Fixtures;
 
 use SilverStripe\ORM\DataObject;
-use colymba\RESTfulAPI\Tests\Fixtures\ApiTestBook;
+use Colymba\RESTfulAPI\Tests\Fixtures\ApiTestBook;
 
 
 

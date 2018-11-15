@@ -1,14 +1,14 @@
 <?php
 
-namespace colymba\RESTfulAPI\Tests\Serializers\EmberData;
+namespace Colymba\RESTfulAPI\Tests\Serializers\EmberData;
 
-use colymba\RESTfulAPI\Inflector;
-use colymba\RESTfulAPI\Serializers\EmberData\RESTfulAPIEmberDataSerializer;
-use colymba\RESTfulAPI\Tests\RESTfulAPITester;
+use Colymba\RESTfulAPI\Inflector;
+use Colymba\RESTfulAPI\Serializers\EmberData\RESTfulAPIEmberDataSerializer;
+use Colymba\RESTfulAPI\Tests\RESTfulAPITester;
 use SilverStripe\Core\Injector\Injector;
-use colymba\RESTfulAPI\Tests\Fixtures\ApiTestAuthor;
-use colymba\RESTfulAPI\Tests\Fixtures\ApiTestBook;
-use colymba\RESTfulAPI\Tests\Fixtures\ApiTestLibrary;
+use Colymba\RESTfulAPI\Tests\Fixtures\ApiTestAuthor;
+use Colymba\RESTfulAPI\Tests\Fixtures\ApiTestBook;
+use Colymba\RESTfulAPI\Tests\Fixtures\ApiTestLibrary;
 use SilverStripe\Core\Config\Config;
 
 

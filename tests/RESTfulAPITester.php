@@ -1,13 +1,13 @@
 <?php
 
-namespace colymba\RESTfulAPI\Tests;
+namespace Colymba\RESTfulAPI\Tests;
 
-use colymba\RESTfulAPI\Extensions\RESTfulAPIGroupExtension;
-use colymba\RESTfulAPI\QueryHandlers\RESTfulAPIDefaultQueryHandler;
-use colymba\RESTfulAPI\RESTfulAPI;
-use colymba\RESTfulAPI\Tests\Fixtures\ApiTestAuthor;
-use colymba\RESTfulAPI\Tests\Fixtures\ApiTestBook;
-use colymba\RESTfulAPI\Tests\Fixtures\ApiTestLibrary;
+use Colymba\RESTfulAPI\Extensions\RESTfulAPIGroupExtension;
+use Colymba\RESTfulAPI\QueryHandlers\RESTfulAPIDefaultQueryHandler;
+use Colymba\RESTfulAPI\RESTfulAPI;
+use Colymba\RESTfulAPI\Tests\Fixtures\ApiTestAuthor;
+use Colymba\RESTfulAPI\Tests\Fixtures\ApiTestBook;
+use Colymba\RESTfulAPI\Tests\Fixtures\ApiTestLibrary;
 use SilverStripe\Control\Director;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\SapphireTest;
@@ -80,10 +80,10 @@ class RESTfulAPITester extends SapphireTest
         Config::inst()->update(RESTfulAPI::class, 'access_control_policy', 'ACL_CHECK_CONFIG_ONLY');
 
         Config::inst()->update(RESTfulAPI::class, 'dependencies', array(
-            'authenticator' => '%$colymba\RESTfulAPI\Authenticators\RESTfulAPITokenAuthenticator',
-            'authority' => '%$colymba\RESTfulAPI\PermissionManagers\RESTfulAPIDefaultPermissionManager',
-            'queryHandler' => '%$colymba\RESTfulAPI\QueryHandlers\RESTfulAPIDefaultQueryHandler',
-            'serializer' => '%$colymba\RESTfulAPI\Serializers\Basic\RESTfulAPIBasicSerializer',
+            'authenticator' => '%$Colymba\RESTfulAPI\Authenticators\RESTfulAPITokenAuthenticator',
+            'authority' => '%$Colymba\RESTfulAPI\PermissionManagers\RESTfulAPIDefaultPermissionManager',
+            'queryHandler' => '%$Colymba\RESTfulAPI\QueryHandlers\RESTfulAPIDefaultQueryHandler',
+            'serializer' => '%$Colymba\RESTfulAPI\Serializers\Basic\RESTfulAPIBasicSerializer',
         ));
 
         Config::inst()->update(RESTfulAPI::class, 'cors', array(
@@ -95,12 +95,12 @@ class RESTfulAPITester extends SapphireTest
         ));
 
         Config::inst()->update(RESTfulAPIDefaultQueryHandler::class, 'dependencies', array(
-            'deSerializer' => '%$colymba\RESTfulAPI\Serializers\Basic\RESTfulAPIBasicDeSerializer'
+            'deSerializer' => '%$Colymba\RESTfulAPI\Serializers\Basic\RESTfulAPIBasicDeSerializer'
         ));
 
         Config::inst()->update(RESTfulAPIDefaultQueryHandler::class, 'models', array(
-                'apitestauthor'  => 'colymba\RESTfulAPI\Tests\Fixtures\ApiTestAuthor',
-                'apitestlibrary' => 'colymba\RESTfulAPI\Tests\Fixtures\ApiTestLibrary',
+                'apitestauthor'  => 'Colymba\RESTfulAPI\Tests\Fixtures\ApiTestAuthor',
+                'apitestlibrary' => 'Colymba\RESTfulAPI\Tests\Fixtures\ApiTestLibrary',
             )
         );
     }

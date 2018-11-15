@@ -1,6 +1,6 @@
 <?php
 
-namespace colymba\RESTfulAPI\Extensions;
+namespace Colymba\RESTfulAPI\Extensions;
 
 use SilverStripe\Forms\FieldList;
 use SilverStripe\ORM\DataExtension;

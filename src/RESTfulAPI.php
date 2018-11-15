@@ -1,8 +1,8 @@
 <?php
 
-namespace colymba\RESTfulAPI;
+namespace Colymba\RESTfulAPI;
 
-use colymba\RESTfulAPI\RESTfulAPIError;
+use Colymba\RESTfulAPI\RESTfulAPIError;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Core\Config\Config;
@@ -90,10 +90,10 @@ class RESTfulAPI extends Controller
      * @config
      */
     private static $dependencies = array(
-        'authenticator' => '%$colymba\RESTfulAPI\Authenticators\RESTfulAPITokenAuthenticator',
-        'authority' => '%$colymba\RESTfulAPI\PermissionManagers\RESTfulAPIDefaultPermissionManager',
-        'queryHandler' => '%$colymba\RESTfulAPI\QueryHandlers\RESTfulAPIDefaultQueryHandler',
-        'serializer' => '%$colymba\RESTfulAPI\Serializers\Basic\RESTfulAPIBasicSerializer',
+        'authenticator' => '%$Colymba\RESTfulAPI\Authenticators\RESTfulAPITokenAuthenticator',
+        'authority' => '%$Colymba\RESTfulAPI\PermissionManagers\RESTfulAPIDefaultPermissionManager',
+        'queryHandler' => '%$Colymba\RESTfulAPI\QueryHandlers\RESTfulAPIDefaultQueryHandler',
+        'serializer' => '%$Colymba\RESTfulAPI\Serializers\Basic\RESTfulAPIBasicSerializer',
     );
 
     /**

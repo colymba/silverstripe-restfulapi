@@ -1,6 +1,6 @@
 <?php
 
-namespace colymba\RESTfulAPI\QueryHandlers;
+namespace Colymba\RESTfulAPI\QueryHandlers;
 
 use SilverStripe\Control\HTTPRequest;
 

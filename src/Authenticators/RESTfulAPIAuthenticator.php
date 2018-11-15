@@ -1,6 +1,6 @@
 <?php
 
-namespace colymba\RESTfulAPI\Authenticators;
+namespace Colymba\RESTfulAPI\Authenticators;
 
 use SilverStripe\Control\HTTPRequest;
 

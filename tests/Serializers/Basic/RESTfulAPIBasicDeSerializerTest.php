@@ -1,13 +1,13 @@
 <?php
 
-namespace colymba\RESTfulAPI\Tests\Serializers\Basic;
+namespace Colymba\RESTfulAPI\Tests\Serializers\Basic;
 
-use colymba\RESTfulAPI\QueryHandlers\RESTfulAPIBasicDeSerializer;
+use Colymba\RESTfulAPI\Serializers\Basic\RESTfulAPIBasicDeSerializer;
 use SilverStripe\Core\Injector\Injector;
-use colymba\RESTfulAPI\Tests\Fixtures\ApiTestAuthor;
-use colymba\RESTfulAPI\Tests\Fixtures\ApiTestBook;
-use colymba\RESTfulAPI\Tests\Fixtures\ApiTestLibrary;
-use colymba\RESTfulAPI\Tests\RESTfulAPITester;
+use Colymba\RESTfulAPI\Tests\Fixtures\ApiTestAuthor;
+use Colymba\RESTfulAPI\Tests\Fixtures\ApiTestBook;
+use Colymba\RESTfulAPI\Tests\Fixtures\ApiTestLibrary;
+use Colymba\RESTfulAPI\Tests\RESTfulAPITester;
 
 
 

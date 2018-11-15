@@ -1,10 +1,10 @@
 <?php
 
-namespace colymba\RESTfulAPI\Serializers\Basic;
+namespace Colymba\RESTfulAPI\Serializers\Basic;
 
-use colymba\RESTfulAPI\RESTfulAPI;
-use colymba\RESTfulAPI\RESTfulAPIError;
-use colymba\RESTfulAPI\Serializers\RESTfulAPISerializer;
+use Colymba\RESTfulAPI\RESTfulAPI;
+use Colymba\RESTfulAPI\RESTfulAPIError;
+use Colymba\RESTfulAPI\Serializers\RESTfulAPISerializer;
 use SilverStripe\ORM\RelationList;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\DataList;

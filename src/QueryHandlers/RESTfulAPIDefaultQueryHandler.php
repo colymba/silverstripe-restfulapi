@@ -1,10 +1,10 @@
 <?php
 
-namespace colymba\RESTfulAPI\QueryHandlers;
+namespace Colymba\RESTfulAPI\QueryHandlers;
 
-use colymba\RESTfulAPI\QueryHandlers\RESTfulAPIQueryHandler;
-use colymba\RESTfulAPI\RESTfulAPI;
-use colymba\RESTfulAPI\RESTfulAPIError;
+use Colymba\RESTfulAPI\QueryHandlers\RESTfulAPIQueryHandler;
+use Colymba\RESTfulAPI\RESTfulAPI;
+use Colymba\RESTfulAPI\RESTfulAPIError;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Injector\Injector;
@@ -42,7 +42,7 @@ class RESTfulAPIDefaultQueryHandler implements RESTfulAPIQueryHandler
      * @config
      */
     private static $dependencies = array(
-        'deSerializer' => '%$colymba\RESTfulAPI\Serializers\Basic\RESTfulAPIBasicDeSerializer',
+        'deSerializer' => '%$Colymba\RESTfulAPI\Serializers\Basic\RESTfulAPIBasicDeSerializer',
     );
 
     /**

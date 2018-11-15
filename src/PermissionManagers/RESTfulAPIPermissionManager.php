@@ -1,6 +1,6 @@
 <?php
 
-namespace colymba\RESTfulAPI\PermissionManagers;
+namespace Colymba\RESTfulAPI\PermissionManagers;
 
 /**
  * Basic required structure for any RESTfulAPI Permission Manager

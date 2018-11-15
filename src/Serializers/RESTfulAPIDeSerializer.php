@@ -1,6 +1,6 @@
 <?php
 
-namespace colymba\RESTfulAPI\Serializers;
+namespace Colymba\RESTfulAPI\Serializers;
 
 /**
  * Defines requirements for RESTfulAPI DeSerializer
