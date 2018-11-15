@@ -4,7 +4,7 @@ namespace colymba\RESTfulAPI\Tests\QueryHandlers;
 
 use colymba\RESTfulAPI\QueryHandlers\RESTfulAPIDefaultQueryHandler;
 use SilverStripe\Core\Injector\Injector;
-use NADesign\RESTfulAPI\RESTfulAPIError;
+use colymba\RESTfulAPI\RESTfulAPIError;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\ORM\DataList;
@@ -39,6 +39,16 @@ class RESTfulAPIDefaultQueryHandlerTest extends RESTfulAPITester
 
     protected $url_pattern = 'api/$ModelReference/$ID';
 
+    /**
+     * Turn on API access for the book fixture by default
+     */
+    public function setUp()
+    {
+        parent::setUp();
+
+        Config::inst()->update(ApiTestBook::class, 'api_access', true);
+    }
+
     protected function getHTTPRequest($method = 'GET', $class = ApiTestBook::class, $id = '', $params = array())
     {
         $request = new HTTPRequest(
@@ -64,9 +74,9 @@ class RESTfulAPIDefaultQueryHandlerTest extends RESTfulAPITester
         return $qh;
     }
 
-    public static function generateDBEntries()
+    public static function setUpBeforeClass()
     {
-        parent::generateDBEntries();
+        parent::setUpBeforeClass();
 
         $product = ApiTestProduct::create(array(
             'Title' => 'Sold out product',
@@ -129,8 +139,6 @@ class RESTfulAPIDefaultQueryHandlerTest extends RESTfulAPITester
      */
     public function testFindSingleModel()
     {
-        Config::inst()->update(ApiTestBook::class, 'api_access', true);
-
         $qh = $this->getQueryHandler();
         $request = $this->getHTTPRequest('GET', ApiTestBook::class, '1');
         $result = $qh->handleQuery($request);
@@ -152,8 +160,6 @@ class RESTfulAPIDefaultQueryHandlerTest extends RESTfulAPITester
      */
     public function testFindMultipleModels()
     {
-        Config::inst()->update(ApiTestBook::class, 'api_access', true);
-
         $qh = $this->getQueryHandler();
         $request = $this->getHTTPRequest('GET', ApiTestBook::class);
         $result = $qh->handleQuery($request);
@@ -176,7 +182,6 @@ class RESTfulAPIDefaultQueryHandlerTest extends RESTfulAPITester
      */
     public function testMaxRecordsLimit()
     {
-        Config::inst()->update(ApiTestBook::class, 'api_access', true);
         Config::inst()->update(RESTfulAPIDefaultQueryHandler::class, 'max_records_limit', 1);
 
         $qh = $this->getQueryHandler();
@@ -292,7 +297,7 @@ class RESTfulAPIDefaultQueryHandlerTest extends RESTfulAPITester
 
         $deletedRecord = DataObject::get_by_id(ApiTestBook::class, $firstRecord->ID);
 
-        $this->assertFalse(
+        $this->assertNull(
             $deletedRecord,
             'Delete model should delete a database record'
         );

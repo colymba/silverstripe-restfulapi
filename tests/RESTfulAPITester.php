@@ -40,11 +40,11 @@ class RESTfulAPITester extends SapphireTest
 
         $bible = ApiTestBook::create(array(
             'Title' => 'The Bible',
-            'Pages' => 2000,
+            'Pages' => 60,
         ));
         $kamasutra = ApiTestBook::create(array(
             'Title' => 'Kama Sutra',
-            'Pages' => 1000,
+            'Pages' => 70,
         ));
 
         $helsinki = ApiTestLibrary::create(array(

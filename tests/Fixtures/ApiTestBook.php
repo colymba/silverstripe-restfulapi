@@ -41,7 +41,7 @@ class ApiTestBook extends DataObject
 
     public function validate()
     {
-        if ($this->pages > 100) {
+        if ($this->Pages > 100) {
             $result = ValidationResult::create()->addError('Too many pages');
         } else {
             $result = ValidationResult::create();

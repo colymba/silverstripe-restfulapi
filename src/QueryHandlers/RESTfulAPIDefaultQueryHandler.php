@@ -447,8 +447,17 @@ class RESTfulAPIDefaultQueryHandler implements RESTfulAPIQueryHandler
                     $id = $model->write(false, false, false, $hasRelationChanges);
                 } catch (ValidationException $exception) {
                     $error = $exception->getResult();
+                    $messages = [];
+                    foreach ($error->getMessages() as $message) {
+                        $fieldName = $message['fieldName'];
+                        if ($fieldName) {
+                            $messages[] = "{$fieldName}: {$message['message']}";
+                        } else {
+                            $messages[] = $message['message'];
+                        }
+                    }
                     return new RESTfulAPIError(400,
-                        $error->message()
+                        implode("\n", $messages)
                     );
                 }
 
