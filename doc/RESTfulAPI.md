@@ -9,19 +9,19 @@ Director:
     'restapi': 'RESTfulAPI'
 ```
 
-Config | Type | Info | Default
---- | :---: | --- | ---
-`authentication_policy` | `boolean`/`array` | If true, the API will use authentication, if false|null no authentication required. Or an array of HTTP methods that require authentication | false
-`access_control_policy` | `boolean`/`string` | Lets you select which access control checks the API will perform or none at all. | 'ACL_CHECK_CONFIG_ONLY'
-`dependencies` | `array` | key => value pairs sepcifying the components classes used for the `'authenticator'`, `'queryHandler'` and `'serializer'`  | 'authenticator' => '%$Colymba\RESTfulAPI\Authenticators\TokenAuthenticator', 'queryHandler' => '%$Colymba\RESTfulAPI\QueryHandlers\DefaultQueryHandler', 'serializer' => '%$Colymba\RESTfulAPI\Serializers\Basic\BasicSerializer'
-`embedded_records` | `array` | key => value pairs sepcifying which relation names to embed in the response and for which model this applies (i.e. 'RequestedClass' => array('RelationNameToEmbed')) | n/a
-- | - | - | -
-`cors` | `array` | Cross-Origin Resource Sharing (CORS) API settings |
-`cors.Enabled` | `boolean` | If true the API will add CORS HTTP headers to the response | true
-`cors.Allow-Origin` | `string` or `array` | '\*' allows all, 'http://domain.com' allows a specific domain, array('http://domain.com', 'http://site.com') allows a list of domains | '\*'
-`cors.Allow-Headers` | `string` | '\*' allows all, 'header1, header2' coman separated list allows a list of headers | '\*'
-`cors.Allow-Methods` | `string` | 'HTTPMETHODE1, HTTPMETHODE12' coma separated list of HTTP methodes to allow | 'OPTIONS, POST, GET, PUT, DELETE'
-`cors.Max-Age` | `integer` | Preflight/OPTIONS request caching time in seconds | 86400
+| Config | Type | Info | Default
+| --- | :---: | --- | ---
+| `authentication_policy` | `boolean`/`array` | If true, the API will use authentication, if false|null no authentication required. Or an array of HTTP methods that require authentication | false
+| `access_control_policy` | `boolean`/`string` | Lets you select which access control checks the API will perform or none at all. | 'ACL_CHECK_CONFIG_ONLY'
+| `dependencies` | `array` | key => value pairs sepcifying the components classes used for the `'authenticator'`, `'queryHandler'` and `'serializer'`  | 'authenticator' => '%$Colymba\RESTfulAPI\Authenticators\TokenAuthenticator', 'queryHandler' => '%$Colymba\RESTfulAPI\QueryHandlers\DefaultQueryHandler', 'serializer' => '%$Colymba\RESTfulAPI\Serializers\Basic\BasicSerializer'
+| `embedded_records` | `array` | key => value pairs sepcifying which relation names to embed in the response and for which model this applies (i.e. 'RequestedClass' => array('RelationNameToEmbed')) | n/a
+| - | - | - | -
+| `cors` | `array` | Cross-Origin Resource Sharing (CORS) API settings |
+| `cors.Enabled` | `boolean` | If true the API will add CORS HTTP headers to the response | true
+| `cors.Allow-Origin` | `string` or `array` | '\*' allows all, 'http://domain.com' allows a specific domain, array('http://domain.com', 'http://site.com') allows a list of domains | '\*'
+| `cors.Allow-Headers` | `string` | '\*' allows all, 'header1, header2' coman separated list allows a list of headers | '\*'
+| `cors.Allow-Methods` | `string` | 'HTTPMETHODE1, HTTPMETHODE12' coma separated list of HTTP methodes to allow | 'OPTIONS, POST, GET, PUT, DELETE'
+| `cors.Max-Age` | `integer` | Preflight/OPTIONS request caching time in seconds | 86400
 
 
 ## CORS (Cross-Origin Resource Sharing)

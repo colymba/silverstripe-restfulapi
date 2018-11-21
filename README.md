@@ -122,14 +122,14 @@ File:
 Page:
   api_access: false
 # RestfulAPI config
-RESTfulAPI:
+Colymba\RESTfulAPI\RESTfulAPI:
   authentication_policy: true
   access_control_policy: 'ACL_CHECK_CONFIG_AND_MODEL'
   dependencies:
-    authenticator: '%$TokenAuthenticator'
-    authority: '%$DefaultPermissionManager'
-    queryHandler: '%$DefaultQueryHandler'
-    serializer: '%$EmberDataSerializer'
+    authenticator: '%$Colymba\RESTfulAPI\Authenticators\TokenAuthenticator'
+    authority: '%$Colymba\RESTfulAPI\PermissionManagers\DefaultPermissionManager'
+    queryHandler: '%$Colymba\RESTfulAPI\QueryHandlers\DefaultQueryHandler'
+    serializer: '%$Colymba\RESTfulAPI\Serializers\EmberData\EmberDataSerializer'
   cors:
     Enabled: true
     Allow-Origin: 'http://mydomain.com'
@@ -137,10 +137,10 @@ RESTfulAPI:
     Allow-Methods: 'OPTIONS, GET'
     Max-Age: 86400
 # Components config
-DefaultQueryHandler:
+Colymba\RESTfulAPI\QueryHandlers\DefaultQueryHandler\DefaultQueryHandler:
   dependencies:
-    deSerializer: '%$EmberDataDeSerializer'
-EmberDataSerializer:
+    deSerializer: '%$Colymba\RESTfulAPI\Serializers\EmberData\EmberDataDeSerializer'
+Colymba\RESTfulAPI\Serializers\EmberData\EmberDataSerializer:
   sideloaded_records:
     Artwork:
       - 'Visuals'
