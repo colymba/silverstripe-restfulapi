@@ -13,7 +13,7 @@ namespace Colymba\RESTfulAPI\Serializers;
  * @package RESTfulAPI
  * @subpackage Serializer
  */
-interface RESTfulAPIDeSerializer
+interface DeSerializer
 {
 
     /**

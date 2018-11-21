@@ -15,7 +15,7 @@ use SilverStripe\Control\HTTPRequest;
  * @package RESTfulAPI
  * @subpackage Authentication
  */
-interface RESTfulAPIAuthenticator
+interface Authenticator
 {
     /**
      * Checks if a request to the API is authenticated

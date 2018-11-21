@@ -4,7 +4,7 @@ namespace Colymba\RESTfulAPI\Serializers\Basic;
 
 use Colymba\RESTfulAPI\RESTfulAPI;
 use Colymba\RESTfulAPI\RESTfulAPIError;
-use Colymba\RESTfulAPI\Serializers\RESTfulAPISerializer;
+use Colymba\RESTfulAPI\Serializers\Serializer;
 use SilverStripe\ORM\RelationList;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\DataList;
@@ -22,7 +22,7 @@ use SilverStripe\Core\Config\Config;
  * @package RESTfulAPI
  * @subpackage Serializer
  */
-class RESTfulAPIBasicSerializer implements RESTfulAPISerializer
+class BasicSerializer implements Serializer
 {
     /**
      * Content-type header definition for this Serializer

@@ -2,7 +2,7 @@
 
 namespace Colymba\RESTfulAPI\QueryHandlers;
 
-use Colymba\RESTfulAPI\QueryHandlers\RESTfulAPIQueryHandler;
+use Colymba\RESTfulAPI\QueryHandlers\QueryHandler;
 use Colymba\RESTfulAPI\RESTfulAPI;
 use Colymba\RESTfulAPI\RESTfulAPIError;
 use SilverStripe\Control\HTTPRequest;
@@ -24,13 +24,13 @@ use SilverStripe\ORM\ValidationException;
  * @package RESTfulAPI
  * @subpackage QueryHandler
  */
-class RESTfulAPIDefaultQueryHandler implements RESTfulAPIQueryHandler
+class DefaultQueryHandler implements QueryHandler
 {
 
     /**
      * Current deSerializer instance
      *
-     * @var RESTfulAPIDeSerializer
+     * @var DeSerializer
      */
     public $deSerializer;
 
@@ -42,7 +42,7 @@ class RESTfulAPIDefaultQueryHandler implements RESTfulAPIQueryHandler
      * @config
      */
     private static $dependencies = array(
-        'deSerializer' => '%$Colymba\RESTfulAPI\Serializers\Basic\RESTfulAPIBasicDeSerializer',
+        'deSerializer' => '%$Colymba\RESTfulAPI\Serializers\Basic\BasicDeSerializer',
     );
 
     /**
@@ -95,7 +95,7 @@ class RESTfulAPIDefaultQueryHandler implements RESTfulAPIQueryHandler
     /**
      * Return current RESTfulAPI DeSerializer instance
      *
-     * @return RESTfulAPIDeSerializer DeSerializer instance
+     * @return DeSerializer DeSerializer instance
      */
     public function getdeSerializer()
     {

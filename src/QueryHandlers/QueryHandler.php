@@ -15,13 +15,13 @@ use SilverStripe\Control\HTTPRequest;
  * @package RESTfulAPI
  * @subpackage QueryHandler
  */
-interface RESTfulAPIQueryHandler
+interface QueryHandler
 {
 
     /**
      * Return current RESTfulAPI DeSerializer instance
      *
-     * @return RESTfulAPIDeSerializer DeSerializer instance
+     * @return DeSerializer DeSerializer instance
      */
     public function getdeSerializer();
 

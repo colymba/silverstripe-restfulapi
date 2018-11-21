@@ -13,7 +13,7 @@ namespace Colymba\RESTfulAPI\PermissionManagers;
  * @package RESTfulAPI
  * @subpackage Permission
  */
-interface RESTfulAPIPermissionManager
+interface PermissionManager
 {
     /**
      * Checks if a given DataObject or Class

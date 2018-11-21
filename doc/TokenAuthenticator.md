@@ -1,12 +1,12 @@
-# RESTfulAPITokenAuthenticator
+# Authenticators\TokenAuthenticator
 
 This component takes care of authenticating all API requests against a token stored in a HTTP header or a query var as fallback.
 
 The authentication token is returned by the `login` function. Also available, a `logout` function and `lostpassword` function that will email a password reset link to the user.
 
-The token can also be retrieved with an `RESTfulAPITokenAuthenticator` instance calling the method `getToken()` and it can be reset via `resetToken()`.
+The token can also be retrieved with an `TokenAuthenticator` instance calling the method `getToken()` and it can be reset via `resetToken()`.
 
-The `RESTfulAPITokenAuthExtension` `DataExtension` must be applied to a `DataObject` and the `tokenOwnerClass` config updated with the correct classname.
+The `TokenAuthExtension` `DataExtension` must be applied to a `DataObject` and the `tokenOwnerClass` config updated with the correct classname.
 
 Config | Type | Info | Default
 --- | :---: | --- | ---
@@ -17,18 +17,18 @@ Config | Type | Info | Default
 `autoRefreshLifetime` | `boolean` | Whether or not token lifetime should be updated with every request | false
 
 
-## Token Authentication Data Extension `RESTfulAPITokenAuthExtension`
-This extension **MUST** be applied to a `DataObject` to use `RESTfulAPITokenAuthenticator` and update the `tokenOwnerClass` config accordingly. e.g.
+## Token Authentication Data Extension `Colymba\RESTfulAPI\Extensions\TokenAuthExtension`
+This extension **MUST** be applied to a `DataObject` to use `TokenAuthenticator` and update the `tokenOwnerClass` config accordingly. e.g.
 ```yaml
 Member:
   extensions:
-    - RESTfulAPITokenAuthExtension
+    - Colymba\RESTfulAPI\Extensions\TokenAuthExtension
 ```
 ```yaml
 ApiUser:
   extensions:
-    - RESTfulAPITokenAuthExtension
-RESTfulAPITokenAuthenticator:
+    - Colymba\RESTfulAPI\Extensions\TokenAuthExtension
+TokenAuthenticator:
   tokenOwnerClass: 'ApiUser'
 ```
 

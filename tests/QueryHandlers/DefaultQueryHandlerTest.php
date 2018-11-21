@@ -2,7 +2,7 @@
 
 namespace Colymba\RESTfulAPI\Tests\QueryHandlers;
 
-use Colymba\RESTfulAPI\QueryHandlers\RESTfulAPIDefaultQueryHandler;
+use Colymba\RESTfulAPI\QueryHandlers\DefaultQueryHandler;
 use SilverStripe\Core\Injector\Injector;
 use Colymba\RESTfulAPI\RESTfulAPIError;
 use SilverStripe\Control\HTTPRequest;
@@ -28,7 +28,7 @@ use Colymba\RESTfulAPI\Tests\RESTfulAPITester;
  * @package RESTfulAPI
  * @subpackage Tests
  */
-class RESTfulAPIDefaultQueryHandlerTest extends RESTfulAPITester
+class DefaultQueryHandlerTest extends RESTfulAPITester
 {
     protected static $extra_dataobjects = array(
         ApiTestAuthor::class,
@@ -67,7 +67,7 @@ class RESTfulAPIDefaultQueryHandlerTest extends RESTfulAPITester
     protected function getQueryHandler()
     {
         $injector = new Injector();
-        $qh = new RESTfulAPIDefaultQueryHandler();
+        $qh = new DefaultQueryHandler();
 
         $injector->inject($qh);
 
@@ -182,7 +182,7 @@ class RESTfulAPIDefaultQueryHandlerTest extends RESTfulAPITester
      */
     public function testMaxRecordsLimit()
     {
-        Config::inst()->update(RESTfulAPIDefaultQueryHandler::class, 'max_records_limit', 1);
+        Config::inst()->update(DefaultQueryHandler::class, 'max_records_limit', 1);
 
         $qh = $this->getQueryHandler();
         $request = $this->getHTTPRequest('GET', ApiTestBook::class);

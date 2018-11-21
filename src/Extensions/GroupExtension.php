@@ -22,7 +22,7 @@ use SilverStripe\Security\Group;
  * @package RESTfulAPI
  * @subpackage Permission
  */
-class RESTfulAPIGroupExtension extends DataExtension implements PermissionProvider
+class GroupExtension extends DataExtension implements PermissionProvider
 {
     /**
      * Basic RESTfulAPI Permission set

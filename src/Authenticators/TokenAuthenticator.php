@@ -3,8 +3,8 @@
 namespace Colymba\RESTfulAPI\Authenticators;
 
 use Colymba\RESTfulAPI\RESTfulAPIError;
-use Colymba\RESTfulAPI\Authenticators\RESTfulAPIAuthenticator;
-use Colymba\RESTfulAPI\Extensions\RESTfulAPITokenAuthExtension;
+use Colymba\RESTfulAPI\Authenticators\Authenticator;
+use Colymba\RESTfulAPI\Extensions\TokenAuthExtension;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Control\Session;
 use SilverStripe\Core\Injector\Injector;
@@ -30,7 +30,7 @@ use SilverStripe\Security\Security;
  * @package RESTfulAPI
  * @subpackage Authentication
  */
-class RESTfulAPITokenAuthenticator implements RESTfulAPIAuthenticator
+class TokenAuthenticator implements Authenticator
 {
 
     /**
@@ -113,7 +113,7 @@ class RESTfulAPITokenAuthenticator implements RESTfulAPIAuthenticator
         $config['owner'] = $configInstance->get(self::class, 'tokenOwnerClass');
         $config['autoRefresh'] = $configInstance->get(self::class, 'autoRefreshLifetime');
 
-        $tokenDBColumns = $configInstance->get(RESTfulAPITokenAuthExtension::class, 'db');
+        $tokenDBColumns = $configInstance->get(TokenAuthExtension::class, 'db');
         $tokenDBColumn = array_search('Varchar(160)', $tokenDBColumns);
         $expireDBColumn = array_search('Int', $tokenDBColumns);
 
@@ -259,7 +259,7 @@ class RESTfulAPITokenAuthenticator implements RESTfulAPIAuthenticator
                 user_error("API Token owner '$ownerClass' not found with ID = $id", E_USER_WARNING);
             }
         } else {
-            user_error("RESTfulAPITokenAuthenticator::getToken() requires an ID as argument.", E_USER_WARNING);
+            user_error("TokenAuthenticator::getToken() requires an ID as argument.", E_USER_WARNING);
         }
     }
 
@@ -291,7 +291,7 @@ class RESTfulAPITokenAuthenticator implements RESTfulAPIAuthenticator
                 user_error("API Token owner '$ownerClass' not found with ID = $id", E_USER_WARNING);
             }
         } else {
-            user_error("RESTfulAPITokenAuthenticator::resetToken() requires an ID as argument.", E_USER_WARNING);
+            user_error("TokenAuthenticator::resetToken() requires an ID as argument.", E_USER_WARNING);
         }
     }
 

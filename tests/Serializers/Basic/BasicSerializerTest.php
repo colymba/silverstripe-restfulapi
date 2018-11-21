@@ -3,7 +3,7 @@
 namespace Colymba\RESTfulAPI\Tests\Serializers\Basic;
 
 use Colymba\RESTfulAPI\RESTfulAPI;
-use Colymba\RESTfulAPI\Serializers\Basic\RESTfulAPIBasicSerializer;
+use Colymba\RESTfulAPI\Serializers\Basic\BasicSerializer;
 use Colymba\RESTfulAPI\Tests\RESTfulAPITester;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Core\Config\Config;
@@ -25,7 +25,7 @@ use Colymba\RESTfulAPI\Tests\Fixtures\ApiTestLibrary;
  * @package RESTfulAPI
  * @subpackage Tests
  */
-class RESTfulAPIBasicSerializerTest extends RESTfulAPITester
+class BasicSerializerTest extends RESTfulAPITester
 {
     protected static $extra_dataobjects = array(
         ApiTestAuthor::class,
@@ -36,7 +36,7 @@ class RESTfulAPIBasicSerializerTest extends RESTfulAPITester
     protected function getSerializer()
     {
         $injector = new Injector();
-        $serializer = new RESTfulAPIBasicSerializer();
+        $serializer = new BasicSerializer();
 
         $injector->inject($serializer);
 

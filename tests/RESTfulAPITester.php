@@ -2,8 +2,8 @@
 
 namespace Colymba\RESTfulAPI\Tests;
 
-use Colymba\RESTfulAPI\Extensions\RESTfulAPIGroupExtension;
-use Colymba\RESTfulAPI\QueryHandlers\RESTfulAPIDefaultQueryHandler;
+use Colymba\RESTfulAPI\Extensions\GroupExtension;
+use Colymba\RESTfulAPI\QueryHandlers\DefaultQueryHandler;
 use Colymba\RESTfulAPI\RESTfulAPI;
 use Colymba\RESTfulAPI\Tests\Fixtures\ApiTestAuthor;
 use Colymba\RESTfulAPI\Tests\Fixtures\ApiTestBook;
@@ -71,7 +71,7 @@ class RESTfulAPITester extends SapphireTest
         $paris->Books()->add($kamasutra);
 
         // since it doesn't seem to be called automatically
-        $ext = new RESTfulAPIGroupExtension();
+        $ext = new GroupExtension();
         $ext->requireDefaultRecords();
     }
 
@@ -80,10 +80,10 @@ class RESTfulAPITester extends SapphireTest
         Config::inst()->update(RESTfulAPI::class, 'access_control_policy', 'ACL_CHECK_CONFIG_ONLY');
 
         Config::inst()->update(RESTfulAPI::class, 'dependencies', array(
-            'authenticator' => '%$Colymba\RESTfulAPI\Authenticators\RESTfulAPITokenAuthenticator',
-            'authority' => '%$Colymba\RESTfulAPI\PermissionManagers\RESTfulAPIDefaultPermissionManager',
-            'queryHandler' => '%$Colymba\RESTfulAPI\QueryHandlers\RESTfulAPIDefaultQueryHandler',
-            'serializer' => '%$Colymba\RESTfulAPI\Serializers\Basic\RESTfulAPIBasicSerializer',
+            'authenticator' => '%$Colymba\RESTfulAPI\Authenticators\TokenAuthenticator',
+            'authority' => '%$Colymba\RESTfulAPI\PermissionManagers\DefaultPermissionManager',
+            'queryHandler' => '%$Colymba\RESTfulAPI\QueryHandlers\DefaultQueryHandler',
+            'serializer' => '%$Colymba\RESTfulAPI\Serializers\Basic\BasicSerializer',
         ));
 
         Config::inst()->update(RESTfulAPI::class, 'cors', array(
@@ -94,11 +94,11 @@ class RESTfulAPITester extends SapphireTest
             'Max-Age' => 86400,
         ));
 
-        Config::inst()->update(RESTfulAPIDefaultQueryHandler::class, 'dependencies', array(
-            'deSerializer' => '%$Colymba\RESTfulAPI\Serializers\Basic\RESTfulAPIBasicDeSerializer'
+        Config::inst()->update(DefaultQueryHandler::class, 'dependencies', array(
+            'deSerializer' => '%$Colymba\RESTfulAPI\Serializers\Basic\BasicDeSerializer'
         ));
 
-        Config::inst()->update(RESTfulAPIDefaultQueryHandler::class, 'models', array(
+        Config::inst()->update(DefaultQueryHandler::class, 'models', array(
                 'apitestauthor'  => 'Colymba\RESTfulAPI\Tests\Fixtures\ApiTestAuthor',
                 'apitestlibrary' => 'Colymba\RESTfulAPI\Tests\Fixtures\ApiTestLibrary',
             )

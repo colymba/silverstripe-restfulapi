@@ -12,4 +12,4 @@ SilverStripe\Control\Director:
 # Permissions / Uncomment or create your own
 #SilverStripe\Security\Group:
 #  extensions:
-#    - Colymba\RESTfulAPI\Extensions\RESTfulAPIGroupExtension
+#    - Colymba\RESTfulAPI\Extensions\GroupExtension

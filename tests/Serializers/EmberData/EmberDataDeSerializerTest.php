@@ -1,18 +1,19 @@
 <?php
 
-namespace Colymba\RESTfulAPI\Tests\Serializers\Basic;
+namespace Colymba\RESTfulAPI\Tests\Serializers\EmberData;
 
-use Colymba\RESTfulAPI\Serializers\Basic\RESTfulAPIBasicDeSerializer;
+use Colymba\RESTfulAPI\Serializers\Basic\BasicDeSerializer;
+use Colymba\RESTfulAPI\Tests\RESTfulAPITester;
 use SilverStripe\Core\Injector\Injector;
 use Colymba\RESTfulAPI\Tests\Fixtures\ApiTestAuthor;
 use Colymba\RESTfulAPI\Tests\Fixtures\ApiTestBook;
 use Colymba\RESTfulAPI\Tests\Fixtures\ApiTestLibrary;
-use Colymba\RESTfulAPI\Tests\RESTfulAPITester;
+
 
 
 
 /**
- * Basic DeSerializer Test suite
+ * EmberData DeSerializer Test suite
  *
  * @author  Thierry Francois @colymba thierry@colymba.com
  * @copyright Copyright (c) 2013, Thierry Francois
@@ -22,7 +23,7 @@ use Colymba\RESTfulAPI\Tests\RESTfulAPITester;
  * @package RESTfulAPI
  * @subpackage Tests
  */
-class RESTfulAPIBasicDeSerializerTest extends RESTfulAPITester
+class EmberDataDeSerializerTest extends RESTfulAPITester
 {
     protected static $extra_dataobjects = array(
         ApiTestAuthor::class,
@@ -33,7 +34,7 @@ class RESTfulAPIBasicDeSerializerTest extends RESTfulAPITester
     protected function getDeSerializer()
     {
         $injector = new Injector();
-        $deserializer = new RESTfulAPIBasicDeSerializer();
+        $deserializer = new BasicDeSerializer();
 
         $injector->inject($deserializer);
 

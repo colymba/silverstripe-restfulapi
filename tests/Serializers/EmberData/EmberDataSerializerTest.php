@@ -4,7 +4,7 @@ namespace Colymba\RESTfulAPI\Tests\Serializers\EmberData;
 
 use Colymba\RESTfulAPI\RESTfulAPI;
 use Colymba\RESTfulAPI\Inflector;
-use Colymba\RESTfulAPI\Serializers\EmberData\RESTfulAPIEmberDataSerializer;
+use Colymba\RESTfulAPI\Serializers\EmberData\EmberDataSerializer;
 use Colymba\RESTfulAPI\Tests\RESTfulAPITester;
 use SilverStripe\Core\Injector\Injector;
 use Colymba\RESTfulAPI\Tests\Fixtures\ApiTestAuthor;
@@ -25,7 +25,7 @@ use SilverStripe\Core\Config\Config;
  * @package RESTfulAPI
  * @subpackage Tests
  */
-class RESTfulAPIEmberDataSerializerTest extends RESTfulAPITester
+class EmberDataSerializerTest extends RESTfulAPITester
 {
     protected static $extra_dataobjects = array(
         ApiTestAuthor::class,
@@ -36,7 +36,7 @@ class RESTfulAPIEmberDataSerializerTest extends RESTfulAPITester
     protected function getSerializer()
     {
         $injector = new Injector();
-        $serializer = new RESTfulAPIEmberDataSerializer();
+        $serializer = new EmberDataSerializer();
 
         $injector->inject($serializer);
 
@@ -88,7 +88,7 @@ class RESTfulAPIEmberDataSerializerTest extends RESTfulAPITester
     public function testSideloadedRecords()
     {
         Config::inst()->update(RESTfulAPI::class, 'access_control_policy', false);
-        Config::inst()->update(RESTfulAPIEmberDataSerializer::class, 'sideloaded_records', array(
+        Config::inst()->update(EmberDataSerializer::class, 'sideloaded_records', array(
             'Colymba\RESTfulAPI\Tests\Fixtures\ApiTestLibrary' => array('Books'),
         ));
 

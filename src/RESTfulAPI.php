@@ -57,28 +57,28 @@ class RESTfulAPI extends Controller
     /**
      * Current Authenticator instance
      *
-     * @var RESTfulAPIAuthenticator
+     * @var Authenticator
      */
     public $authenticator;
 
     /**
      * Current Permission Manager instance
      *
-     * @var RESTfulAPIPermissionManager
+     * @var PermissionManager
      */
     public $authority;
 
     /**
      * Current QueryHandler instance
      *
-     * @var RESTfulAPIQueryHandler
+     * @var QueryHandler
      */
     public $queryHandler;
 
     /**
      * Current serializer instance
      *
-     * @var RESTfulAPISerializer
+     * @var Serializer
      */
     public $serializer;
 
@@ -90,10 +90,10 @@ class RESTfulAPI extends Controller
      * @config
      */
     private static $dependencies = array(
-        'authenticator' => '%$Colymba\RESTfulAPI\Authenticators\RESTfulAPITokenAuthenticator',
-        'authority' => '%$Colymba\RESTfulAPI\PermissionManagers\RESTfulAPIDefaultPermissionManager',
-        'queryHandler' => '%$Colymba\RESTfulAPI\QueryHandlers\RESTfulAPIDefaultQueryHandler',
-        'serializer' => '%$Colymba\RESTfulAPI\Serializers\Basic\RESTfulAPIBasicSerializer',
+        'authenticator' => '%$Colymba\RESTfulAPI\Authenticators\TokenAuthenticator',
+        'authority' => '%$Colymba\RESTfulAPI\PermissionManagers\DefaultPermissionManager',
+        'queryHandler' => '%$Colymba\RESTfulAPI\QueryHandlers\DefaultQueryHandler',
+        'serializer' => '%$Colymba\RESTfulAPI\Serializers\Basic\BasicSerializer',
     );
 
     /**
@@ -176,7 +176,7 @@ class RESTfulAPI extends Controller
     /**
      * Returns current query handler instance
      *
-     * @return RESTfulAPIQueryHandler QueryHandler instance
+     * @return QueryHandler QueryHandler instance
      */
     public function getqueryHandler()
     {
@@ -186,7 +186,7 @@ class RESTfulAPI extends Controller
     /**
      * Returns current serializer instance
      *
-     * @return RESTfulAPISerializer Serializer instance
+     * @return Serializer Serializer instance
      */
     public function getserializer()
     {

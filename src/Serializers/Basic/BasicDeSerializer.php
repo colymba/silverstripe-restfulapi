@@ -1,14 +1,13 @@
 <?php
 
-namespace Colymba\RESTfulAPI\Serializers\EmberData;
+namespace Colymba\RESTfulAPI\Serializers\Basic;
 
-use Colymba\RESTfulAPI\Inflector;
 use Colymba\RESTfulAPI\RESTfulAPIError;
-use Colymba\RESTfulAPI\Serializers\RESTfulAPIDeSerializer;
+use Colymba\RESTfulAPI\Serializers\DeSerializer;
 use SilverStripe\Core\ClassInfo;
 
 /**
- * EmberData RESTfulAPI Model DeSerializer
+ * Basic RESTfulAPI Model DeSerializer
  * handles DataObject, DataList etc.. JSON serialization and de-serialization
  *
  * @author  Thierry Francois @colymba thierry@colymba.com
@@ -19,7 +18,7 @@ use SilverStripe\Core\ClassInfo;
  * @package RESTfulAPI
  * @subpackage Serializer
  */
-class RESTfulAPIEmberDataDeSerializer implements RESTfulAPIDeSerializer
+class BasicDeSerializer implements DeSerializer
 {
 
     /**
@@ -28,10 +27,8 @@ class RESTfulAPIEmberDataDeSerializer implements RESTfulAPIDeSerializer
      *
      * Expects payload to be formatted:
      * {
-     *   "className": {
-     *     "fieldName": "Field value",
-     *     "relations": [1]
-     *   }
+     *   "FieldName": "Field value",
+     *   "Relations": [1]
      * }
      *
      * @param  string        $data   JSON to be converted to data ready to be consumed by SilverStripe
@@ -48,11 +45,10 @@ class RESTfulAPIEmberDataDeSerializer implements RESTfulAPIDeSerializer
         }
 
         if ($data) {
-            $data = array_shift($data);
             $data = $this->unformatPayloadData($data);
         } else {
             return new RESTfulAPIError(400,
-                'Malformed JSON payload.'
+                "No data received."
             );
         }
 
@@ -94,16 +90,12 @@ class RESTfulAPIEmberDataDeSerializer implements RESTfulAPIDeSerializer
      */
     public function unformatName($name)
     {
-        $class = Inflector::singularize($name);
-        $class = ucfirst($class);
-
+        $class = ucfirst($name);
         if (ClassInfo::exists($class)) {
             return $class;
         } else {
-            $name = $this->deserializeColumnName($name);
+            return $name;
         }
-
-        return $name;
     }
 
     /**
@@ -115,9 +107,6 @@ class RESTfulAPIEmberDataDeSerializer implements RESTfulAPIDeSerializer
      */
     private function deserializeColumnName($name)
     {
-        $name = preg_replace('/(.*)ID(s)?$/i', '$1ID', $name);
-        $name = ucfirst($name);
-
         return $name;
     }
 }

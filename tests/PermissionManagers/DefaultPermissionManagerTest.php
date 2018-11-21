@@ -3,7 +3,7 @@
 namespace Colymba\RESTfulAPI\Tests\PermissionManagers;
 
 use Colymba\RESTfulAPI\RESTfulAPI;
-use Colymba\RESTfulAPI\Extensions\RESTfulAPITokenAuthExtension;
+use Colymba\RESTfulAPI\Extensions\TokenAuthExtension;
 use Colymba\RESTfulAPI\Tests\RESTfulAPITester;
 use SilverStripe\Control\Director;
 use SilverStripe\Core\Config\Config;
@@ -24,10 +24,10 @@ use Colymba\RESTfulAPI\Tests\Fixtures\ApiTestLibrary;
  * @package RESTfulAPI
  * @subpackage Tests
  */
-class RESTfulAPIDefaultPermissionManagerTest extends RESTfulAPITester
+class DefaultPermissionManagerTest extends RESTfulAPITester
 {
     protected static $required_extensions = array(
-        Member::class => array(RESTfulAPITokenAuthExtension::class),
+        Member::class => array(TokenAuthExtension::class),
     );
 
     protected static $extra_dataobjects = array(

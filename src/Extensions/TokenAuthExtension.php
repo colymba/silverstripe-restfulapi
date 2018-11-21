@@ -18,7 +18,7 @@ use SilverStripe\ORM\DataExtension;
  * @package RESTfulAPI
  * @subpackage Authentication
  */
-class RESTfulAPITokenAuthExtension extends DataExtension
+class TokenAuthExtension extends DataExtension
 {
 
     private static $db = array(

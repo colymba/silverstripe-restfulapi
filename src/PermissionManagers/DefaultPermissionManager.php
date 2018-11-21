@@ -2,7 +2,7 @@
 
 namespace Colymba\RESTfulAPI\PermissionManagers;
 
-use Colymba\RESTfulAPI\PermissionManagers\RESTfulAPIPermissionManager;
+use Colymba\RESTfulAPI\PermissionManagers\PermissionManager;
 
 /**
  * Default RESTfulAPI Permission Manager
@@ -16,7 +16,7 @@ use Colymba\RESTfulAPI\PermissionManagers\RESTfulAPIPermissionManager;
  * @package RESTfulAPI
  * @subpackage Permission
  */
-class RESTfulAPIDefaultPermissionManager implements RESTfulAPIPermissionManager
+class DefaultPermissionManager implements PermissionManager
 {
 
     /**

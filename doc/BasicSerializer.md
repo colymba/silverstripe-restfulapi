@@ -1,4 +1,4 @@
-# RESTfulAPIBasicSerializer & RESTfulAPIBasicDeSerializer
+# Serializers\BasicSerializer & Serializers\BasicDeSerializer
 
 This component will serialize the data returned by the QueryHandler into JSON. No special formatting is performed on the JSON output (column names are returned as is), DataObject are returns as objects {} and DataLists as array or objects [{},{}].
 

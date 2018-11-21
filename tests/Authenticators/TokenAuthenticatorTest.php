@@ -3,8 +3,8 @@
 namespace Colymba\RESTfulAPI\Tests\Authenticators;
 
 use Colymba\RESTfulAPI\RESTfulAPIError;
-use Colymba\RESTfulAPI\Authenticators\RESTfulAPITokenAuthenticator;
-use Colymba\RESTfulAPI\Extensions\RESTfulAPITokenAuthExtension;
+use Colymba\RESTfulAPI\Authenticators\TokenAuthenticator;
+use Colymba\RESTfulAPI\Extensions\TokenAuthExtension;
 use Colymba\RESTfulAPI\Tests\RESTfulAPITester;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Control\Session;
@@ -24,16 +24,16 @@ use SilverStripe\Security\Member;
  * @package RESTfulAPI
  * @subpackage Tests
  */
-class RESTfulAPITokenAuthenticatorTest extends RESTfulAPITester
+class TokenAuthenticatorTest extends RESTfulAPITester
 {
     protected static $required_extensions = array(
-        Member::class => array(RESTfulAPITokenAuthExtension::class),
+        Member::class => array(TokenAuthExtension::class),
     );
 
     protected function getAuthenticator()
     {
         $injector = new Injector();
-        $auth = new RESTfulAPITokenAuthenticator();
+        $auth = new TokenAuthenticator();
 
         $injector->inject($auth);
 
