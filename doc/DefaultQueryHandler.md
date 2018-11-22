@@ -4,11 +4,11 @@ This component handles database queries, utilize the deserializer to figure out 
 
 Config | Type | Info | Default
 --- | :---: | --- | ---
-`dependencies` | `array` | key => value pair specifying which deserializer to use | 'deSerializer' => '%$Colymba\RESTfulAPI\Serializers\Basic\BasicDeSerializer'
-`searchFilterModifiersSeparator` | `string` | Separator used in HTTP params between the column name and the search filter modifier (e.g. ?name__StartsWith=Henry will find models with the column name that starts with 'Henry'. ORM equivalent *->filter(array('name::StartsWith' => 'Henry'))* ) | '__'
-`skipedQueryParameters` | `array` | Uppercased query params that would not parsed as column names (uppercased) | 'URL', 'FLUSH', 'FLUSHTOKEN'
-`max_records_limit` | `int` | specify the maximum number of records to return by default (avoid the api returning millions...) | 100
-
+| `dependencies` | `array` | key => value pair specifying which deserializer to use | 'deSerializer' => '%$Colymba\RESTfulAPI\Serializers\Basic\BasicDeSerializer'
+| `searchFilterModifiersSeparator` | `string` | Separator used in HTTP params between the column name and the search filter modifier (e.g. ?name__StartsWith=Henry will find models with the column name that starts with 'Henry'. ORM equivalent *->filter(array('name::StartsWith' => 'Henry'))* ) | '__'
+| `skipedQueryParameters` | `array` | Uppercased query params that would not parsed as column names (uppercased) | 'URL', 'FLUSH', 'FLUSHTOKEN'
+| `max_records_limit` | `int` | specify the maximum number of records to return by default (avoid the api returning millions...) | 100
+| `models` | `array` | Array of mappings of URL segments to class names | []
 
 ## Search filter modifiers
 This also accept search filter modifiers in HTTP variables (see [Search Filter Modifiers](http://doc.silverstripe.org/framework/en/topics/datamodel#search-filter-modifiers)) like:
@@ -22,6 +22,19 @@ As well as special modifiers `sort`, `rand` and `limit` with these possible form
 * ?__limit[]=count&__limit[]=offset
 
 Search filter modifiers are recognised/extracted thanks to the `searchFilterModifiersSeparator` config. The above examples assume the default `searchFilterModifiersSeparator` is in use.
+
+## Model mappings
+
+Using the `models` configuration option it is possible to map the URL segment that follows `/api/` to a particular model class name. This can be used to override the default behaviour which will use a lower cased version of the model name, for example `Member` will become `/api/member`.
+
+It is a requirement to use this mapping when exposing namespaced classes because they do not map to a single URL segment.
+
+Example:
+```yaml
+Colymba\RESTfulAPI\QueryHandlers\DefaultQueryHandler:
+  models:
+    member: SilverStripe\Security\Member
+```
 
 ## Hooks
 
