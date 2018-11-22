@@ -13,6 +13,7 @@ use Colymba\RESTfulAPI\Tests\Fixtures\ApiTestAuthor;
 use Colymba\RESTfulAPI\Tests\Fixtures\ApiTestBook;
 use Colymba\RESTfulAPI\Tests\Fixtures\ApiTestLibrary;
 use Colymba\RESTfulAPI\Tests\Fixtures\ApiTestProduct;
+use ApiTestWidget;
 use Colymba\RESTfulAPI\Tests\RESTfulAPITester;
 
 
@@ -40,13 +41,19 @@ class DefaultQueryHandlerTest extends RESTfulAPITester
     protected $url_pattern = 'api/$ModelReference/$ID';
 
     /**
-     * Turn on API access for the book fixture by default
+     * Turn on API access for the book and widget fixtures by default
      */
     public function setUp()
     {
         parent::setUp();
 
         Config::inst()->update(ApiTestBook::class, 'api_access', true);
+        Config::inst()->update(ApiTestWidget::class, 'api_access', true);
+
+        $widget = ApiTestWidget::create(['Name' => 'TestWidget1']);
+        $widget->write();
+        $widget = ApiTestWidget::create(['Name' => 'TestWidget2']);
+        $widget->write();
     }
 
     protected function getHTTPRequest($method = 'GET', $class = ApiTestBook::class, $id = '', $params = array())
@@ -174,6 +181,22 @@ class DefaultQueryHandlerTest extends RESTfulAPITester
             1,
             $result->toArray(),
             'Request should return more than 1 result'
+        );
+    }
+
+    /**
+     * Checks fallback for models without explicit mapping
+     */
+    public function testModelMappingFallback()
+    {
+        $qh = $this->getQueryHandler();
+        $request = $this->getHTTPRequest('GET', ApiTestWidget::class, '1');
+        $result = $qh->handleQuery($request);
+
+        $this->assertContainsOnlyInstancesOf(
+            ApiTestWidget::class,
+            array($result),
+            'Unmapped model should fall back to standard mapping'
         );
     }
 
