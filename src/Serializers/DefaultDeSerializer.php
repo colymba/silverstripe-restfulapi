@@ -1,13 +1,12 @@
 <?php
 
-namespace Colymba\RESTfulAPI\Serializers\Basic;
+namespace Colymba\RESTfulAPI\Serializers;
 
 use Colymba\RESTfulAPI\RESTfulAPIError;
-use Colymba\RESTfulAPI\Serializers\DeSerializer;
 use SilverStripe\Core\ClassInfo;
 
 /**
- * Basic RESTfulAPI Model DeSerializer
+ * Default RESTfulAPI Model DeSerializer
  * handles DataObject, DataList etc.. JSON serialization and de-serialization
  *
  * @author  Thierry Francois @colymba thierry@colymba.com
@@ -18,7 +17,7 @@ use SilverStripe\Core\ClassInfo;
  * @package RESTfulAPI
  * @subpackage Serializer
  */
-class BasicDeSerializer implements DeSerializer
+class DefaultDeSerializer implements DeSerializer
 {
 
     /**

@@ -1,8 +1,8 @@
 <?php
 
-namespace Colymba\RESTfulAPI\Tests\Serializers\Basic;
+namespace Colymba\RESTfulAPI\Tests\Serializers;
 
-use Colymba\RESTfulAPI\Serializers\Basic\BasicDeSerializer;
+use Colymba\RESTfulAPI\Serializers\DefaultDeSerializer;
 use SilverStripe\Core\Injector\Injector;
 use Colymba\RESTfulAPI\Tests\Fixtures\ApiTestAuthor;
 use Colymba\RESTfulAPI\Tests\Fixtures\ApiTestBook;
@@ -12,7 +12,7 @@ use Colymba\RESTfulAPI\Tests\RESTfulAPITester;
 
 
 /**
- * Basic DeSerializer Test suite
+ * Default DeSerializer Test suite
  *
  * @author  Thierry Francois @colymba thierry@colymba.com
  * @copyright Copyright (c) 2013, Thierry Francois
@@ -22,7 +22,7 @@ use Colymba\RESTfulAPI\Tests\RESTfulAPITester;
  * @package RESTfulAPI
  * @subpackage Tests
  */
-class BasicDeSerializerTest extends RESTfulAPITester
+class DefaultDeSerializerTest extends RESTfulAPITester
 {
     protected static $extra_dataobjects = array(
         ApiTestAuthor::class,
@@ -33,7 +33,7 @@ class BasicDeSerializerTest extends RESTfulAPITester
     protected function getDeSerializer()
     {
         $injector = new Injector();
-        $deserializer = new BasicDeSerializer();
+        $deserializer = new DefaultDeSerializer();
 
         $injector->inject($deserializer);
 
@@ -55,13 +55,13 @@ class BasicDeSerializerTest extends RESTfulAPITester
 
         $this->assertTrue(
             is_array($result),
-            "Basic DeSerialize should return an array"
+            "Default DeSerialize should return an array"
         );
 
         $this->assertEquals(
             "Some name",
             $result['Name'],
-            "Basic DeSerialize should not change values"
+            "Default DeSerialize should not change values"
         );
     }
 
@@ -78,13 +78,13 @@ class BasicDeSerializerTest extends RESTfulAPITester
         $this->assertEquals(
             $column,
             $deserializer->unformatName($column),
-            "Basic DeSerialize should not change name formatting"
+            "Default DeSerialize should not change name formatting"
         );
 
         $this->assertEquals(
             ApiTestAuthor::class,
             $deserializer->unformatName($class),
-            "Basic DeSerialize should return ucfirst class name"
+            "Default DeSerialize should return ucfirst class name"
         );
     }
 }

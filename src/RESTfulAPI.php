@@ -93,7 +93,7 @@ class RESTfulAPI extends Controller
         'authenticator' => '%$Colymba\RESTfulAPI\Authenticators\TokenAuthenticator',
         'authority' => '%$Colymba\RESTfulAPI\PermissionManagers\DefaultPermissionManager',
         'queryHandler' => '%$Colymba\RESTfulAPI\QueryHandlers\DefaultQueryHandler',
-        'serializer' => '%$Colymba\RESTfulAPI\Serializers\Basic\BasicSerializer',
+        'serializer' => '%$Colymba\RESTfulAPI\Serializers\DefaultSerializer',
     );
 
     /**

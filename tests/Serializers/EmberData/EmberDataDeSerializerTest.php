@@ -2,7 +2,7 @@
 
 namespace Colymba\RESTfulAPI\Tests\Serializers\EmberData;
 
-use Colymba\RESTfulAPI\Serializers\Basic\BasicDeSerializer;
+use Colymba\RESTfulAPI\Serializers\DefaultDeSerializer;
 use Colymba\RESTfulAPI\Tests\RESTfulAPITester;
 use SilverStripe\Core\Injector\Injector;
 use Colymba\RESTfulAPI\Tests\Fixtures\ApiTestAuthor;
@@ -34,7 +34,7 @@ class EmberDataDeSerializerTest extends RESTfulAPITester
     protected function getDeSerializer()
     {
         $injector = new Injector();
-        $deserializer = new BasicDeSerializer();
+        $deserializer = new DefaultDeSerializer();
 
         $injector->inject($deserializer);
 
@@ -56,13 +56,13 @@ class EmberDataDeSerializerTest extends RESTfulAPITester
 
         $this->assertTrue(
             is_array($result),
-            "Basic DeSerialize should return an array"
+            "Ember DeSerialize should return an array"
         );
 
         $this->assertEquals(
             "Some name",
             $result['Name'],
-            "Basic DeSerialize should not change values"
+            "Ember DeSerialize should not change values"
         );
     }
 
@@ -79,13 +79,13 @@ class EmberDataDeSerializerTest extends RESTfulAPITester
         $this->assertEquals(
             $column,
             $deserializer->unformatName($column),
-            "Basic DeSerialize should not change name formatting"
+            "Ember DeSerialize should not change name formatting"
         );
 
         $this->assertEquals(
             ApiTestAuthor::class,
             $deserializer->unformatName($class),
-            "Basic DeSerialize should return ucfirst class name"
+            "Ember DeSerialize should return ucfirst class name"
         );
     }
 }

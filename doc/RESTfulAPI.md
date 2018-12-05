@@ -13,7 +13,7 @@ Director:
 | --- | :---: | --- | ---
 | `authentication_policy` | `boolean`/`array` | If true, the API will use authentication, if false|null no authentication required. Or an array of HTTP methods that require authentication | false
 | `access_control_policy` | `boolean`/`string` | Lets you select which access control checks the API will perform or none at all. | 'ACL_CHECK_CONFIG_ONLY'
-| `dependencies` | `array` | key => value pairs sepcifying the components classes used for the `'authenticator'`, `'queryHandler'` and `'serializer'`  | 'authenticator' => '%$Colymba\RESTfulAPI\Authenticators\TokenAuthenticator', 'queryHandler' => '%$Colymba\RESTfulAPI\QueryHandlers\DefaultQueryHandler', 'serializer' => '%$Colymba\RESTfulAPI\Serializers\Basic\BasicSerializer'
+| `dependencies` | `array` | key => value pairs sepcifying the components classes used for the `'authenticator'`, `'queryHandler'` and `'serializer'`  | 'authenticator' => '%$Colymba\RESTfulAPI\Authenticators\TokenAuthenticator', 'queryHandler' => '%$Colymba\RESTfulAPI\QueryHandlers\DefaultQueryHandler', 'serializer' => '%$Colymba\RESTfulAPI\Serializers\DefaultSerializer'
 | `embedded_records` | `array` | key => value pairs sepcifying which relation names to embed in the response and for which model this applies (i.e. 'RequestedClass' => array('RelationNameToEmbed')) | n/a
 | - | - | - | -
 | `cors` | `array` | Cross-Origin Resource Sharing (CORS) API settings |

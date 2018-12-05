@@ -83,7 +83,7 @@ class RESTfulAPITester extends SapphireTest
             'authenticator' => '%$Colymba\RESTfulAPI\Authenticators\TokenAuthenticator',
             'authority' => '%$Colymba\RESTfulAPI\PermissionManagers\DefaultPermissionManager',
             'queryHandler' => '%$Colymba\RESTfulAPI\QueryHandlers\DefaultQueryHandler',
-            'serializer' => '%$Colymba\RESTfulAPI\Serializers\Basic\BasicSerializer',
+            'serializer' => '%$Colymba\RESTfulAPI\Serializers\DefaultSerializer',
         ));
 
         Config::inst()->update(RESTfulAPI::class, 'cors', array(
@@ -95,7 +95,7 @@ class RESTfulAPITester extends SapphireTest
         ));
 
         Config::inst()->update(DefaultQueryHandler::class, 'dependencies', array(
-            'deSerializer' => '%$Colymba\RESTfulAPI\Serializers\Basic\BasicDeSerializer'
+            'deSerializer' => '%$Colymba\RESTfulAPI\Serializers\DefaultDeSerializer'
         ));
 
         Config::inst()->update(DefaultQueryHandler::class, 'models', array(

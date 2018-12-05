@@ -1,17 +1,16 @@
 <?php
 
-namespace Colymba\RESTfulAPI\Serializers\Basic;
+namespace Colymba\RESTfulAPI\Serializers;
 
 use Colymba\RESTfulAPI\RESTfulAPI;
 use Colymba\RESTfulAPI\RESTfulAPIError;
-use Colymba\RESTfulAPI\Serializers\Serializer;
 use SilverStripe\ORM\RelationList;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\DataList;
 use SilverStripe\Core\Config\Config;
 
 /**
- * Basic RESTfulAPI Model Serializer
+ * Default RESTfulAPI Model Serializer
  * handles DataObject, DataList etc.. JSON serialization and de-serialization
  *
  * @author  Thierry Francois @colymba thierry@colymba.com
@@ -22,7 +21,7 @@ use SilverStripe\Core\Config\Config;
  * @package RESTfulAPI
  * @subpackage Serializer
  */
-class BasicSerializer implements Serializer
+class DefaultSerializer implements Serializer
 {
     /**
      * Content-type header definition for this Serializer

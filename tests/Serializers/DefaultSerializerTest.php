@@ -1,9 +1,9 @@
 <?php
 
-namespace Colymba\RESTfulAPI\Tests\Serializers\Basic;
+namespace Colymba\RESTfulAPI\Tests\Serializers;
 
 use Colymba\RESTfulAPI\RESTfulAPI;
-use Colymba\RESTfulAPI\Serializers\Basic\BasicSerializer;
+use Colymba\RESTfulAPI\Serializers\DefaultSerializer;
 use Colymba\RESTfulAPI\Tests\RESTfulAPITester;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Core\Config\Config;
@@ -15,7 +15,7 @@ use Colymba\RESTfulAPI\Tests\Fixtures\ApiTestLibrary;
 
 
 /**
- * Basic Serializer Test suite
+ * Default Serializer Test suite
  *
  * @author  Thierry Francois @colymba thierry@colymba.com
  * @copyright Copyright (c) 2013, Thierry Francois
@@ -25,7 +25,7 @@ use Colymba\RESTfulAPI\Tests\Fixtures\ApiTestLibrary;
  * @package RESTfulAPI
  * @subpackage Tests
  */
-class BasicSerializerTest extends RESTfulAPITester
+class DefaultSerializerTest extends RESTfulAPITester
 {
     protected static $extra_dataobjects = array(
         ApiTestAuthor::class,
@@ -36,7 +36,7 @@ class BasicSerializerTest extends RESTfulAPITester
     protected function getSerializer()
     {
         $injector = new Injector();
-        $serializer = new BasicSerializer();
+        $serializer = new DefaultSerializer();
 
         $injector->inject($serializer);
 
@@ -57,7 +57,7 @@ class BasicSerializerTest extends RESTfulAPITester
 
         $this->assertTrue(
             is_string($contentType),
-            'Basic Serializer getcontentType() should return string'
+            'Default Serializer getcontentType() should return string'
         );
     }
 
@@ -77,13 +77,13 @@ class BasicSerializerTest extends RESTfulAPITester
         $this->assertEquals(
             JSON_ERROR_NONE,
             json_last_error(),
-            'Basic Serialize dataObject should return valid JSON'
+            'Default Serialize dataObject should return valid JSON'
         );
 
         $this->assertEquals(
             $dataObject->Name,
             $jsonObject->Name,
-            'Basic Serialize should return an object and not modify values'
+            'Default Serialize should return an object and not modify values'
         );
 
         // test datalist serialization
@@ -94,12 +94,12 @@ class BasicSerializerTest extends RESTfulAPITester
         $this->assertEquals(
             JSON_ERROR_NONE,
             json_last_error(),
-            'Basic Serialize dataList should return valid JSON'
+            'Default Serialize dataList should return valid JSON'
         );
 
         $this->assertTrue(
             is_array($jsonArray),
-            'Basic Serialize dataObject should return an object'
+            'Default Serialize dataObject should return an object'
         );
     }
 
@@ -124,7 +124,7 @@ class BasicSerializerTest extends RESTfulAPITester
 
         $this->assertEmpty(
             $result->Books,
-            'Basic Serialize should return empty array for DataObject without permission'
+            'Default Serialize should return empty array for DataObject without permission'
         );
 
         // api access enabled
@@ -134,7 +134,7 @@ class BasicSerializerTest extends RESTfulAPITester
 
         $this->assertTrue(
             is_numeric($result->Books[0]->ID),
-            'Basic Serialize should return a full record for embedded records'
+            'Default Serialize should return a full record for embedded records'
         );
     }
 
@@ -150,7 +150,7 @@ class BasicSerializerTest extends RESTfulAPITester
         $this->assertEquals(
             $column,
             $serializer->formatName($column),
-            'Basic Serialize should not change name formatting'
+            'Default Serialize should not change name formatting'
         );
     }
 

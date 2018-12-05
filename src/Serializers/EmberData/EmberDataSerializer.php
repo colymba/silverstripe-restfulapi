@@ -3,7 +3,7 @@
 namespace Colymba\RESTfulAPI\Serializers\EmberData;
 
 use Colymba\RESTfulAPI\Inflector;
-use Colymba\RESTfulAPI\Serializers\Basic\BasicSerializer;
+use Colymba\RESTfulAPI\Serializers\DefaultSerializer;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\ORM\DataList;
@@ -21,7 +21,7 @@ use SilverStripe\ORM\DataObject;
  * @package RESTfulAPI
  * @subpackage Serializer
  */
-class EmberDataSerializer extends BasicSerializer
+class EmberDataSerializer extends DefaultSerializer
 {
 
     /**

@@ -65,8 +65,8 @@ This API comes with defaults for each of those components:
 * `TokenAuthenticator` handles authentication via a token in an HTTP header or variable
 * `DefaultPermissionManager` handles DataObject permission checks depending on the HTTP request
 * `DefaultQueryHandler` handles all find, edit, create or delete for models
-* `BasicSerializer` / `BasicDeSerializer` serialize query results into JSON and deserialize client payloads
-* `EmberDataSerializer` / `EmberDataDeSerializer` same as the `Basic` version but with specific fomatting fo Ember Data.
+* `DefaultSerializer` / `DefaultDeSerializer` serialize query results into JSON and deserialize client payloads
+* `EmberDataSerializer` / `EmberDataDeSerializer` same as the `Default` version but with specific fomatting fo Ember Data.
 
 You can create you own classes by implementing the right interface or extending the existing components. When creating you own components, any error should be return as a `RESTfulAPIError` object to the `RESTfulAPI`.
 
@@ -91,7 +91,7 @@ See individual component configuration file for mode details
 * [TokenAuthenticator](doc/TokenAuthenticator.md) handles query authentication via token
 * [DefaultPermissionManager](doc/DefaultPermissionManager.md) handles DataObject level permissions check
 * [DefaultQueryHandler](doc/DefaultQueryHandler.md) where most of the logic happens
-* [BasicSerializer](doc/BasicSerializer.md) BasicSerializer and DeSerializer for everyday use
+* [DefaultSerializer](doc/DefaultSerializer.md) DefaultSerializer and DeSerializer for everyday use
 * [EmberDataSerializer](doc/EmberDataSerializer.md) EmberDataSerializer and DeSerializer speicifrcally design for use with Ember Data and application/vnd.api+json
 
 Here is what a site's `config.yml` file could look like:

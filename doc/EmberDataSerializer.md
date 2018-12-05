@@ -2,7 +2,7 @@
 
 **This component was specificly create to work with Ember.js EmberData out of the box.**
 
-These components are extension of the `BasicSerializer` and `BasicDeSerializer`, they perform the same actions but follow different formatting conventions:
+These components are extension of the `DefaultSerializer` and `DefaultDeSerializer`, they perform the same actions but follow different formatting conventions:
 * SilverStripe class names and column name are UpperCamelCase
 * the client consumes lowerCamelCase models and columns
 

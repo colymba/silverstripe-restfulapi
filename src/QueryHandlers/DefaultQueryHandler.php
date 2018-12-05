@@ -42,7 +42,7 @@ class DefaultQueryHandler implements QueryHandler
      * @config
      */
     private static $dependencies = array(
-        'deSerializer' => '%$Colymba\RESTfulAPI\Serializers\Basic\BasicDeSerializer',
+        'deSerializer' => '%$Colymba\RESTfulAPI\Serializers\DefaultDeSerializer',
     );
 
     /**

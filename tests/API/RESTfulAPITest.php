@@ -202,15 +202,15 @@ class RESTfulAPITest extends RESTfulAPITester
         Config::inst()->update(RESTfulAPI::class, 'access_control_policy', 'ACL_CHECK_CONFIG_ONLY');
         Config::inst()->update(ApiTestAuthor::class, 'api_access', true);
 
-        // Basic serializer
+        // Default serializer
         Config::inst()->update(RESTfulAPI::class, 'dependencies', array(
             'authenticator' => null,
             'authority' => null,
             'queryHandler' => '%$Colymba\RESTfulAPI\QueryHandlers\DefaultQueryHandler',
-            'serializer' => '%$Colymba\RESTfulAPI\Serializers\Basic\BasicSerializer',
+            'serializer' => '%$Colymba\RESTfulAPI\Serializers\DefaultSerializer',
         ));
         Config::inst()->update(RESTfulAPI::class, 'dependencies', array(
-            'deSerializer' => '%$Colymba\RESTfulAPI\Serializers\Basic\BasicDeSerializer',
+            'deSerializer' => '%$Colymba\RESTfulAPI\Serializers\DefaultDeSerializer',
         ));
 
         $response = Director::test('api/apitestauthor/1', null, null, 'GET');
