@@ -40,7 +40,7 @@ class DefaultPermissionManagerTest extends RESTfulAPITester
 
         Member::create(array(
             'Email' => 'admin@api.com',
-            'Password' => 'admin',
+            'Password' => 'Admin$password1',
         ))->write();
 
         $member = Member::get()->filter(array(
@@ -51,20 +51,20 @@ class DefaultPermissionManagerTest extends RESTfulAPITester
 
         Member::create(array(
             'Email' => 'stranger@api.com',
-            'Password' => 'stranger',
+            'Password' => 'Stranger$password1',
         ))->write();
     }
 
     protected function getAdminToken()
     {
-        $response = Director::test('api/auth/login?email=admin@api.com&pwd=admin');
+        $response = Director::test('api/auth/login?email=admin@api.com&pwd=Admin$password1');
         $json = json_decode($response->getBody());
         return $json->token;
     }
 
     protected function getStrangerToken()
     {
-        $response = Director::test('api/auth/login?email=stranger@api.com&pwd=stranger');
+        $response = Director::test('api/auth/login?email=stranger@api.com&pwd=Stranger$password1');
         $json = json_decode($response->getBody());
         return $json->token;
     }

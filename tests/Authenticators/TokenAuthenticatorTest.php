@@ -46,7 +46,7 @@ class TokenAuthenticatorTest extends RESTfulAPITester
 
         Member::create(array(
             'Email' => 'test@test.com',
-            'Password' => 'test',
+            'Password' => 'Test$password1',
         ))->write();
     }
 
@@ -70,7 +70,7 @@ class TokenAuthenticatorTest extends RESTfulAPITester
             'api/auth/login',
             array(
                 'email' => 'test@test.com',
-                'pwd' => 'test',
+                'pwd' => 'Test$password1',
             )
         );
         $request->setSession(new Session([]));
