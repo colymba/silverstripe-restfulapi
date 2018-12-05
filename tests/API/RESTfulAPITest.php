@@ -227,31 +227,5 @@ class RESTfulAPITest extends RESTfulAPITester
             json_last_error(),
             "API request should return valid JSON"
         );
-
-        // EmberData serializer
-        Config::inst()->update(RESTfulAPI::class, 'dependencies', array(
-            'authenticator' => null,
-            'authority' => null,
-            'queryHandler' => '%$Colymba\RESTfulAPI\QueryHandlers\DefaultQueryHandler',
-            'serializer' => '%$Colymba\RESTfulAPI\Serializers\EmberData\EmberDataSerializer',
-        ));
-        Config::inst()->update(RESTfulAPI::class, 'dependencies', array(
-            'deSerializer' => '%$Colymba\RESTfulAPI\Serializers\EmberData\EmberDataDeSerializer',
-        ));
-
-        $response = Director::test('api/apitestauthor/1', null, null, 'GET');
-
-        $this->assertEquals(
-            200,
-            $response->getStatusCode(),
-            "API request for existing record should resolve"
-        );
-
-        $json = json_decode($response->getBody());
-        $this->assertEquals(
-            JSON_ERROR_NONE,
-            json_last_error(),
-            "API request should return valid JSON"
-        );
     }
 }

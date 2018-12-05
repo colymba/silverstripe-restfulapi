@@ -1,8 +1,6 @@
 mappings:
   DefaultPermissionManagerTest: colymba\RESTfulAPI\Tests\PermissionManagers\DefaultPermissionManagerTest
   DefaultQueryHandlerTest: colymba\RESTfulAPI\Tests\QueryHandlers\DefaultQueryHandlerTest
-  EmberDataSerializerTest: colymba\RESTfulAPI\Tests\Serializers\EmberData\EmberDataSerializerTest
-  EmberDataDeSerializerTest: colymba\RESTfulAPI\Tests\Serializers\EmberData\EmberDataDeSerializerTest
   BasicDeSerializerTest: colymba\RESTfulAPI\Tests\Serializers\DefaultDeSerializerTest
   BasicSerializerTest: colymba\RESTfulAPI\Tests\Serializers\DefaultSerializerTest
   RESTfulAPITest: colymba\RESTfulAPI\Tests\API\RESTfulAPITest
