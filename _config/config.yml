@@ -1,14 +1,15 @@
 ---
 Name: restfulapi
-After: 'framework/*','cms/*'
+After:
+  - rootroutes
 ---
 # ---------------------------------
 # Routing
-Director:
+SilverStripe\Control\Director:
   rules:
-    'api': 'RESTfulAPI'
+    'api': 'Colymba\RESTfulAPI\RESTfulAPI'
 # ---------------------------------
 # Permissions / Uncomment or create your own
-#Group:
+#SilverStripe\Security\Group:
 #  extensions:
-#    - RESTfulAPI_GroupExtension
+#    - Colymba\RESTfulAPI\Extensions\GroupExtension

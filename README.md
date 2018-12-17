@@ -28,7 +28,7 @@ This module implements a RESTful API for read/write access to your SilverStripe 
 * `api/Book?title__StartsWith=Henry&__rand=123456&__limit=1`
 * `api/Book?title__StartsWith=Henry&__rand=123456&__limit[]=10&__limit[]=5`
 
-The allowed `/auth/$Action` must be defined on the used `RESTfulAPI_Authenticator` class via the `$allowed_actions` config.
+The allowed `/auth/$Action` must be defined on the used `Authenticator` class via the `$allowed_actions` config.
 
 
 ## Requirements
@@ -54,33 +54,33 @@ If CORS are enabled (true by default), the right headers are taken care of too.
 
 ### Components
 The `RESTfulAPI` uses 4 types of components, each implementing a different interface:
-* Authetication (`RESTfulAPI_Authenticator`)
-* Permission Management (`RESTfulAPI_PermissionManager`)
-* Query Handler (`RESTfulAPI_QueryHandler`)
-* Serializer (`RESTfulAPI_Serializer`)
+* Authetication (`Authenticator`)
+* Permission Management (`PermissionManager`)
+* Query Handler (`QueryHandler`)
+* Serializer (`Serializer`)
 
 
 ### Default components
 This API comes with defaults for each of those components:
-* `RESTfulAPI_TokenAuthenticator` handles authentication via a token in an HTTP header or variable
-* `RESTfulAPI_DefaultPermissionManager` handles DataObject permission checks depending on the HTTP request
-* `RESTfulAPI_DefaultQueryHandler` handles all find, edit, create or delete for models
-* `RESTfulAPI_BasicSerializer` / `RESTfulAPI_BasicDeSerializer` serialize query results into JSON and deserialize client payloads
-* `RESTfulAPI_EmberDataSerializer` / `RESTfulAPI_EmberDataDeSerializer` same as the `Basic` version but with specific fomatting fo Ember Data.
+* `TokenAuthenticator` handles authentication via a token in an HTTP header or variable
+* `DefaultPermissionManager` handles DataObject permission checks depending on the HTTP request
+* `DefaultQueryHandler` handles all find, edit, create or delete for models
+* `DefaultSerializer` / `DefaultDeSerializer` serialize query results into JSON and deserialize client payloads
+* `EmberDataSerializer` / `EmberDataDeSerializer` same as the `Default` version but with specific fomatting fo Ember Data.
 
-You can create you own classes by implementing the right interface or extending the existing components. When creating you own components, any error should be return as a `RESTfulAPI_Error` object to the `RESTfulAPI`.
+You can create you own classes by implementing the right interface or extending the existing components. When creating you own components, any error should be return as a `RESTfulAPIError` object to the `RESTfulAPI`.
 
 
 ### Token Authentication Extension
-When using `RESTfulAPI_TokenAuthenticator` you must add the `RESTfulAPI_TokenAuthExtension` `DataExtension` to a `DataObject` and setup `RESTfulAPI_TokenAuthenticator` with the right config.
+When using `TokenAuthenticator` you must add the `TokenAuthExtension` `DataExtension` to a `DataObject` and setup `TokenAuthenticator` with the right config.
 
 **By default, API authentication is disabled.**
 
 
 ### Permissions management
-DataObject API access control can be managed in 2 ways. Through the `api_access` [YML config](doc/RESTfulAPI.md#authentication-and-api-access-control) allowing for simple configurations, or via [DataObject permissions](http://doc.silverstripe.org/framework/en/reference/dataobject#permissions) through a `RESTfulAPI_PermissionManager` component.
+DataObject API access control can be managed in 2 ways. Through the `api_access` [YML config](doc/RESTfulAPI.md#authentication-and-api-access-control) allowing for simple configurations, or via [DataObject permissions](http://doc.silverstripe.org/framework/en/reference/dataobject#permissions) through a `PermissionManager` component.
 
-A sample `Group` extension `RESTfulAPI_GroupExtension` is also available with a basic set of dedicated API permissions. This can be enabled via [config](code/_config/config.yml#L11) or you can create your own.
+A sample `Group` extension `GroupExtension` is also available with a basic set of dedicated API permissions. This can be enabled via [config](code/_config/config.yml#L11) or you can create your own.
 
 **By default, the API only performs access control against the `api_access` YML config.**
 
@@ -91,14 +91,16 @@ See individual component configuration file for mode details
 * [TokenAuthenticator](doc/TokenAuthenticator.md) handles query authentication via token
 * [DefaultPermissionManager](doc/DefaultPermissionManager.md) handles DataObject level permissions check
 * [DefaultQueryHandler](doc/DefaultQueryHandler.md) where most of the logic happens
-* [BasicSerializer](doc/BasicSerializer.md) BasicSerializer and DeSerializer for everyday use
+* [DefaultSerializer](doc/DefaultSerializer.md) DefaultSerializer and DeSerializer for everyday use
 * [EmberDataSerializer](doc/EmberDataSerializer.md) EmberDataSerializer and DeSerializer speicifrcally design for use with Ember Data and application/vnd.api+json
 
 Here is what a site's `config.yml` file could look like:
 ```yaml
 ---
 Name: mysite
-After: 'framework/*','cms/*'
+After:
+    - 'framework/*'
+    - 'cms/*'
 ---
 # API access
 Artwork:
@@ -120,14 +122,14 @@ File:
 Page:
   api_access: false
 # RestfulAPI config
-RESTfulAPI:
+Colymba\RESTfulAPI\RESTfulAPI:
   authentication_policy: true
   access_control_policy: 'ACL_CHECK_CONFIG_AND_MODEL'
   dependencies:
-    authenticator: '%$RESTfulAPI_TokenAuthenticator'
-    authority: '%$RESTfulAPI_DefaultPermissionManager'
-    queryHandler: '%$RESTfulAPI_DefaultQueryHandler'
-    serializer: '%$RESTfulAPI_EmberDataSerializer'
+    authenticator: '%$Colymba\RESTfulAPI\Authenticators\TokenAuthenticator'
+    authority: '%$Colymba\RESTfulAPI\PermissionManagers\DefaultPermissionManager'
+    queryHandler: '%$Colymba\RESTfulAPI\QueryHandlers\DefaultQueryHandler'
+    serializer: '%$Colymba\RESTfulAPI\Serializers\EmberData\EmberDataSerializer'
   cors:
     Enabled: true
     Allow-Origin: 'http://mydomain.com'
@@ -135,10 +137,10 @@ RESTfulAPI:
     Allow-Methods: 'OPTIONS, GET'
     Max-Age: 86400
 # Components config
-RESTfulAPI_DefaultQueryHandler:
+Colymba\RESTfulAPI\QueryHandlers\DefaultQueryHandler\DefaultQueryHandler:
   dependencies:
-    deSerializer: '%$RESTfulAPI_EmberDataDeSerializer'
-RESTfulAPI_EmberDataSerializer:
+    deSerializer: '%$Colymba\RESTfulAPI\Serializers\EmberData\EmberDataDeSerializer'
+Colymba\RESTfulAPI\Serializers\EmberData\EmberDataSerializer:
   sideloaded_records:
     Artwork:
       - 'Visuals'
@@ -152,7 +154,7 @@ RESTfulAPI_EmberDataSerializer:
 
 ## Todo
 * API access IP throttling (limit request per minute for each IP or token)
-* Check components interface implementation 
+* Check components interface implementation
 
 
 ## License (BSD Simplified)
@@ -166,5 +168,5 @@ Redistribution and use in source and binary forms, with or without modification,
  * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
  * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
  * Neither the name of Thierry Francois, colymba nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
- 
+
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.

@@ -1,19 +1,28 @@
 {
-	"name": "colymba/silverstripe-restfulapi",
-	"type": "silverstripe-module",
-	"description": "SilverStripe 3 RESTful API with a default JSON serializer.",
-	"homepage": "https://github.com/colymba/silverstripe-model-serializer",
-	"keywords": ["silverstripe", "api", "REST", "REST API", "RESTful", "json api", "model serializer", "REST server", "RESTful server"],
-	"license": "BSD Simplified",
-	"authors": [{
-		"name": "Thierry Francois",
-		"homepage": "http://colymba.com"
-  }],
-  "repositories": [{
-    "type": "vcs",
-    "url": "git@github.com:colymba/silverstripe-restfulapi.git"
-  }],
-	"require": {
-    "silverstripe/framework": "~3.1"
-	}
+    "name": "colymba/silverstripe-restfulapi",
+    "type": "silverstripe-vendormodule",
+    "description": "SilverStripe 3 RESTful API with a default JSON serializer.",
+    "homepage": "https://github.com/colymba/silverstripe-model-serializer",
+    "keywords": ["silverstripe", "api", "REST", "REST API", "RESTful", "json api", "model serializer", "REST server", "RESTful server"],
+    "license": "BSD Simplified",
+    "authors": [{
+        "name": "Thierry Francois",
+        "homepage": "http://colymba.com"
+    }],
+    "repositories": [{
+        "type": "vcs",
+        "url": "git@github.com:colymba/silverstripe-restfulapi.git"
+    }],
+    "require": {
+        "silverstripe/framework": "~4.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~5.7@stable"
+    },
+    "autoload": {
+        "psr-4": {
+            "Colymba\\RESTfulAPI\\": "src/",
+            "Colymba\\RESTfulAPI\\Tests\\": "tests/"
+        }
+    }
 }

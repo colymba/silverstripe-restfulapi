@@ -9,19 +9,19 @@ Director:
     'restapi': 'RESTfulAPI'
 ```
 
-Config | Type | Info | Default
---- | :---: | --- | ---
-`authentication_policy` | `boolean`/`array` | If true, the API will use authentication, if false|null no authentication required. Or an array of HTTP methods that require authentication | false
-`access_control_policy` | `boolean`/`string` | Lets you select which access control checks the API will perform or none at all. | 'ACL_CHECK_CONFIG_ONLY'
-`dependencies` | `array` | key => value pairs sepcifying the components classes used for the `'authenticator'`, `'queryHandler'` and `'serializer'`  | 'authenticator' => '%$RESTfulAPI_TokenAuthenticator', 'queryHandler' => '%$RESTfulAPI_DefaultQueryHandler', 'serializer' => '%$RESTfulAPI_BasicSerializer'
-`embedded_records` | `array` | key => value pairs sepcifying which relation names to embed in the response and for which model this applies (i.e. 'RequestedClass' => array('RelationNameToEmbed')) | n/a
-- | - | - | -
-`cors` | `array` | Cross-Origin Resource Sharing (CORS) API settings | 
-`cors.Enabled` | `boolean` | If true the API will add CORS HTTP headers to the response | true
-`cors.Allow-Origin` | `string` or `array` | '\*' allows all, 'http://domain.com' allows a specific domain, array('http://domain.com', 'http://site.com') allows a list of domains | '\*'
-`cors.Allow-Headers` | `string` | '\*' allows all, 'header1, header2' coman separated list allows a list of headers | '\*'
-`cors.Allow-Methods` | `string` | 'HTTPMETHODE1, HTTPMETHODE12' coma separated list of HTTP methodes to allow | 'OPTIONS, POST, GET, PUT, DELETE'
-`cors.Max-Age` | `integer` | Preflight/OPTIONS request caching time in seconds | 86400
+| Config | Type | Info | Default
+| --- | :---: | --- | ---
+| `authentication_policy` | `boolean`/`array` | If true, the API will use authentication, if false|null no authentication required. Or an array of HTTP methods that require authentication | false
+| `access_control_policy` | `boolean`/`string` | Lets you select which access control checks the API will perform or none at all. | 'ACL_CHECK_CONFIG_ONLY'
+| `dependencies` | `array` | key => value pairs sepcifying the components classes used for the `'authenticator'`, `'queryHandler'` and `'serializer'`  | 'authenticator' => '%$Colymba\RESTfulAPI\Authenticators\TokenAuthenticator', 'queryHandler' => '%$Colymba\RESTfulAPI\QueryHandlers\DefaultQueryHandler', 'serializer' => '%$Colymba\RESTfulAPI\Serializers\DefaultSerializer'
+| `embedded_records` | `array` | key => value pairs sepcifying which relation names to embed in the response and for which model this applies (i.e. 'RequestedClass' => array('RelationNameToEmbed')) | n/a
+| - | - | - | -
+| `cors` | `array` | Cross-Origin Resource Sharing (CORS) API settings |
+| `cors.Enabled` | `boolean` | If true the API will add CORS HTTP headers to the response | true
+| `cors.Allow-Origin` | `string` or `array` | '\*' allows all, 'http://domain.com' allows a specific domain, array('http://domain.com', 'http://site.com') allows a list of domains | '\*'
+| `cors.Allow-Headers` | `string` | '\*' allows all, 'header1, header2' coman separated list allows a list of headers | '\*'
+| `cors.Allow-Methods` | `string` | 'HTTPMETHODE1, HTTPMETHODE12' coma separated list of HTTP methodes to allow | 'OPTIONS, POST, GET, PUT, DELETE'
+| `cors.Max-Age` | `integer` | Preflight/OPTIONS request caching time in seconds | 86400
 
 
 ## CORS (Cross-Origin Resource Sharing)
@@ -43,11 +43,11 @@ See the [api_access_control()](../code/RESTfulAPI.php#L519) function for more de
 
 
 ### Access control considerations
-The API (with default components) will call the `api_access_control` method (making any configured checks) for each `find`, `create`, `update`, `delete` operations as well as during serialization of the data. Using a `RESTfulAPI_PermissionManager` may impact performace and you should concider carefully your permission sets to avoid unexpected results.
+The API (with default components) will call the `api_access_control` method (making any configured checks) for each `find`, `create`, `update`, `delete` operations as well as during serialization of the data. Using a `PermissionManager` may impact performace and you should concider carefully your permission sets to avoid unexpected results.
 
-Note that when coonfiguring `api_access_control` to do checks on the DataObject level via a `RESTfulAPI_PermissionManager`, the Member model passed to the Permission Manager is the one returned by the `RESTfulAPI_Authenticator` `getOwner()` method. If the returned owner isn't an instance of Member, `null` will be passed instead.
+Note that when configuring `api_access_control` to do checks on the DataObject level via a `PermissionManager`, the Member model passed to the Permission Manager is the one returned by the `Authenticator` `getOwner()` method. If the returned owner isn't an instance of Member, `null` will be passed instead.
 
-A sample `Group` extension `RESTfulAPI_GroupExtension` is also available with a basic set of dedicated API permissions and User Groups. This can be enabled via [config](../code/_config/config.yml#L11) or you can create your own.
+A sample `Group` extension `Colymba\RESTfulAPI\Extensions\GroupExtension` is also available with a basic set of dedicated API permissions and User Groups. This can be enabled via [config](../code/_config/config.yml#L11) or you can create your own.
 
 
 ## Embedded records
