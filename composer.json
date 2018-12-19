@@ -4,7 +4,7 @@
     "description": "SilverStripe RESTful API with a default JSON serializer.",
     "homepage": "https://github.com/colymba/silverstripe-restfulapi",
     "keywords": ["silverstripe", "api", "REST", "REST API", "RESTful", "json api", "model serializer", "REST server", "RESTful server"],
-    "license": "BSD 3-clause license",
+    "license": "BSD-3-Clause",
     "authors": [{
         "name": "Thierry Francois",
         "homepage": "http://colymba.com"
