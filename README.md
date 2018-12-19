@@ -157,9 +157,9 @@ Colymba\RESTfulAPI\Serializers\EmberData\EmberDataSerializer:
 * Check components interface implementation
 
 
-## License (BSD Simplified)
+## License (BSD 3-clause license)
 
-Copyright (c) 2013, Thierry Francois (colymba)
+Copyright (c) 2018, Thierry Francois (colymba)
 
 All rights reserved.
 
