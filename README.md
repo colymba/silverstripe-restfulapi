@@ -32,7 +32,7 @@ The allowed `/auth/$Action` must be defined on the used `Authenticator` class vi
 
 
 ## Requirements
-* [SilverStripe Framework 3.1+](https://github.com/silverstripe/silverstripe-framework)
+* [SilverStripe Framework 4+](https://github.com/silverstripe/silverstripe-framework)
 
 
 ## Quick features highlight
