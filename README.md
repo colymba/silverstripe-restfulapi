@@ -148,10 +148,6 @@ Colymba\RESTfulAPI\Serializers\EmberData\EmberDataSerializer:
 ```
 
 
-## In the wild
-* [hesainprint.com](http://hesainprint.com)
-
-
 ## Todo
 * API access IP throttling (limit request per minute for each IP or token)
 * Check components interface implementation
@@ -159,5 +155,6 @@ Colymba\RESTfulAPI\Serializers\EmberData\EmberDataSerializer:
 
 ## License 
 [BSD 3-clause license](LICENSE)
+
 Copyright (c) 2018, Thierry Francois (colymba)
 All rights reserved.
