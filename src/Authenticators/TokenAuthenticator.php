@@ -11,6 +11,7 @@ use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Convert;
 use SilverStripe\ORM\DataObject;
+use SilverStripe\Security\IdentityStore;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\MemberAuthenticator\LostPasswordHandler;
 use SilverStripe\Security\MemberAuthenticator\MemberAuthenticator;
@@ -422,10 +423,12 @@ class TokenAuthenticator implements Authenticator
                 }
                 //all good, log Member in
                 if (is_a($tokenOwner, Member::class)) {
-                    # $tokenOwner->logIn();
                     # this is a login without the logging
-                    Config::inst()->set(Member::class, 'session_regenerate_id', true);
-                    $request->getSession()->set("loggedInAs", $tokenOwner->ID);
+                    Config::nest();
+                    Config::modify()->set(Member::class, 'session_regenerate_id', true);
+                    $identityStore = Injector::inst()->get(IdentityStore::class);
+                    $identityStore->logIn($tokenOwner, false, $request);
+                    Config::unnest();
                 }
 
                 return true;

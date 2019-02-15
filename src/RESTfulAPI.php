@@ -2,11 +2,17 @@
 
 namespace Colymba\RESTfulAPI;
 
-use Colymba\RESTfulAPI\RESTfulAPIError;
+use Colymba\RESTfulAPI\Authenticators\Authenticator;
+use Colymba\RESTfulAPI\PermissionManagers\PermissionManager;
+use Colymba\RESTfulAPI\QueryHandlers\QueryHandler;
+use Colymba\RESTfulAPI\Serializers\Serializer;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Control\Controller;
+use SilverStripe\ORM\DataObject;
+use SilverStripe\Security\Member;
+
 /**
  * SilverStripe 3 RESTful API
  *
@@ -232,7 +238,8 @@ class RESTfulAPI extends Controller
      * get response from API Authenticator
      * then passes it on to $answer()
      *
-     * @param  HTTPRequest $request HTTP request
+     * @param HTTPRequest $request HTTP request
+     * @return HTTPResponse
      */
     public function auth(HTTPRequest $request)
     {
@@ -269,7 +276,8 @@ class RESTfulAPI extends Controller
      * get response from API PermissionManager
      * then passes it on to $answer()
      *
-     * @param  HTTPRequest $request HTTP request
+     * @param HTTPRequest $request HTTP request
+     * @return HTTPResponse
      */
     public function acl(HTTPRequest $request)
     {
@@ -307,7 +315,7 @@ class RESTfulAPI extends Controller
      *
      * @todo move authentication check to another methode
      *
-     * @param  SS_HTTPRequest   $request    HTTP request
+     * @param  HTTPRequest      $request    HTTP request
      * @return string                       json object of the models found
      */
     public function index(HTTPRequest $request)
@@ -350,8 +358,9 @@ class RESTfulAPI extends Controller
      * Output the API response to client
      * then exit.
      *
-     * @param  string           $json             Response body
-     * @param  boolean          $corsPreflight    Set to true if this is a XHR preflight request answer. CORS shoud be enabled.
+     * @param  string $json Response body
+     * @param  boolean $corsPreflight Set to true if this is a XHR preflight request answer. CORS shoud be enabled.
+     * @return HTTPResponse
      */
     public function answer($json = null, $corsPreflight = false)
     {
@@ -378,6 +387,7 @@ class RESTfulAPI extends Controller
      * then exit.
      *
      * @param  RESTfulAPIError $error Error object to return
+     * @return HTTPResponse
      */
     public function error(RESTfulAPIError $error)
     {
@@ -402,6 +412,7 @@ class RESTfulAPI extends Controller
      * to an HTTPResponse
      *
      * @param HTTPResponse $answer The updated response if CORS are neabled
+     * @return HTTPResponse
      */
     private function setAnswerCORS(HTTPResponse $answer)
     {
