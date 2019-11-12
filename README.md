@@ -1,3 +1,5 @@
+:warning: I haven't been able to give as much love as I would like to these repos as they deserve. If you have time and are interested to help maintain them, give me a shout. :rotating_light:
+
 # SilverStripe RESTful API
 
 [![Build Status](https://travis-ci.org/colymba/silverstripe-restfulapi.png?branch=master)](https://travis-ci.org/colymba/silverstripe-restfulapi)
