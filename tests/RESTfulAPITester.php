@@ -150,7 +150,7 @@ class RESTfulAPITester extends SapphireTest
         );
     }
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
 
@@ -159,7 +159,7 @@ class RESTfulAPITester extends SapphireTest
         }
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

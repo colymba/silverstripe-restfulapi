@@ -34,7 +34,7 @@ class DefaultPermissionManagerTest extends RESTfulAPITester
         ApiTestLibrary::class,
     );
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
 

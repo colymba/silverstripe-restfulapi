@@ -43,7 +43,7 @@ class DefaultQueryHandlerTest extends RESTfulAPITester
     /**
      * Turn on API access for the book and widget fixtures by default
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -81,7 +81,7 @@ class DefaultQueryHandlerTest extends RESTfulAPITester
         return $qh;
     }
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
 

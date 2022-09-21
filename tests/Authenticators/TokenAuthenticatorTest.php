@@ -40,7 +40,7 @@ class TokenAuthenticatorTest extends RESTfulAPITester
         return $auth;
     }
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
 
