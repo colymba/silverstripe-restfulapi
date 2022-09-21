@@ -248,7 +248,7 @@ class DefaultQueryHandler implements QueryHandler
      * @param  HTTPRequest         $request        The original HTTP request
      * @return DataObject|DataList                    Result of the search (note: DataList can be empty)
      */
-    public function findModel($model, $id = false, $queryParams, HTTPRequest $request)
+    public function findModel($model, $id = false, $queryParams = [], HTTPRequest $request = null)
     {
         if ($id) {
             $return = DataObject::get_by_id($model, $id);
