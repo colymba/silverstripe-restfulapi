@@ -89,8 +89,8 @@ class DefaultPermissionManagerTest extends RESTfulAPITester
         $response = Director::test('api/apitestlibrary/1', null, null, 'GET', null, $requestHeaders);
 
         $this->assertEquals(
-            $response->getStatusCode(),
             200,
+            $response->getStatusCode(),
             "Member of 'restfulapi-administrators' Group should be able to READ records."
         );
 
@@ -100,8 +100,8 @@ class DefaultPermissionManagerTest extends RESTfulAPITester
         $response = Director::test('api/apitestlibrary/1', null, null, 'GET', null, $requestHeaders);
 
         $this->assertEquals(
-            $response->getStatusCode(),
             403,
+            $response->getStatusCode(),
             "Member without permission should NOT be able to READ records."
         );
     }
@@ -122,8 +122,8 @@ class DefaultPermissionManagerTest extends RESTfulAPITester
         $response = Director::test('api/apitestlibrary/1', null, null, 'PUT', '{"Name":"Api"}', $requestHeaders);
 
         $this->assertEquals(
-            $response->getStatusCode(),
             200,
+            $response->getStatusCode(),
             "Member of 'restfulapi-administrators' Group should be able to EDIT records."
         );
 
@@ -133,8 +133,8 @@ class DefaultPermissionManagerTest extends RESTfulAPITester
         $response = Director::test('api/apitestlibrary/1', null, null, 'PUT', '{"Name":"Api"}', $requestHeaders);
 
         $this->assertEquals(
-            $response->getStatusCode(),
             403,
+            $response->getStatusCode(),
             "Member without permission should NOT be able to EDIT records."
         );
     }
@@ -155,8 +155,8 @@ class DefaultPermissionManagerTest extends RESTfulAPITester
         $response = Director::test('api/apitestlibrary', null, null, 'POST', '{"Name":"Api"}', $requestHeaders);
 
         $this->assertEquals(
-            $response->getStatusCode(),
             200,
+            $response->getStatusCode(),
             "Member of 'restfulapi-administrators' Group should be able to CREATE records."
         );
 
@@ -166,8 +166,8 @@ class DefaultPermissionManagerTest extends RESTfulAPITester
         $response = Director::test('api/apitestlibrary', null, null, 'POST', '{"Name":"Api"}', $requestHeaders);
 
         $this->assertEquals(
-            $response->getStatusCode(),
             403,
+            $response->getStatusCode(),
             "Member without permission should NOT be able to CREATE records."
         );
     }
@@ -188,8 +188,8 @@ class DefaultPermissionManagerTest extends RESTfulAPITester
         $response = Director::test('api/apitestlibrary/1', null, null, 'DELETE', null, $requestHeaders);
 
         $this->assertEquals(
-            $response->getStatusCode(),
             200,
+            $response->getStatusCode(),
             "Member of 'restfulapi-administrators' Group should be able to DELETE records."
         );
 
@@ -199,8 +199,8 @@ class DefaultPermissionManagerTest extends RESTfulAPITester
         $response = Director::test('api/apitestlibrary/1', null, null, 'DELETE', null, $requestHeaders);
 
         $this->assertEquals(
-            $response->getStatusCode(),
             403,
+            $response->getStatusCode(),
             "Member without permission should NOT be able to DELETE records."
         );
     }
