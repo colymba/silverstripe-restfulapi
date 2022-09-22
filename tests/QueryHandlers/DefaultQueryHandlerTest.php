@@ -147,7 +147,10 @@ class DefaultQueryHandlerTest extends RESTfulAPITester
     public function testFindSingleModel()
     {
         $qh = $this->getQueryHandler();
-        $request = $this->getHTTPRequest('GET', ApiTestBook::class, '1');
+
+        $id = ApiTestBook::get()->first()->ID;
+
+        $request = $this->getHTTPRequest('GET', ApiTestBook::class, $id);
         $result = $qh->handleQuery($request);
 
         $this->assertContainsOnlyInstancesOf(
@@ -156,7 +159,7 @@ class DefaultQueryHandlerTest extends RESTfulAPITester
             'Single model request should return a DataObject of class model'
         );
         $this->assertEquals(
-            1,
+            $id,
             $result->ID,
             'IDs mismatch. DataObject is not the record requested'
         );
