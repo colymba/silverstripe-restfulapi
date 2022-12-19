@@ -440,7 +440,7 @@ class RESTfulAPI extends Controller
         //allowed headers
         $allowedHeaders = '';
         $requestHeaders = $this->request->getHeader('Access-Control-Request-Headers');
-        if ($cors['Allow-Headers'] === '*') {
+        if ($cors['Allow-Headers'] === '*' && $requestHeaders != null) {
             $allowedHeaders = $requestHeaders;
         } else {
             $allowedHeaders = $cors['Allow-Headers'];
