@@ -273,7 +273,7 @@ class Inflector
     public static function reset()
     {
         if (empty(self::$_initialState)) {
-            self::$_initialState = get_class_vars('Inflector');
+            self::$_initialState = get_class_vars(Inflector::class);
             return;
         }
         foreach (self::$_initialState as $key => $val) {

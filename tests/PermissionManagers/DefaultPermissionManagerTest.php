@@ -34,7 +34,7 @@ class DefaultPermissionManagerTest extends RESTfulAPITester
         ApiTestLibrary::class,
     );
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
 
@@ -83,25 +83,27 @@ class DefaultPermissionManagerTest extends RESTfulAPITester
             'Enabled' => false,
         ));
 
+        $id = ApiTestLibrary::get()->first()->ID;
+
         // GET with permission = OK
         $requestHeaders = $this->getRequestHeaders();
         $requestHeaders['X-Silverstripe-Apitoken'] = $this->getAdminToken();
-        $response = Director::test('api/apitestlibrary/1', null, null, 'GET', null, $requestHeaders);
+        $response = Director::test('api/apitestlibrary/' . $id, null, null, 'GET', null, $requestHeaders);
 
         $this->assertEquals(
-            $response->getStatusCode(),
             200,
+            $response->getStatusCode(),
             "Member of 'restfulapi-administrators' Group should be able to READ records."
         );
 
         // GET with NO Permission = BAD
         $requestHeaders = $this->getRequestHeaders();
         $requestHeaders['X-Silverstripe-Apitoken'] = $this->getStrangerToken();
-        $response = Director::test('api/apitestlibrary/1', null, null, 'GET', null, $requestHeaders);
+        $response = Director::test('api/apitestlibrary/' . $id, null, null, 'GET', null, $requestHeaders);
 
         $this->assertEquals(
-            $response->getStatusCode(),
             403,
+            $response->getStatusCode(),
             "Member without permission should NOT be able to READ records."
         );
     }
@@ -116,25 +118,27 @@ class DefaultPermissionManagerTest extends RESTfulAPITester
             'Enabled' => false,
         ));
 
+        $id = ApiTestLibrary::get()->first()->ID;
+
         // PUT with permission = OK
         $requestHeaders = $this->getRequestHeaders();
         $requestHeaders['X-Silverstripe-Apitoken'] = $this->getAdminToken();
-        $response = Director::test('api/apitestlibrary/1', null, null, 'PUT', '{"Name":"Api"}', $requestHeaders);
+        $response = Director::test('api/apitestlibrary/' . $id, null, null, 'PUT', '{"Name":"Api"}', $requestHeaders);
 
         $this->assertEquals(
-            $response->getStatusCode(),
             200,
+            $response->getStatusCode(),
             "Member of 'restfulapi-administrators' Group should be able to EDIT records."
         );
 
         // PUT with NO Permission = BAD
         $requestHeaders = $this->getRequestHeaders();
         $requestHeaders['X-Silverstripe-Apitoken'] = $this->getStrangerToken();
-        $response = Director::test('api/apitestlibrary/1', null, null, 'PUT', '{"Name":"Api"}', $requestHeaders);
+        $response = Director::test('api/apitestlibrary/' . $id, null, null, 'PUT', '{"Name":"Api"}', $requestHeaders);
 
         $this->assertEquals(
-            $response->getStatusCode(),
             403,
+            $response->getStatusCode(),
             "Member without permission should NOT be able to EDIT records."
         );
     }
@@ -155,8 +159,8 @@ class DefaultPermissionManagerTest extends RESTfulAPITester
         $response = Director::test('api/apitestlibrary', null, null, 'POST', '{"Name":"Api"}', $requestHeaders);
 
         $this->assertEquals(
-            $response->getStatusCode(),
             200,
+            $response->getStatusCode(),
             "Member of 'restfulapi-administrators' Group should be able to CREATE records."
         );
 
@@ -166,8 +170,8 @@ class DefaultPermissionManagerTest extends RESTfulAPITester
         $response = Director::test('api/apitestlibrary', null, null, 'POST', '{"Name":"Api"}', $requestHeaders);
 
         $this->assertEquals(
-            $response->getStatusCode(),
             403,
+            $response->getStatusCode(),
             "Member without permission should NOT be able to CREATE records."
         );
     }
@@ -182,25 +186,27 @@ class DefaultPermissionManagerTest extends RESTfulAPITester
             'Enabled' => false,
         ));
 
+        $id = ApiTestLibrary::get()->first()->ID;
+
         // DELETE with permission = OK
         $requestHeaders = $this->getRequestHeaders();
         $requestHeaders['X-Silverstripe-Apitoken'] = $this->getAdminToken();
-        $response = Director::test('api/apitestlibrary/1', null, null, 'DELETE', null, $requestHeaders);
+        $response = Director::test('api/apitestlibrary/' . $id, null, null, 'DELETE', null, $requestHeaders);
 
         $this->assertEquals(
-            $response->getStatusCode(),
             200,
+            $response->getStatusCode(),
             "Member of 'restfulapi-administrators' Group should be able to DELETE records."
         );
 
         // DELETE with NO Permission = BAD
         $requestHeaders = $this->getRequestHeaders();
         $requestHeaders['X-Silverstripe-Apitoken'] = $this->getStrangerToken();
-        $response = Director::test('api/apitestlibrary/1', null, null, 'DELETE', null, $requestHeaders);
+        $response = Director::test('api/apitestlibrary/' . $id, null, null, 'DELETE', null, $requestHeaders);
 
         $this->assertEquals(
-            $response->getStatusCode(),
             403,
+            $response->getStatusCode(),
             "Member without permission should NOT be able to DELETE records."
         );
     }

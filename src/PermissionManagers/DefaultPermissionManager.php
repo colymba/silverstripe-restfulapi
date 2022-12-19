@@ -28,7 +28,7 @@ class DefaultPermissionManager implements PermissionManager
      * @param  string                  $httpMethod  API request HTTP method
      * @return Boolean                              true or false if permission was given or not
      */
-    public function checkPermission($model, $member = null, $httpMethod)
+    public function checkPermission($model, $member = null, $httpMethod = 'GET')
     {
         if (is_string($model)) {
             $model = singleton($model);
