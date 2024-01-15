@@ -445,6 +445,10 @@ class RESTfulAPI extends Controller
         } else {
             $allowedHeaders = $cors['Allow-Headers'];
         }
+
+        if (is_null($allowedHeaders))
+            $allowedHeaders = "";
+
         $answer->addHeader('Access-Control-Allow-Headers', $allowedHeaders);
 
         //allowed method
